@@ -1,4 +1,4 @@
-name: GitHub Profile 3D Contrib
+name: GitHub Profile Recent Contributions
 
 on:
   schedule:
@@ -11,15 +11,20 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.METRICS_TOKEN != '' && secrets.METRICS_TOKEN || secrets.GITHUB_TOKEN }}
+      GITHUB_LOGIN: ${{ github.repository_owner }}
     steps:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Generate 3D contribution graph
-        uses: yoshi389111/github-profile-3d-contrib@latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          USERNAME: ${{ github.repository_owner }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Generate recent 12 weeks contribution card
+        run: python scripts/generate_recent_contrib_svg.py
 
       - name: Commit generated assets
         run: |
@@ -30,5 +35,5 @@ jobs:
             echo "No changes to commit."
             exit 0
           fi
-          git commit -m "chore: update 3d contribution graph"
+          git commit -m "chore: update recent contribution card"
           git push
