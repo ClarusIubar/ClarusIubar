@@ -69,7 +69,8 @@ def build_svg(login: str, weeks: list[dict[str, object]], totals: dict[str, int]
     left = 80
     top = 92
     heatmap_width = len(weeks) * (cell + gap)
-    right_x = left + heatmap_width + 44
+    stats_x = left + heatmap_width + 44
+    chart_x = 660
     weekly_totals = [sum(day["contributionCount"] for day in week["contributionDays"]) for week in weeks]
     max_weekly = max(max(weekly_totals), 1)
     active_days = sum(1 for week in weeks for day in week["contributionDays"] if day["contributionCount"] > 0)
@@ -105,7 +106,7 @@ def build_svg(login: str, weeks: list[dict[str, object]], totals: dict[str, int]
     bar_base_y = top + 7 * (cell + gap) + 36
     for index, total in enumerate(weekly_totals):
         bar_height = 88 * total / max_weekly
-        x = right_x + index * 16
+        x = chart_x + index * 16
         y = bar_base_y - bar_height
         bars.append(
             f'<rect x="{x:.1f}" y="{y:.1f}" width="10" height="{bar_height:.1f}" rx="4" fill="#45B3FF"><title>week {index + 1}: {total} contributions</title></rect>'
@@ -124,7 +125,7 @@ def build_svg(login: str, weeks: list[dict[str, object]], totals: dict[str, int]
     for index, (label, value) in enumerate(summary_items):
         row = index // 2
         col = index % 2
-        x = right_x + col * 128
+        x = stats_x + col * 108
         y = 92 + row * 46
         summary_svg.append(f'<text x="{x}" y="{y}" fill="#8EA0BE" font-size="12">{label}</text>')
         summary_svg.append(f'<text x="{x}" y="{y + 20}" fill="#F4F7FB" font-size="18" font-weight="700">{value}</text>')
@@ -141,13 +142,13 @@ def build_svg(login: str, weeks: list[dict[str, object]], totals: dict[str, int]
   <rect width="{width}" height="{height}" rx="18" fill="url(#card-bg)" />
   <text x="28" y="38" fill="#F4F7FB" font-size="24" font-weight="700">Recent 12 Weeks</text>
   <text x="28" y="60" fill="#8EA0BE" font-size="13">{login} - {start.isoformat()} ~ {end.isoformat()}</text>
-  <text x="{right_x}" y="38" fill="#F4F7FB" font-size="18" font-weight="700">Weekly activity</text>
-  <text x="{right_x}" y="60" fill="#8EA0BE" font-size="13">12-week contribution window</text>
+  <text x="{chart_x}" y="38" fill="#F4F7FB" font-size="18" font-weight="700">Weekly activity</text>
+  <text x="{chart_x}" y="60" fill="#8EA0BE" font-size="13">12-week contribution window</text>
   {''.join(month_labels)}
   {''.join(day_labels)}
   {''.join(heatmap)}
   {''.join(summary_svg)}
-  <line x1="{right_x}" y1="{bar_base_y}" x2="{right_x + 12 * 16}" y2="{bar_base_y}" stroke="#2A3955" stroke-width="1" />
+  <line x1="{chart_x}" y1="{bar_base_y}" x2="{chart_x + 12 * 16}" y2="{bar_base_y}" stroke="#2A3955" stroke-width="1" />
   {''.join(bars)}
 </svg>
 '''
