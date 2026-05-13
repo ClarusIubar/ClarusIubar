@@ -63,15 +63,15 @@ def iso_datetime(value: date, end_of_day: bool = False) -> str:
 
 def build_svg(login: str, weeks: list[dict[str, object]], totals: dict[str, int], start: date, end: date) -> str:
     width = 980
-    height = 400
+    height = 340
     cell = 18
     gap = 4
     left = 80
     top = 92
     heatmap_width = len(weeks) * (cell + gap)
     stats_x = left + heatmap_width + 44
-    chart_x = stats_x
-    chart_title_y = 286
+    chart_x = 640
+    chart_title_y = 92
     weekly_totals = [sum(day["contributionCount"] for day in week["contributionDays"]) for week in weeks]
     max_weekly = max(max(weekly_totals), 1)
     active_days = sum(1 for week in weeks for day in week["contributionDays"] if day["contributionCount"] > 0)
@@ -104,7 +104,7 @@ def build_svg(login: str, weeks: list[dict[str, object]], totals: dict[str, int]
             )
 
     bars = []
-    bar_base_y = 360
+    bar_base_y = 250
     for index, total in enumerate(weekly_totals):
         bar_height = 88 * total / max_weekly
         x = chart_x + index * 16
