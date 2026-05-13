@@ -43,10 +43,6 @@
 - 주로 보는 포크: `paperclip`, `symphony`, `codex`, `opencode`, `openclaw`, `qmd`, `GitNexus`, `firecrawl`, `memori`, `Agentic-R`, `ReasonRank`, `camel`, `vllm`
 - 여기에서 방향과 구조를 참조하고, 실제 운영 코드는 비포크 레포에서 만듭니다.
 
-## Recent Activity (12 Weeks)
-
-![](./profile-contrib/recent-12-weeks.svg)
-
 ## Languages
 
 <p align="center">
