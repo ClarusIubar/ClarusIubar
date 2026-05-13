@@ -6,9 +6,8 @@
 
 ![](./profile-3d-contrib/profile-night-view.svg)
 
-## Metrics
+## Languages
 
 <p align="center">
-  <img src="./metrics/metrics.core.svg" width="49%" alt="core metrics" />
-  <img src="./metrics/metrics.activity.svg" width="49%" alt="activity metrics" />
+  <img src="./metrics/metrics.languages.svg" width="72%" alt="language metrics" />
 </p>
