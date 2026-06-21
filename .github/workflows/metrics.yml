@@ -22,6 +22,8 @@ jobs:
         with:
           token: ${{ env.METRICS_RUNTIME_TOKEN }}
           user: ClarusIubar
+          repositories_affiliations: ""
+          commits_authoring: ClarusIubar, 101549899+ClarusIubar@users.noreply.github.com
           filename: metrics/metrics.languages.svg
           template: classic
           base: ""
