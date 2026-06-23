@@ -6,13 +6,13 @@
     "totalDays": 367
   },
   "summary": {
-    "totalContributions": 17005,
+    "totalContributions": 17007,
     "activeDays": 204,
     "maxDayCount": 726,
     "currentMonth": "2026-06",
-    "currentMonthContributions": 6795,
+    "currentMonthContributions": 6797,
     "currentMonthActiveDays": 23,
-    "generatedAt": "2026-06-23T13:51:56.131Z"
+    "generatedAt": "2026-06-23T13:53:51.177Z"
   },
   "buckets": [
     {
@@ -22,7 +22,8 @@
       "share": 0.7254901960784313,
       "shareOfYear": 0.4032697547683924,
       "minCount": 1,
-      "maxCount": 97
+      "maxCount": 97,
+      "rangeLabel": "1-100"
     },
     {
       "key": "COUNT_101_200",
@@ -31,7 +32,8 @@
       "share": 0.1568627450980392,
       "shareOfYear": 0.08719346049046321,
       "minCount": 102,
-      "maxCount": 192
+      "maxCount": 192,
+      "rangeLabel": "101-200"
     },
     {
       "key": "COUNT_201_300",
@@ -40,7 +42,8 @@
       "share": 0.058823529411764705,
       "shareOfYear": 0.0326975476839237,
       "minCount": 201,
-      "maxCount": 297
+      "maxCount": 297,
+      "rangeLabel": "201-300"
     },
     {
       "key": "COUNT_301_PLUS",
@@ -49,7 +52,8 @@
       "share": 0.058823529411764705,
       "shareOfYear": 0.0326975476839237,
       "minCount": 340,
-      "maxCount": 726
+      "maxCount": 726,
+      "rangeLabel": "300+"
     }
   ]
 }

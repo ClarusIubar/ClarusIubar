@@ -29,7 +29,7 @@
     <g>
       <rect x="34" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="34" y="92" width="4" height="52" rx="2" fill="#39d353" />
-      <text x="52" y="116" class="stat-value">17,005</text>
+      <text x="52" y="116" class="stat-value">17,007</text>
       <text x="52" y="134" class="stat-label">Total</text>
     </g>
   
@@ -37,7 +37,7 @@
     <g>
       <rect x="218" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="218" y="92" width="4" height="52" rx="2" fill="#54aeff" />
-      <text x="236" y="116" class="stat-value">6,795</text>
+      <text x="236" y="116" class="stat-value">6,797</text>
       <text x="236" y="134" class="stat-label">This month</text>
     </g>
   
@@ -91,7 +91,7 @@
         <text x="200" y="304" class="row-muted">4.4%</text>
         <rect x="264" y="294" width="98" height="10" rx="5" fill="#21262d" />
         <rect x="264" y="294" width="4" height="10" rx="5" fill="#26a641" />
-        <text x="414" y="304" text-anchor="end" class="row-muted">382-478</text>
+        <text x="414" y="304" text-anchor="end" class="row-muted">384-478</text>
       
         <rect x="50" y="318" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="65" cy="329" r="5.5" fill="#39d353" />
@@ -117,7 +117,7 @@
         <text x="634" y="246" class="row-muted">72.5%</text>
         <rect x="698" y="236" width="98" height="10" rx="5" fill="#21262d" />
         <rect x="698" y="236" width="71" height="10" rx="5" fill="#0a3069" />
-        <text x="848" y="246" text-anchor="end" class="row-muted">1-97</text>
+        
       
         <rect x="484" y="260" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="499" cy="271" r="5.5" fill="#0969da" />
@@ -126,7 +126,7 @@
         <text x="634" y="275" class="row-muted">15.7%</text>
         <rect x="698" y="265" width="98" height="10" rx="5" fill="#21262d" />
         <rect x="698" y="265" width="15" height="10" rx="5" fill="#0969da" />
-        <text x="848" y="275" text-anchor="end" class="row-muted">102-192</text>
+        
       
         <rect x="484" y="289" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="499" cy="300" r="5.5" fill="#54aeff" />
@@ -135,7 +135,7 @@
         <text x="634" y="304" class="row-muted">5.9%</text>
         <rect x="698" y="294" width="98" height="10" rx="5" fill="#21262d" />
         <rect x="698" y="294" width="6" height="10" rx="5" fill="#54aeff" />
-        <text x="848" y="304" text-anchor="end" class="row-muted">201-297</text>
+        
       
         <rect x="484" y="318" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="499" cy="329" r="5.5" fill="#b6e3ff" />
@@ -144,7 +144,7 @@
         <text x="634" y="333" class="row-muted">5.9%</text>
         <rect x="698" y="323" width="98" height="10" rx="5" fill="#21262d" />
         <rect x="698" y="323" width="6" height="10" rx="5" fill="#b6e3ff" />
-        <text x="848" y="333" text-anchor="end" class="row-muted">340-726</text>
+        
       
     </g>
   

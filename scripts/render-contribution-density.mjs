@@ -29,10 +29,10 @@ const LEVELS = [
 ];
 
 const VOLUME_BUCKETS = [
-  { key: "COUNT_1_100", label: "1-100", min: 1, max: 100, color: "#0a3069" },
-  { key: "COUNT_101_200", label: "101-200", min: 101, max: 200, color: "#0969da" },
-  { key: "COUNT_201_300", label: "201-300", min: 201, max: 300, color: "#54aeff" },
-  { key: "COUNT_301_PLUS", label: "300+", min: 301, max: null, color: "#b6e3ff" },
+  { key: "COUNT_1_100", label: "1-100", rangeLabel: "1-100", min: 1, max: 100, color: "#0a3069" },
+  { key: "COUNT_101_200", label: "101-200", rangeLabel: "101-200", min: 101, max: 200, color: "#0969da" },
+  { key: "COUNT_201_300", label: "201-300", rangeLabel: "201-300", min: 201, max: 300, color: "#54aeff" },
+  { key: "COUNT_301_PLUS", label: "300+", rangeLabel: "300+", min: 301, max: null, color: "#b6e3ff" },
 ];
 
 const query = `
@@ -122,6 +122,7 @@ function createVolumeSnapshot(days, totalDays, activeDays) {
       shareOfYear: totalDays === 0 ? 0 : matching.length / totalDays,
       minCount,
       maxCount,
+      rangeLabel: bucket.rangeLabel,
       color: bucket.color,
     };
   });
@@ -173,6 +174,7 @@ function renderMetricCard({ snapshot, title, desc, rows, paletteByKey }) {
       const palette = paletteByKey.get(row.key);
       const y = rowStartY + index * rowHeight;
       const barWidth = Math.max(2, Math.round(row.share * 260));
+      const rangeText = row.rangeLabel ? "" : formatRange(row.minCount, row.maxCount);
 
       return `
         <rect x="36" y="${y - 14}" width="648" height="22" rx="8" fill="#0d1117" />
@@ -182,7 +184,7 @@ function renderMetricCard({ snapshot, title, desc, rows, paletteByKey }) {
         <text x="320" y="${y + 4}" class="muted">${escapeXml(formatPercent(row.share))}</text>
         <rect x="398" y="${y - 7}" width="260" height="12" rx="6" fill="#21262d" />
         <rect x="398" y="${y - 7}" width="${barWidth}" height="12" rx="6" fill="${palette.color}" />
-        <text x="670" y="${y + 4}" text-anchor="end" class="muted">${escapeXml(formatRange(row.minCount, row.maxCount))}</text>
+        ${rangeText ? `<text x="670" y="${y + 4}" text-anchor="end" class="muted">${escapeXml(rangeText)}</text>` : ""}
       `;
     })
     .join("");
@@ -252,6 +254,7 @@ function renderActivityPanel({ title, subtitle, rows, paletteByKey, x, y, width 
       const palette = paletteByKey.get(row.key);
       const rowY = y + 68 + index * rowHeight;
       const fillWidth = Math.max(3, Math.round(row.share * barWidth));
+      const rangeText = row.rangeLabel ? "" : formatRange(row.minCount, row.maxCount);
 
       return `
         <rect x="${x + 16}" y="${rowY - 15}" width="${width - 32}" height="22" rx="6" fill="#0d1117" />
@@ -261,7 +264,7 @@ function renderActivityPanel({ title, subtitle, rows, paletteByKey, x, y, width 
         <text x="${percentX}" y="${rowY}" class="row-muted">${escapeXml(formatPercent(row.share))}</text>
         <rect x="${barX}" y="${rowY - 10}" width="${barWidth}" height="10" rx="5" fill="#21262d" />
         <rect x="${barX}" y="${rowY - 10}" width="${fillWidth}" height="10" rx="5" fill="${palette.color}" />
-        <text x="${rangeX}" y="${rowY}" text-anchor="end" class="row-muted">${escapeXml(formatRange(row.minCount, row.maxCount))}</text>
+        ${rangeText ? `<text x="${rangeX}" y="${rowY}" text-anchor="end" class="row-muted">${escapeXml(rangeText)}</text>` : ""}
       `;
     })
     .join("");
