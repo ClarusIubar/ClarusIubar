@@ -4,6 +4,12 @@
   <img src="./metrics/contribution-density.svg" width="100%" alt="contribution density metrics" />
 </p>
 
+## Contribution Volume
+
+<p align="center">
+  <img src="./metrics/contribution-volume.svg" width="100%" alt="contribution volume metrics" />
+</p>
+
 ## Languages
 
 <p align="center">

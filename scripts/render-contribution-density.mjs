@@ -14,14 +14,23 @@ if (!TOKEN) {
 }
 
 const outputDir = path.resolve(process.cwd(), "metrics");
-const outputJsonPath = path.join(outputDir, "contribution-density.json");
-const outputSvgPath = path.join(outputDir, "contribution-density.svg");
+const densityJsonPath = path.join(outputDir, "contribution-density.json");
+const densitySvgPath = path.join(outputDir, "contribution-density.svg");
+const volumeJsonPath = path.join(outputDir, "contribution-volume.json");
+const volumeSvgPath = path.join(outputDir, "contribution-volume.svg");
 
 const LEVELS = [
   { key: "FIRST_QUARTILE", label: "Q1", color: "#0e4429" },
   { key: "SECOND_QUARTILE", label: "Q2", color: "#006d32" },
   { key: "THIRD_QUARTILE", label: "Q3", color: "#26a641" },
   { key: "FOURTH_QUARTILE", label: "Q4", color: "#39d353" },
+];
+
+const VOLUME_BUCKETS = [
+  { key: "COUNT_1_100", label: "1-100", min: 1, max: 100, color: "#0a3069" },
+  { key: "COUNT_101_200", label: "101-200", min: 101, max: 200, color: "#0969da" },
+  { key: "COUNT_201_300", label: "201-300", min: 201, max: 300, color: "#54aeff" },
+  { key: "COUNT_301_PLUS", label: "300+", min: 301, max: null, color: "#b6e3ff" },
 ];
 
 const query = `
@@ -87,6 +96,31 @@ function createLevelSnapshot(days, totalDays, activeDays) {
   });
 }
 
+function createVolumeSnapshot(days, totalDays, activeDays) {
+  return VOLUME_BUCKETS.map((bucket) => {
+    const matching = days.filter((day) => {
+      if (day.contributionCount < bucket.min) {
+        return false;
+      }
+      return bucket.max == null || day.contributionCount <= bucket.max;
+    });
+    const counts = matching.map((day) => day.contributionCount);
+    const minCount = counts.length > 0 ? Math.min(...counts) : null;
+    const maxCount = counts.length > 0 ? Math.max(...counts) : null;
+
+    return {
+      key: bucket.key,
+      label: bucket.label,
+      days: matching.length,
+      share: activeDays === 0 ? 0 : matching.length / activeDays,
+      shareOfYear: totalDays === 0 ? 0 : matching.length / totalDays,
+      minCount,
+      maxCount,
+      color: bucket.color,
+    };
+  });
+}
+
 function buildSnapshot(calendar) {
   const days = calendar.weeks.flatMap((week) => week.contributionDays);
   const totalDays = days.length;
@@ -95,6 +129,7 @@ function buildSnapshot(calendar) {
   const start = days[0]?.date ?? null;
   const end = days.at(-1)?.date ?? null;
   const levels = createLevelSnapshot(days, totalDays, activeDays).map(({ color, ...level }) => level);
+  const volumeBuckets = createVolumeSnapshot(days, totalDays, activeDays).map(({ color, ...bucket }) => bucket);
 
   return {
     username: OWNER,
@@ -110,39 +145,39 @@ function buildSnapshot(calendar) {
       generatedAt: new Date().toISOString(),
     },
     levels,
+    volumeBuckets,
   };
 }
 
-function renderSvg(snapshot) {
+function renderMetricCard({ snapshot, title, desc, rows, paletteByKey }) {
   const width = 720;
   const height = 270;
   const rowStartY = 116;
   const rowHeight = 28;
 
-  const levelByKey = new Map(LEVELS.map((level) => [level.key, level]));
-  const rows = snapshot.levels
-    .map((level, index) => {
-      const palette = levelByKey.get(level.key);
+  const renderedRows = rows
+    .map((row, index) => {
+      const palette = paletteByKey.get(row.key);
       const y = rowStartY + index * rowHeight;
-      const barWidth = Math.max(2, Math.round(level.share * 260));
+      const barWidth = Math.max(2, Math.round(row.share * 260));
 
       return `
         <rect x="36" y="${y - 14}" width="648" height="22" rx="8" fill="#0d1117" />
         <circle cx="54" cy="${y}" r="6" fill="${palette.color}" />
-        <text x="72" y="${y + 4}" class="label">${escapeXml(level.label)}</text>
-        <text x="205" y="${y + 4}" class="value">${escapeXml(String(level.days))} days</text>
-        <text x="320" y="${y + 4}" class="muted">${escapeXml(formatPercent(level.share))}</text>
+        <text x="72" y="${y + 4}" class="label">${escapeXml(row.label)}</text>
+        <text x="205" y="${y + 4}" class="value">${escapeXml(String(row.days))} days</text>
+        <text x="320" y="${y + 4}" class="muted">${escapeXml(formatPercent(row.share))}</text>
         <rect x="398" y="${y - 7}" width="260" height="12" rx="6" fill="#21262d" />
         <rect x="398" y="${y - 7}" width="${barWidth}" height="12" rx="6" fill="${palette.color}" />
-        <text x="670" y="${y + 4}" text-anchor="end" class="muted">${escapeXml(formatRange(level.minCount, level.maxCount))}</text>
+        <text x="670" y="${y + 4}" text-anchor="end" class="muted">${escapeXml(formatRange(row.minCount, row.maxCount))}</text>
       `;
     })
     .join("");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
-  <title id="title">Contribution Density</title>
-  <desc id="desc">GitHub contribution density by contribution level for the last year.</desc>
+  <title id="title">${escapeXml(title)}</title>
+  <desc id="desc">${escapeXml(desc)}</desc>
   <style>
     .bg { fill: #0d1117; }
     .card { fill: #161b22; stroke: #30363d; stroke-width: 1; }
@@ -157,7 +192,7 @@ function renderSvg(snapshot) {
   <rect class="bg" width="${width}" height="${height}" rx="18" />
   <rect class="card" x="12" y="12" width="${width - 24}" height="${height - 24}" rx="16" />
 
-  <text x="36" y="48" class="title">Contribution Density</text>
+  <text x="36" y="48" class="title">${escapeXml(title)}</text>
   <text x="36" y="72" class="subtitle">${escapeXml(snapshot.window.start)} to ${escapeXml(snapshot.window.end)} · Last 1 year</text>
 
   <text x="36" y="100" class="summary">${escapeXml(String(snapshot.summary.totalContributions))}</text>
@@ -168,8 +203,28 @@ function renderSvg(snapshot) {
   <text x="458" y="100" class="summary-label">max/day</text>
   <text x="684" y="100" text-anchor="end" class="summary-label">generated ${escapeXml(snapshot.summary.generatedAt.slice(0, 10))}</text>
 
-  ${rows}
+  ${renderedRows}
 </svg>`;
+}
+
+function renderDensitySvg(snapshot) {
+  return renderMetricCard({
+    snapshot,
+    title: "Contribution Density",
+    desc: "GitHub contribution density by contribution level for the last year.",
+    rows: snapshot.levels,
+    paletteByKey: new Map(LEVELS.map((level) => [level.key, level])),
+  });
+}
+
+function renderVolumeSvg(snapshot) {
+  return renderMetricCard({
+    snapshot,
+    title: "Contribution Volume",
+    desc: "GitHub contribution volume by absolute daily contribution count for active days.",
+    rows: snapshot.volumeBuckets,
+    paletteByKey: new Map(VOLUME_BUCKETS.map((bucket) => [bucket.key, bucket])),
+  });
 }
 
 async function fetchContributionCalendar() {
@@ -202,14 +257,26 @@ async function fetchContributionCalendar() {
 async function main() {
   const calendar = await fetchContributionCalendar();
   const snapshot = buildSnapshot(calendar);
-  const svg = renderSvg(snapshot);
+  const densitySvg = renderDensitySvg(snapshot);
+  const volumeSvg = renderVolumeSvg(snapshot);
+  const { volumeBuckets, ...densitySnapshot } = snapshot;
+  const volumeSnapshot = {
+    username: snapshot.username,
+    window: snapshot.window,
+    summary: snapshot.summary,
+    buckets: volumeBuckets,
+  };
 
   await mkdir(outputDir, { recursive: true });
-  await writeFile(outputJsonPath, `${JSON.stringify(snapshot, null, 2)}\n`, "utf8");
-  await writeFile(outputSvgPath, svg, "utf8");
+  await writeFile(densityJsonPath, `${JSON.stringify(densitySnapshot, null, 2)}\n`, "utf8");
+  await writeFile(densitySvgPath, densitySvg, "utf8");
+  await writeFile(volumeJsonPath, `${JSON.stringify(volumeSnapshot, null, 2)}\n`, "utf8");
+  await writeFile(volumeSvgPath, volumeSvg, "utf8");
 
-  console.log(`Wrote ${outputJsonPath}`);
-  console.log(`Wrote ${outputSvgPath}`);
+  console.log(`Wrote ${densityJsonPath}`);
+  console.log(`Wrote ${densitySvgPath}`);
+  console.log(`Wrote ${volumeJsonPath}`);
+  console.log(`Wrote ${volumeSvgPath}`);
 }
 
 await main();
