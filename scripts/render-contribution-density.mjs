@@ -29,10 +29,10 @@ const LEVELS = [
 ];
 
 const VOLUME_BUCKETS = [
-  { key: "COUNT_1_100", label: "1-100", rangeLabel: "1-100", min: 1, max: 100, color: "#0a3069" },
-  { key: "COUNT_101_200", label: "101-200", rangeLabel: "101-200", min: 101, max: 200, color: "#0969da" },
-  { key: "COUNT_201_300", label: "201-300", rangeLabel: "201-300", min: 201, max: 300, color: "#54aeff" },
-  { key: "COUNT_301_PLUS", label: "300+", rangeLabel: "300+", min: 301, max: null, color: "#b6e3ff" },
+  { key: "COUNT_1_50", label: "1-50", rangeLabel: "1-50", min: 1, max: 50, color: "#0a3069" },
+  { key: "COUNT_51_100", label: "51-100", rangeLabel: "51-100", min: 51, max: 100, color: "#0969da" },
+  { key: "COUNT_101_150", label: "101-150", rangeLabel: "101-150", min: 101, max: 150, color: "#54aeff" },
+  { key: "COUNT_151_PLUS", label: "150+", rangeLabel: "150+", min: 151, max: null, color: "#b6e3ff" },
 ];
 
 const query = `
