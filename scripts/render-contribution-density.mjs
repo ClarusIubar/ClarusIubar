@@ -67,7 +67,7 @@ function formatRange(minCount, maxCount) {
   return `${minCount}–${maxCount}`;
 }
 
-function createLevelSnapshot(days, totalDays) {
+function createLevelSnapshot(days, totalDays, activeDays) {
   return LEVELS.map((level) => {
     const matching = days.filter((day) => day.contributionLevel === level.key);
     const counts = matching.map((day) => day.contributionCount);
@@ -78,7 +78,8 @@ function createLevelSnapshot(days, totalDays) {
       key: level.key,
       label: level.label,
       days: matching.length,
-      share: totalDays === 0 ? 0 : matching.length / totalDays,
+      share: activeDays === 0 ? 0 : matching.length / activeDays,
+      shareOfYear: totalDays === 0 ? 0 : matching.length / totalDays,
       minCount,
       maxCount,
       color: level.color,
@@ -93,7 +94,7 @@ function buildSnapshot(calendar) {
   const maxDayCount = days.reduce((max, day) => Math.max(max, day.contributionCount), 0);
   const start = days[0]?.date ?? null;
   const end = days.at(-1)?.date ?? null;
-  const levels = createLevelSnapshot(days, totalDays).map(({ color, ...level }) => level);
+  const levels = createLevelSnapshot(days, totalDays, activeDays).map(({ color, ...level }) => level);
 
   return {
     username: OWNER,
