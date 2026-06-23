@@ -6,10 +6,13 @@
     "totalDays": 367
   },
   "summary": {
-    "totalContributions": 16977,
+    "totalContributions": 16992,
     "activeDays": 204,
     "maxDayCount": 726,
-    "generatedAt": "2026-06-23T12:21:02.066Z"
+    "currentMonth": "2026-06",
+    "currentMonthContributions": 6782,
+    "currentMonthActiveDays": 23,
+    "generatedAt": "2026-06-23T12:51:00.371Z"
   },
   "levels": [
     {
@@ -24,19 +27,19 @@
     {
       "key": "SECOND_QUARTILE",
       "label": "Q2",
-      "days": 19,
-      "share": 0.09313725490196079,
-      "shareOfYear": 0.051771117166212535,
+      "days": 18,
+      "share": 0.08823529411764706,
+      "shareOfYear": 0.04904632152588556,
       "minCount": 184,
-      "maxCount": 354
+      "maxCount": 346
     },
     {
       "key": "THIRD_QUARTILE",
       "label": "Q3",
-      "days": 8,
-      "share": 0.0392156862745098,
-      "shareOfYear": 0.021798365122615803,
-      "minCount": 393,
+      "days": 9,
+      "share": 0.04411764705882353,
+      "shareOfYear": 0.02452316076294278,
+      "minCount": 369,
       "maxCount": 478
     },
     {

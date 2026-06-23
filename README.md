@@ -1,13 +1,7 @@
-## Contribution Density
+## Contribution Activity
 
 <p align="center">
-  <img src="./metrics/contribution-density.svg" width="100%" alt="contribution density metrics" />
-</p>
-
-## Contribution Volume
-
-<p align="center">
-  <img src="./metrics/contribution-volume.svg" width="100%" alt="contribution volume metrics" />
+  <img src="./metrics/contribution-activity.svg" width="100%" alt="contribution activity metrics" />
 </p>
 
 ## Languages

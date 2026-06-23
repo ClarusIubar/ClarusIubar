@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="420" viewBox="0 0 900 420" role="img" aria-labelledby="title desc">
+  <title id="title">Contribution Activity</title>
+  <desc id="desc">GitHub contribution density and absolute contribution volume for active days during the last year.</desc>
+  <style>
+    .bg { fill: #0d1117; }
+    .card { fill: #161b22; stroke: #30363d; stroke-width: 1; }
+    .divider { stroke: #30363d; stroke-width: 1; }
+    .eyebrow { fill: #79c0ff; font: 700 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: 0; }
+    .title { fill: #f0f6fc; font: 800 28px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .subtitle { fill: #9da7b3; font: 500 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .stat-value { fill: #f0f6fc; font: 800 20px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .stat-label { fill: #8b949e; font: 600 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .panel-title { fill: #f0f6fc; font: 800 18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .panel-subtitle { fill: #8b949e; font: 500 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .row-label { fill: #f0f6fc; font: 700 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .row-value { fill: #f0f6fc; font: 700 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .row-muted { fill: #9da7b3; font: 600 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .note { fill: #6e7681; font: 500 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+  </style>
+  <rect class="bg" width="900" height="420" rx="16" />
+  <rect class="card" x="14" y="14" width="872" height="392" rx="14" />
+
+  <text x="38" y="48" class="eyebrow">LAST 1 YEAR</text>
+  <text x="38" y="82" class="title">Contribution Activity</text>
+  <text x="38" y="106" class="subtitle">2025-06-22 to 2026-06-23 - generated 2026-06-23</text>
+
+  
+    <g>
+      <rect x="34" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
+      <rect x="34" y="92" width="4" height="52" rx="2" fill="#39d353" />
+      <text x="52" y="116" class="stat-value">16,992</text>
+      <text x="52" y="134" class="stat-label">total contributions</text>
+    </g>
+  
+  
+    <g>
+      <rect x="218" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
+      <rect x="218" y="92" width="4" height="52" rx="2" fill="#54aeff" />
+      <text x="236" y="116" class="stat-value">6,782</text>
+      <text x="236" y="134" class="stat-label">2026-06 contributions</text>
+    </g>
+  
+  
+    <g>
+      <rect x="402" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
+      <rect x="402" y="92" width="4" height="52" rx="2" fill="#f2cc60" />
+      <text x="420" y="116" class="stat-value">204/367</text>
+      <text x="420" y="134" class="stat-label">active days</text>
+    </g>
+  
+  
+    <g>
+      <rect x="586" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
+      <rect x="586" y="92" width="4" height="52" rx="2" fill="#ff7b72" />
+      <text x="604" y="116" class="stat-value">726</text>
+      <text x="604" y="134" class="stat-label">max per day</text>
+    </g>
+  
+
+  <line class="divider" x1="34" y1="164" x2="866" y2="164" />
+
+  
+    <g>
+      <rect x="34" y="178" width="398" height="164" rx="12" fill="#0d1117" stroke="#21262d" />
+      <text x="50" y="206" class="panel-title">Density</text>
+      <text x="50" y="226" class="panel-subtitle">GitHub grass levels, active days only</text>
+      
+        <rect x="50" y="231" width="366" height="22" rx="6" fill="#0d1117" />
+        <circle cx="65" cy="242" r="5.5" fill="#0e4429" />
+        <text x="82" y="246" class="row-label">Q1</text>
+        <text x="145" y="246" class="row-value">176d</text>
+        <text x="200" y="246" class="row-muted">86.3%</text>
+        <rect x="264" y="236" width="98" height="10" rx="5" fill="#21262d" />
+        <rect x="264" y="236" width="85" height="10" rx="5" fill="#0e4429" />
+        <text x="414" y="246" text-anchor="end" class="row-muted">1-180</text>
+      
+        <rect x="50" y="260" width="366" height="22" rx="6" fill="#0d1117" />
+        <circle cx="65" cy="271" r="5.5" fill="#006d32" />
+        <text x="82" y="275" class="row-label">Q2</text>
+        <text x="145" y="275" class="row-value">18d</text>
+        <text x="200" y="275" class="row-muted">8.8%</text>
+        <rect x="264" y="265" width="98" height="10" rx="5" fill="#21262d" />
+        <rect x="264" y="265" width="9" height="10" rx="5" fill="#006d32" />
+        <text x="414" y="275" text-anchor="end" class="row-muted">184-346</text>
+      
+        <rect x="50" y="289" width="366" height="22" rx="6" fill="#0d1117" />
+        <circle cx="65" cy="300" r="5.5" fill="#26a641" />
+        <text x="82" y="304" class="row-label">Q3</text>
+        <text x="145" y="304" class="row-value">9d</text>
+        <text x="200" y="304" class="row-muted">4.4%</text>
+        <rect x="264" y="294" width="98" height="10" rx="5" fill="#21262d" />
+        <rect x="264" y="294" width="4" height="10" rx="5" fill="#26a641" />
+        <text x="414" y="304" text-anchor="end" class="row-muted">369-478</text>
+      
+        <rect x="50" y="318" width="366" height="22" rx="6" fill="#0d1117" />
+        <circle cx="65" cy="329" r="5.5" fill="#39d353" />
+        <text x="82" y="333" class="row-label">Q4</text>
+        <text x="145" y="333" class="row-value">1d</text>
+        <text x="200" y="333" class="row-muted">0.5%</text>
+        <rect x="264" y="323" width="98" height="10" rx="5" fill="#21262d" />
+        <rect x="264" y="323" width="3" height="10" rx="5" fill="#39d353" />
+        <text x="414" y="333" text-anchor="end" class="row-muted">726</text>
+      
+    </g>
+  
+  
+    <g>
+      <rect x="468" y="178" width="398" height="164" rx="12" fill="#0d1117" stroke="#21262d" />
+      <text x="484" y="206" class="panel-title">Volume</text>
+      <text x="484" y="226" class="panel-subtitle">Absolute contribution count per active day</text>
+      
+        <rect x="484" y="231" width="366" height="22" rx="6" fill="#0d1117" />
+        <circle cx="499" cy="242" r="5.5" fill="#0a3069" />
+        <text x="516" y="246" class="row-label">1-100</text>
+        <text x="579" y="246" class="row-value">148d</text>
+        <text x="634" y="246" class="row-muted">72.5%</text>
+        <rect x="698" y="236" width="98" height="10" rx="5" fill="#21262d" />
+        <rect x="698" y="236" width="71" height="10" rx="5" fill="#0a3069" />
+        <text x="848" y="246" text-anchor="end" class="row-muted">1-97</text>
+      
+        <rect x="484" y="260" width="366" height="22" rx="6" fill="#0d1117" />
+        <circle cx="499" cy="271" r="5.5" fill="#0969da" />
+        <text x="516" y="275" class="row-label">101-200</text>
+        <text x="579" y="275" class="row-value">32d</text>
+        <text x="634" y="275" class="row-muted">15.7%</text>
+        <rect x="698" y="265" width="98" height="10" rx="5" fill="#21262d" />
+        <rect x="698" y="265" width="15" height="10" rx="5" fill="#0969da" />
+        <text x="848" y="275" text-anchor="end" class="row-muted">102-192</text>
+      
+        <rect x="484" y="289" width="366" height="22" rx="6" fill="#0d1117" />
+        <circle cx="499" cy="300" r="5.5" fill="#54aeff" />
+        <text x="516" y="304" class="row-label">201-300</text>
+        <text x="579" y="304" class="row-value">12d</text>
+        <text x="634" y="304" class="row-muted">5.9%</text>
+        <rect x="698" y="294" width="98" height="10" rx="5" fill="#21262d" />
+        <rect x="698" y="294" width="6" height="10" rx="5" fill="#54aeff" />
+        <text x="848" y="304" text-anchor="end" class="row-muted">201-297</text>
+      
+        <rect x="484" y="318" width="366" height="22" rx="6" fill="#0d1117" />
+        <circle cx="499" cy="329" r="5.5" fill="#b6e3ff" />
+        <text x="516" y="333" class="row-label">300+</text>
+        <text x="579" y="333" class="row-value">12d</text>
+        <text x="634" y="333" class="row-muted">5.9%</text>
+        <rect x="698" y="323" width="98" height="10" rx="5" fill="#21262d" />
+        <rect x="698" y="323" width="6" height="10" rx="5" fill="#b6e3ff" />
+        <text x="848" y="333" text-anchor="end" class="row-muted">340-726</text>
+      
+    </g>
+  
+  <text x="34" y="374" class="note">Percentages exclude zero-contribution days. Density uses GitHub contribution levels; Volume uses absolute daily count buckets.</text>
+</svg>
