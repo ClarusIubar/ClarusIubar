@@ -2,7 +2,7 @@ name: GitHub Metrics
 
 on:
   schedule:
-    - cron: "30 19 * * 0"
+    - cron: "0 16 * * 6"
   workflow_dispatch:
 
 permissions:
@@ -16,6 +16,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
 
       - name: Generate language metrics card
         uses: lowlighter/metrics@latest
@@ -37,6 +42,12 @@ jobs:
           plugin_languages_indepth: yes
           plugin_languages_categories: markup, programming, data
           config_timezone: Asia/Seoul
+
+      - name: Generate contribution density assets
+        env:
+          GITHUB_TOKEN: ${{ env.METRICS_RUNTIME_TOKEN }}
+          PROFILE_USERNAME: ClarusIubar
+        run: node scripts/render-contribution-density.mjs
 
       - name: Commit generated assets
         run: |
