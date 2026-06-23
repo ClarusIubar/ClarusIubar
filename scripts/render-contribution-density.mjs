@@ -311,8 +311,6 @@ function renderActivitySvg(snapshot) {
     y: 178,
     width: 398,
   });
-  const monthLabel = snapshot.summary.currentMonth || "current month";
-
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
   <title id="title">Contribution Activity</title>
@@ -340,10 +338,10 @@ function renderActivitySvg(snapshot) {
   <text x="38" y="82" class="title">Contribution Activity</text>
   <text x="38" y="106" class="subtitle">${escapeXml(snapshot.window.start)} to ${escapeXml(snapshot.window.end)} - generated ${escapeXml(generatedDate)}</text>
 
-  ${renderActivityStat({ x: 34, label: "total contributions", value: formatNumber(snapshot.summary.totalContributions), accent: "#39d353" })}
-  ${renderActivityStat({ x: 218, label: `${monthLabel} contributions`, value: formatNumber(snapshot.summary.currentMonthContributions), accent: "#54aeff" })}
-  ${renderActivityStat({ x: 402, label: "active days", value: `${snapshot.summary.activeDays}/${snapshot.window.totalDays}`, accent: "#f2cc60" })}
-  ${renderActivityStat({ x: 586, label: "max per day", value: formatNumber(snapshot.summary.maxDayCount), accent: "#ff7b72" })}
+  ${renderActivityStat({ x: 34, label: "Total", value: formatNumber(snapshot.summary.totalContributions), accent: "#39d353" })}
+  ${renderActivityStat({ x: 218, label: "This month", value: formatNumber(snapshot.summary.currentMonthContributions), accent: "#54aeff" })}
+  ${renderActivityStat({ x: 402, label: "Active days", value: `${snapshot.summary.activeDays}/${snapshot.window.totalDays}`, accent: "#f2cc60" })}
+  ${renderActivityStat({ x: 586, label: "Max/day", value: formatNumber(snapshot.summary.maxDayCount), accent: "#ff7b72" })}
 
   <line class="divider" x1="34" y1="164" x2="866" y2="164" />
 

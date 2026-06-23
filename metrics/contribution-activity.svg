@@ -29,16 +29,16 @@
     <g>
       <rect x="34" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="34" y="92" width="4" height="52" rx="2" fill="#39d353" />
-      <text x="52" y="116" class="stat-value">16,993</text>
-      <text x="52" y="134" class="stat-label">total contributions</text>
+      <text x="52" y="116" class="stat-value">17,003</text>
+      <text x="52" y="134" class="stat-label">Total</text>
     </g>
   
   
     <g>
       <rect x="218" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="218" y="92" width="4" height="52" rx="2" fill="#54aeff" />
-      <text x="236" y="116" class="stat-value">6,783</text>
-      <text x="236" y="134" class="stat-label">2026-06 contributions</text>
+      <text x="236" y="116" class="stat-value">6,793</text>
+      <text x="236" y="134" class="stat-label">This month</text>
     </g>
   
   
@@ -46,7 +46,7 @@
       <rect x="402" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="402" y="92" width="4" height="52" rx="2" fill="#f2cc60" />
       <text x="420" y="116" class="stat-value">204/367</text>
-      <text x="420" y="134" class="stat-label">active days</text>
+      <text x="420" y="134" class="stat-label">Active days</text>
     </g>
   
   
@@ -54,7 +54,7 @@
       <rect x="586" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="586" y="92" width="4" height="52" rx="2" fill="#ff7b72" />
       <text x="604" y="116" class="stat-value">726</text>
-      <text x="604" y="134" class="stat-label">max per day</text>
+      <text x="604" y="134" class="stat-label">Max/day</text>
     </g>
   
 
@@ -91,7 +91,7 @@
         <text x="200" y="304" class="row-muted">4.4%</text>
         <rect x="264" y="294" width="98" height="10" rx="5" fill="#21262d" />
         <rect x="264" y="294" width="4" height="10" rx="5" fill="#26a641" />
-        <text x="414" y="304" text-anchor="end" class="row-muted">370-478</text>
+        <text x="414" y="304" text-anchor="end" class="row-muted">380-478</text>
       
         <rect x="50" y="318" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="65" cy="329" r="5.5" fill="#39d353" />

@@ -19,7 +19,7 @@
   <text x="36" y="48" class="title">Contribution Density</text>
   <text x="36" y="72" class="subtitle">2025-06-22 to 2026-06-23 - Last 1 year</text>
 
-  <text x="36" y="100" class="summary">16993</text>
+  <text x="36" y="100" class="summary">17003</text>
   <text x="88" y="100" class="summary-label">total contributions</text>
   <text x="260" y="100" class="summary">204/367</text>
   <text x="348" y="100" class="summary-label">active days</text>
@@ -53,7 +53,7 @@
         <text x="320" y="176" class="muted">4.4%</text>
         <rect x="398" y="165" width="260" height="12" rx="6" fill="#21262d" />
         <rect x="398" y="165" width="11" height="12" rx="6" fill="#26a641" />
-        <text x="670" y="176" text-anchor="end" class="muted">370-478</text>
+        <text x="670" y="176" text-anchor="end" class="muted">380-478</text>
       
         <rect x="36" y="186" width="648" height="22" rx="8" fill="#0d1117" />
         <circle cx="54" cy="200" r="6" fill="#39d353" />
