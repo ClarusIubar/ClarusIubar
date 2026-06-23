@@ -339,7 +339,7 @@ function renderActivitySvg(snapshot) {
 
   <text x="38" y="48" class="eyebrow">LAST 1 YEAR</text>
   <text x="38" y="82" class="title">Contribution Activity</text>
-  <text x="38" y="106" class="subtitle">${escapeXml(snapshot.window.start)} to ${escapeXml(snapshot.window.end)} - generated ${escapeXml(generatedDate)}</text>
+  <text x="38" y="106" class="subtitle">${escapeXml(snapshot.window.start)} to ${escapeXml(snapshot.window.end)}</text>
 
   ${renderActivityStat({ x: 34, label: "Total", value: formatNumber(snapshot.summary.totalContributions), accent: "#39d353" })}
   ${renderActivityStat({ x: 218, label: "This month", value: formatNumber(snapshot.summary.currentMonthContributions), accent: "#54aeff" })}
@@ -351,6 +351,7 @@ function renderActivitySvg(snapshot) {
   ${densityPanel}
   ${volumePanel}
   <text x="34" y="374" class="note">Percentages exclude zero-contribution days. Density uses GitHub contribution levels; Volume uses absolute daily count buckets.</text>
+  <text x="866" y="374" text-anchor="end" class="note">generated ${escapeXml(generatedDate)}</text>
 </svg>`;
 }
 
