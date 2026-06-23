@@ -6,20 +6,12 @@
     "totalDays": 367
   },
   "summary": {
-    "totalContributions": 16967,
+    "totalContributions": 16970,
     "activeDays": 204,
     "maxDayCount": 726,
-    "generatedAt": "2026-06-23T11:49:46.812Z"
+    "generatedAt": "2026-06-23T11:57:39.742Z"
   },
   "levels": [
-    {
-      "key": "NONE",
-      "label": "Level 0",
-      "days": 163,
-      "share": 0.444141689373297,
-      "minCount": 0,
-      "maxCount": 0
-    },
     {
       "key": "FIRST_QUARTILE",
       "label": "Q1",
@@ -34,7 +26,7 @@
       "days": 19,
       "share": 0.051771117166212535,
       "minCount": 184,
-      "maxCount": 346
+      "maxCount": 347
     },
     {
       "key": "THIRD_QUARTILE",

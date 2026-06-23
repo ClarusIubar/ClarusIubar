@@ -18,7 +18,6 @@ const outputJsonPath = path.join(outputDir, "contribution-density.json");
 const outputSvgPath = path.join(outputDir, "contribution-density.svg");
 
 const LEVELS = [
-  { key: "NONE", label: "Level 0", color: "#484f58" },
   { key: "FIRST_QUARTILE", label: "Q1", color: "#0e4429" },
   { key: "SECOND_QUARTILE", label: "Q2", color: "#006d32" },
   { key: "THIRD_QUARTILE", label: "Q3", color: "#26a641" },
@@ -162,8 +161,8 @@ function renderSvg(snapshot) {
 
   <text x="36" y="100" class="summary">${escapeXml(String(snapshot.summary.totalContributions))}</text>
   <text x="88" y="100" class="summary-label">total contributions</text>
-  <text x="260" y="100" class="summary">${escapeXml(String(snapshot.summary.activeDays))}</text>
-  <text x="298" y="100" class="summary-label">active days</text>
+  <text x="260" y="100" class="summary">${escapeXml(`${snapshot.summary.activeDays}/${snapshot.window.totalDays}`)}</text>
+  <text x="348" y="100" class="summary-label">active days</text>
   <text x="420" y="100" class="summary">${escapeXml(String(snapshot.summary.maxDayCount))}</text>
   <text x="458" y="100" class="summary-label">max/day</text>
   <text x="684" y="100" text-anchor="end" class="summary-label">generated ${escapeXml(snapshot.summary.generatedAt.slice(0, 10))}</text>
