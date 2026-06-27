@@ -30,7 +30,7 @@
     <g>
       <rect x="34" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="34" y="92" width="4" height="52" rx="2" fill="#39d353" />
-      <text x="52" y="116" class="stat-value">17,687</text>
+      <text x="52" y="116" class="stat-value">17,752</text>
       <text x="52" y="134" class="stat-label">Total</text>
     </g>
   
@@ -38,7 +38,7 @@
     <g>
       <rect x="218" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="218" y="92" width="4" height="52" rx="2" fill="#54aeff" />
-      <text x="236" y="116" class="stat-value">7,478</text>
+      <text x="236" y="116" class="stat-value">7,543</text>
       <text x="236" y="134" class="stat-label">This month</text>
     </g>
   
@@ -71,18 +71,18 @@
         <circle cx="65" cy="242" r="5.5" fill="#0e4429" />
         <text x="82" y="246" class="row-label">Q1</text>
         <text x="108" y="246" class="row-threshold">&lt;=180</text>
-        <text x="166" y="246" class="row-value">179d</text>
-        <text x="212" y="246" class="row-muted">86.1%</text>
+        <text x="166" y="246" class="row-value">178d</text>
+        <text x="212" y="246" class="row-muted">85.6%</text>
         <rect x="274" y="236" width="88" height="10" rx="5" fill="#21262d" />
-        <rect x="274" y="236" width="76" height="10" rx="5" fill="#0e4429" />
+        <rect x="274" y="236" width="75" height="10" rx="5" fill="#0e4429" />
         <text x="414" y="246" text-anchor="end" class="row-muted">1-180</text>
       
         <rect x="50" y="260" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="65" cy="271" r="5.5" fill="#006d32" />
         <text x="82" y="275" class="row-label">Q2</text>
         <text x="108" y="275" class="row-threshold">&lt;=346</text>
-        <text x="166" y="275" class="row-value">19d</text>
-        <text x="212" y="275" class="row-muted">9.1%</text>
+        <text x="166" y="275" class="row-value">20d</text>
+        <text x="212" y="275" class="row-muted">9.6%</text>
         <rect x="274" y="265" width="88" height="10" rx="5" fill="#21262d" />
         <rect x="274" y="265" width="8" height="10" rx="5" fill="#006d32" />
         <text x="414" y="275" text-anchor="end" class="row-muted">184-346</text>
