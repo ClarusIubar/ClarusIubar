@@ -83,7 +83,7 @@ function formatRange(minCount, maxCount) {
 }
 
 function createLevelSnapshot(days, totalDays, activeDays) {
-  return LEVELS.map((level) => {
+  const levels = LEVELS.map((level) => {
     const matching = days.filter((day) => day.contributionLevel === level.key);
     const counts = matching.map((day) => day.contributionCount);
     const minCount = counts.length > 0 ? Math.min(...counts) : null;
@@ -98,6 +98,23 @@ function createLevelSnapshot(days, totalDays, activeDays) {
       minCount,
       maxCount,
       color: level.color,
+    };
+  });
+
+  return levels.map((level, index) => {
+    const previousLevel = levels[index - 1];
+    const thresholdLabel =
+      index === levels.length - 1
+        ? previousLevel?.maxCount == null
+          ? "-"
+          : `>${previousLevel.maxCount}`
+        : level.maxCount == null
+          ? "-"
+          : `<=${level.maxCount}`;
+
+    return {
+      ...level,
+      thresholdLabel,
     };
   });
 }
@@ -244,8 +261,8 @@ function renderVolumeSvg(snapshot) {
 
 function renderActivityPanel({ title, subtitle, rows, paletteByKey, x, y, width }) {
   const rowHeight = 29;
-  const barX = x + 230;
-  const barWidth = width - 300;
+  const defaultBarX = x + 230;
+  const defaultBarWidth = width - 300;
   const rangeX = x + width - 18;
   const percentX = x + 166;
 
@@ -253,15 +270,21 @@ function renderActivityPanel({ title, subtitle, rows, paletteByKey, x, y, width 
     .map((row, index) => {
       const palette = paletteByKey.get(row.key);
       const rowY = y + 68 + index * rowHeight;
-      const fillWidth = Math.max(3, Math.round(row.share * barWidth));
       const rangeText = row.rangeLabel ? "" : formatRange(row.minCount, row.maxCount);
+      const hasThreshold = Boolean(row.thresholdLabel);
+      const daysX = hasThreshold ? x + 132 : x + 111;
+      const rowPercentX = hasThreshold ? x + 178 : percentX;
+      const barX = hasThreshold ? x + 240 : defaultBarX;
+      const barWidth = hasThreshold ? width - 310 : defaultBarWidth;
+      const fillWidth = Math.max(3, Math.round(row.share * barWidth));
 
       return `
         <rect x="${x + 16}" y="${rowY - 15}" width="${width - 32}" height="22" rx="6" fill="#0d1117" />
         <circle cx="${x + 31}" cy="${rowY - 4}" r="5.5" fill="${palette.color}" />
         <text x="${x + 48}" y="${rowY}" class="row-label">${escapeXml(row.label)}</text>
-        <text x="${x + 111}" y="${rowY}" class="row-value">${escapeXml(String(row.days))}d</text>
-        <text x="${percentX}" y="${rowY}" class="row-muted">${escapeXml(formatPercent(row.share))}</text>
+        ${hasThreshold ? `<text x="${x + 74}" y="${rowY}" class="row-threshold">${escapeXml(row.thresholdLabel)}</text>` : ""}
+        <text x="${daysX}" y="${rowY}" class="row-value">${escapeXml(String(row.days))}d</text>
+        <text x="${rowPercentX}" y="${rowY}" class="row-muted">${escapeXml(formatPercent(row.share))}</text>
         <rect x="${barX}" y="${rowY - 10}" width="${barWidth}" height="10" rx="5" fill="#21262d" />
         <rect x="${barX}" y="${rowY - 10}" width="${fillWidth}" height="10" rx="5" fill="${palette.color}" />
         ${rangeText ? `<text x="${rangeX}" y="${rowY}" text-anchor="end" class="row-muted">${escapeXml(rangeText)}</text>` : ""}
@@ -330,6 +353,7 @@ function renderActivitySvg(snapshot) {
     .panel-title { fill: #f0f6fc; font: 800 18px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     .panel-subtitle { fill: #8b949e; font: 500 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     .row-label { fill: #f0f6fc; font: 700 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .row-threshold { fill: #9da7b3; font: 700 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     .row-value { fill: #f0f6fc; font: 700 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     .row-muted { fill: #9da7b3; font: 600 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     .note { fill: #6e7681; font: 500 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
