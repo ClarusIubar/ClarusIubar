@@ -1,26 +1,26 @@
 {
   "username": "ClarusIubar",
   "window": {
-    "start": "2025-06-22",
-    "end": "2026-06-27",
+    "start": "2025-06-29",
+    "end": "2026-07-04",
     "totalDays": 371
   },
   "summary": {
-    "totalContributions": 17752,
-    "activeDays": 208,
+    "totalContributions": 19341,
+    "activeDays": 215,
     "maxDayCount": 726,
-    "currentMonth": "2026-06",
-    "currentMonthContributions": 7543,
-    "currentMonthActiveDays": 27,
-    "generatedAt": "2026-06-27T16:24:15.536Z"
+    "currentMonth": "2026-07",
+    "currentMonthContributions": 792,
+    "currentMonthActiveDays": 4,
+    "generatedAt": "2026-07-04T16:23:10.041Z"
   },
   "density": [
     {
       "key": "FIRST_QUARTILE",
       "label": "Q1",
-      "days": 178,
-      "share": 0.8557692307692307,
-      "shareOfYear": 0.4797843665768194,
+      "days": 182,
+      "share": 0.8465116279069768,
+      "shareOfYear": 0.49056603773584906,
       "minCount": 1,
       "maxCount": 180,
       "thresholdLabel": "<=180"
@@ -28,9 +28,9 @@
     {
       "key": "SECOND_QUARTILE",
       "label": "Q2",
-      "days": 20,
-      "share": 0.09615384615384616,
-      "shareOfYear": 0.05390835579514825,
+      "days": 22,
+      "share": 0.10232558139534884,
+      "shareOfYear": 0.05929919137466307,
       "minCount": 184,
       "maxCount": 346,
       "thresholdLabel": "<=346"
@@ -38,22 +38,22 @@
     {
       "key": "THIRD_QUARTILE",
       "label": "Q3",
-      "days": 9,
-      "share": 0.04326923076923077,
-      "shareOfYear": 0.02425876010781671,
+      "days": 10,
+      "share": 0.046511627906976744,
+      "shareOfYear": 0.026954177897574125,
       "minCount": 386,
-      "maxCount": 478,
-      "thresholdLabel": "<=478"
+      "maxCount": 504,
+      "thresholdLabel": "<=504"
     },
     {
       "key": "FOURTH_QUARTILE",
       "label": "Q4",
       "days": 1,
-      "share": 0.004807692307692308,
+      "share": 0.004651162790697674,
       "shareOfYear": 0.0026954177897574125,
       "minCount": 726,
       "maxCount": 726,
-      "thresholdLabel": ">478"
+      "thresholdLabel": ">504"
     }
   ],
   "volume": [
@@ -61,7 +61,7 @@
       "key": "COUNT_1_50",
       "label": "1-50",
       "days": 114,
-      "share": 0.5480769230769231,
+      "share": 0.5302325581395348,
       "shareOfYear": 0.30727762803234504,
       "minCount": 1,
       "maxCount": 50,
@@ -70,19 +70,19 @@
     {
       "key": "COUNT_51_100",
       "label": "51-100",
-      "days": 34,
-      "share": 0.16346153846153846,
-      "shareOfYear": 0.09164420485175202,
+      "days": 36,
+      "share": 0.16744186046511628,
+      "shareOfYear": 0.09703504043126684,
       "minCount": 53,
-      "maxCount": 97,
+      "maxCount": 100,
       "rangeLabel": "51-100"
     },
     {
       "key": "COUNT_101_150",
       "label": "101-150",
-      "days": 22,
-      "share": 0.10576923076923077,
-      "shareOfYear": 0.05929919137466307,
+      "days": 23,
+      "share": 0.10697674418604651,
+      "shareOfYear": 0.06199460916442048,
       "minCount": 102,
       "maxCount": 148,
       "rangeLabel": "101-150"
@@ -90,9 +90,9 @@
     {
       "key": "COUNT_151_PLUS",
       "label": "150+",
-      "days": 38,
-      "share": 0.18269230769230768,
-      "shareOfYear": 0.10242587601078167,
+      "days": 42,
+      "share": 0.19534883720930232,
+      "shareOfYear": 0.11320754716981132,
       "minCount": 156,
       "maxCount": 726,
       "rangeLabel": "150+"
