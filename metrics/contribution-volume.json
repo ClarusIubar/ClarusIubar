@@ -1,26 +1,26 @@
 {
   "username": "ClarusIubar",
   "window": {
-    "start": "2025-06-29",
-    "end": "2026-07-04",
+    "start": "2025-07-06",
+    "end": "2026-07-11",
     "totalDays": 371
   },
   "summary": {
-    "totalContributions": 19341,
-    "activeDays": 215,
-    "maxDayCount": 726,
+    "totalContributions": 22434,
+    "activeDays": 222,
+    "maxDayCount": 766,
     "currentMonth": "2026-07",
-    "currentMonthContributions": 792,
-    "currentMonthActiveDays": 4,
-    "generatedAt": "2026-07-04T16:23:10.041Z"
+    "currentMonthContributions": 1913,
+    "currentMonthActiveDays": 11,
+    "generatedAt": "2026-07-11T16:18:49.993Z"
   },
   "buckets": [
     {
       "key": "COUNT_1_50",
       "label": "1-50",
-      "days": 114,
-      "share": 0.5302325581395348,
-      "shareOfYear": 0.30727762803234504,
+      "days": 111,
+      "share": 0.5,
+      "shareOfYear": 0.2991913746630728,
       "minCount": 1,
       "maxCount": 50,
       "rangeLabel": "1-50"
@@ -28,9 +28,9 @@
     {
       "key": "COUNT_51_100",
       "label": "51-100",
-      "days": 36,
-      "share": 0.16744186046511628,
-      "shareOfYear": 0.09703504043126684,
+      "days": 33,
+      "share": 0.14864864864864866,
+      "shareOfYear": 0.0889487870619946,
       "minCount": 53,
       "maxCount": 100,
       "rangeLabel": "51-100"
@@ -38,21 +38,21 @@
     {
       "key": "COUNT_101_150",
       "label": "101-150",
-      "days": 23,
-      "share": 0.10697674418604651,
-      "shareOfYear": 0.06199460916442048,
-      "minCount": 102,
-      "maxCount": 148,
+      "days": 24,
+      "share": 0.10810810810810811,
+      "shareOfYear": 0.0646900269541779,
+      "minCount": 103,
+      "maxCount": 147,
       "rangeLabel": "101-150"
     },
     {
       "key": "COUNT_151_PLUS",
       "label": "150+",
-      "days": 42,
-      "share": 0.19534883720930232,
-      "shareOfYear": 0.11320754716981132,
-      "minCount": 156,
-      "maxCount": 726,
+      "days": 54,
+      "share": 0.24324324324324326,
+      "shareOfYear": 0.14555256064690028,
+      "minCount": 151,
+      "maxCount": 766,
       "rangeLabel": "150+"
     }
   ]

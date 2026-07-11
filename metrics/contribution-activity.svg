@@ -24,13 +24,13 @@
 
   <text x="38" y="48" class="eyebrow">LAST 1 YEAR</text>
   <text x="38" y="82" class="title">Contribution Activity</text>
-  <text x="38" y="106" class="subtitle">2025-06-29 to 2026-07-04</text>
+  <text x="38" y="106" class="subtitle">2025-07-06 to 2026-07-11</text>
 
   
     <g>
       <rect x="34" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="34" y="92" width="4" height="52" rx="2" fill="#39d353" />
-      <text x="52" y="116" class="stat-value">19,341</text>
+      <text x="52" y="116" class="stat-value">22,434</text>
       <text x="52" y="134" class="stat-label">Total</text>
     </g>
   
@@ -38,7 +38,7 @@
     <g>
       <rect x="218" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="218" y="92" width="4" height="52" rx="2" fill="#54aeff" />
-      <text x="236" y="116" class="stat-value">792</text>
+      <text x="236" y="116" class="stat-value">1,913</text>
       <text x="236" y="134" class="stat-label">This month</text>
     </g>
   
@@ -46,7 +46,7 @@
     <g>
       <rect x="402" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="402" y="92" width="4" height="52" rx="2" fill="#f2cc60" />
-      <text x="420" y="116" class="stat-value">215/371</text>
+      <text x="420" y="116" class="stat-value">222/371</text>
       <text x="420" y="134" class="stat-label">Active days</text>
     </g>
   
@@ -54,7 +54,7 @@
     <g>
       <rect x="586" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="586" y="92" width="4" height="52" rx="2" fill="#ff7b72" />
-      <text x="604" y="116" class="stat-value">726</text>
+      <text x="604" y="116" class="stat-value">766</text>
       <text x="604" y="134" class="stat-label">Max/day</text>
     </g>
   
@@ -70,42 +70,42 @@
         <rect x="50" y="231" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="65" cy="242" r="5.5" fill="#0e4429" />
         <text x="82" y="246" class="row-label">Q1</text>
-        <text x="108" y="246" class="row-threshold">&lt;=180</text>
-        <text x="166" y="246" class="row-value">182d</text>
-        <text x="212" y="246" class="row-muted">84.7%</text>
+        <text x="108" y="246" class="row-threshold">&lt;=188</text>
+        <text x="166" y="246" class="row-value">185d</text>
+        <text x="212" y="246" class="row-muted">83.3%</text>
         <rect x="274" y="236" width="88" height="10" rx="5" fill="#21262d" />
-        <rect x="274" y="236" width="74" height="10" rx="5" fill="#0e4429" />
-        <text x="414" y="246" text-anchor="end" class="row-muted">1-180</text>
+        <rect x="274" y="236" width="73" height="10" rx="5" fill="#0e4429" />
+        <text x="414" y="246" text-anchor="end" class="row-muted">1-188</text>
       
         <rect x="50" y="260" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="65" cy="271" r="5.5" fill="#006d32" />
         <text x="82" y="275" class="row-label">Q2</text>
-        <text x="108" y="275" class="row-threshold">&lt;=346</text>
-        <text x="166" y="275" class="row-value">22d</text>
-        <text x="212" y="275" class="row-muted">10.2%</text>
+        <text x="108" y="275" class="row-threshold">&lt;=358</text>
+        <text x="166" y="275" class="row-value">24d</text>
+        <text x="212" y="275" class="row-muted">10.8%</text>
         <rect x="274" y="265" width="88" height="10" rx="5" fill="#21262d" />
-        <rect x="274" y="265" width="9" height="10" rx="5" fill="#006d32" />
-        <text x="414" y="275" text-anchor="end" class="row-muted">184-346</text>
+        <rect x="274" y="265" width="10" height="10" rx="5" fill="#006d32" />
+        <text x="414" y="275" text-anchor="end" class="row-muted">202-358</text>
       
         <rect x="50" y="289" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="65" cy="300" r="5.5" fill="#26a641" />
         <text x="82" y="304" class="row-label">Q3</text>
-        <text x="108" y="304" class="row-threshold">&lt;=504</text>
-        <text x="166" y="304" class="row-value">10d</text>
-        <text x="212" y="304" class="row-muted">4.7%</text>
+        <text x="108" y="304" class="row-threshold">&lt;=566</text>
+        <text x="166" y="304" class="row-value">12d</text>
+        <text x="212" y="304" class="row-muted">5.4%</text>
         <rect x="274" y="294" width="88" height="10" rx="5" fill="#21262d" />
-        <rect x="274" y="294" width="4" height="10" rx="5" fill="#26a641" />
-        <text x="414" y="304" text-anchor="end" class="row-muted">386-504</text>
+        <rect x="274" y="294" width="5" height="10" rx="5" fill="#26a641" />
+        <text x="414" y="304" text-anchor="end" class="row-muted">385-566</text>
       
         <rect x="50" y="318" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="65" cy="329" r="5.5" fill="#39d353" />
         <text x="82" y="333" class="row-label">Q4</text>
-        <text x="108" y="333" class="row-threshold">&gt;504</text>
+        <text x="108" y="333" class="row-threshold">&gt;566</text>
         <text x="166" y="333" class="row-value">1d</text>
         <text x="212" y="333" class="row-muted">0.5%</text>
         <rect x="274" y="323" width="88" height="10" rx="5" fill="#21262d" />
         <rect x="274" y="323" width="3" height="10" rx="5" fill="#39d353" />
-        <text x="414" y="333" text-anchor="end" class="row-muted">726</text>
+        <text x="414" y="333" text-anchor="end" class="row-muted">766</text>
       
     </g>
   
@@ -119,44 +119,44 @@
         <circle cx="499" cy="242" r="5.5" fill="#0a3069" />
         <text x="516" y="246" class="row-label">1-50</text>
         
-        <text x="579" y="246" class="row-value">114d</text>
-        <text x="634" y="246" class="row-muted">53.0%</text>
+        <text x="579" y="246" class="row-value">111d</text>
+        <text x="634" y="246" class="row-muted">50.0%</text>
         <rect x="698" y="236" width="98" height="10" rx="5" fill="#21262d" />
-        <rect x="698" y="236" width="52" height="10" rx="5" fill="#0a3069" />
+        <rect x="698" y="236" width="49" height="10" rx="5" fill="#0a3069" />
         
       
         <rect x="484" y="260" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="499" cy="271" r="5.5" fill="#0969da" />
         <text x="516" y="275" class="row-label">51-100</text>
         
-        <text x="579" y="275" class="row-value">36d</text>
-        <text x="634" y="275" class="row-muted">16.7%</text>
+        <text x="579" y="275" class="row-value">33d</text>
+        <text x="634" y="275" class="row-muted">14.9%</text>
         <rect x="698" y="265" width="98" height="10" rx="5" fill="#21262d" />
-        <rect x="698" y="265" width="16" height="10" rx="5" fill="#0969da" />
+        <rect x="698" y="265" width="15" height="10" rx="5" fill="#0969da" />
         
       
         <rect x="484" y="289" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="499" cy="300" r="5.5" fill="#54aeff" />
         <text x="516" y="304" class="row-label">101-150</text>
         
-        <text x="579" y="304" class="row-value">23d</text>
-        <text x="634" y="304" class="row-muted">10.7%</text>
+        <text x="579" y="304" class="row-value">24d</text>
+        <text x="634" y="304" class="row-muted">10.8%</text>
         <rect x="698" y="294" width="98" height="10" rx="5" fill="#21262d" />
-        <rect x="698" y="294" width="10" height="10" rx="5" fill="#54aeff" />
+        <rect x="698" y="294" width="11" height="10" rx="5" fill="#54aeff" />
         
       
         <rect x="484" y="318" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="499" cy="329" r="5.5" fill="#b6e3ff" />
         <text x="516" y="333" class="row-label">150+</text>
         
-        <text x="579" y="333" class="row-value">42d</text>
-        <text x="634" y="333" class="row-muted">19.5%</text>
+        <text x="579" y="333" class="row-value">54d</text>
+        <text x="634" y="333" class="row-muted">24.3%</text>
         <rect x="698" y="323" width="98" height="10" rx="5" fill="#21262d" />
-        <rect x="698" y="323" width="19" height="10" rx="5" fill="#b6e3ff" />
+        <rect x="698" y="323" width="24" height="10" rx="5" fill="#b6e3ff" />
         
       
     </g>
   
   <text x="34" y="374" class="note">Percentages exclude zero-contribution days. Density uses GitHub contribution levels; Volume uses absolute daily count buckets.</text>
-  <text x="866" y="374" text-anchor="end" class="note">generated 2026-07-04</text>
+  <text x="866" y="374" text-anchor="end" class="note">generated 2026-07-11</text>
 </svg>
