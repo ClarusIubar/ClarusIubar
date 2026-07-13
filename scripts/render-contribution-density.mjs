@@ -44,6 +44,7 @@ query ($login: String!) {
         weeks {
           contributionDays {
             date
+            color
             contributionCount
             contributionLevel
             weekday
@@ -97,25 +98,14 @@ function createLevelSnapshot(days, totalDays, activeDays) {
       shareOfYear: totalDays === 0 ? 0 : matching.length / totalDays,
       minCount,
       maxCount,
-      color: level.color,
+      color: matching[0]?.color ?? level.color,
     };
   });
 
-  return levels.map((level, index) => {
-    const previousLevel = levels[index - 1];
-    const lowerBound = previousLevel?.maxCount == null ? 1 : previousLevel.maxCount + 1;
-    const thresholdLabel =
-      index === levels.length - 1
-        ? `${lowerBound}+`
-        : level.maxCount == null
-          ? "-"
-          : `${lowerBound}-${level.maxCount}`;
-
-    return {
-      ...level,
-      thresholdLabel,
-    };
-  });
+  return levels.map((level) => ({
+    ...level,
+    thresholdLabel: formatRange(level.minCount, level.maxCount),
+  }));
 }
 
 function createVolumeSnapshot(days, totalDays, activeDays) {
@@ -190,7 +180,7 @@ function renderMetricCard({ snapshot, title, desc, rows, paletteByKey }) {
       const palette = paletteByKey.get(row.key);
       const y = rowStartY + index * rowHeight;
       const barWidth = Math.max(2, Math.round(row.share * 260));
-      const rangeText = row.rangeLabel ? "" : formatRange(row.minCount, row.maxCount);
+      const rangeText = row.thresholdLabel || row.rangeLabel ? "" : formatRange(row.minCount, row.maxCount);
 
       return `
         <rect x="36" y="${y - 14}" width="648" height="22" rx="8" fill="#0d1117" />
@@ -269,7 +259,7 @@ function renderActivityPanel({ title, subtitle, rows, paletteByKey, x, y, width 
     .map((row, index) => {
       const palette = paletteByKey.get(row.key);
       const rowY = y + 68 + index * rowHeight;
-      const rangeText = row.rangeLabel ? "" : formatRange(row.minCount, row.maxCount);
+      const rangeText = row.thresholdLabel || row.rangeLabel ? "" : formatRange(row.minCount, row.maxCount);
       const hasThreshold = Boolean(row.thresholdLabel);
       const daysX = hasThreshold ? x + 132 : x + 111;
       const rowPercentX = hasThreshold ? x + 178 : percentX;
