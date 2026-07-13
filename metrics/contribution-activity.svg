@@ -30,7 +30,7 @@
     <g>
       <rect x="34" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="34" y="92" width="4" height="52" rx="2" fill="#39d353" />
-      <text x="52" y="116" class="stat-value">23,408</text>
+      <text x="52" y="116" class="stat-value">23,409</text>
       <text x="52" y="134" class="stat-label">Total</text>
     </g>
   
@@ -38,7 +38,7 @@
     <g>
       <rect x="218" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="218" y="92" width="4" height="52" rx="2" fill="#54aeff" />
-      <text x="236" y="116" class="stat-value">2,888</text>
+      <text x="236" y="116" class="stat-value">2,889</text>
       <text x="236" y="134" class="stat-label">This month</text>
     </g>
   
@@ -100,7 +100,7 @@
         <rect x="50" y="318" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="65" cy="329" r="5.5" fill="#39d353" />
         <text x="82" y="333" class="row-label">Q4</text>
-        <text x="108" y="333" class="row-threshold">497-766</text>
+        <text x="108" y="333" class="row-threshold">495-766</text>
         <text x="166" y="333" class="row-value">6d</text>
         <text x="212" y="333" class="row-muted">2.7%</text>
         <rect x="274" y="323" width="88" height="10" rx="5" fill="#21262d" />
