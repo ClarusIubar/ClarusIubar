@@ -103,14 +103,13 @@ function createLevelSnapshot(days, totalDays, activeDays) {
 
   return levels.map((level, index) => {
     const previousLevel = levels[index - 1];
+    const lowerBound = previousLevel?.maxCount == null ? 1 : previousLevel.maxCount + 1;
     const thresholdLabel =
       index === levels.length - 1
-        ? previousLevel?.maxCount == null
-          ? "-"
-          : `>${previousLevel.maxCount}`
+        ? `${lowerBound}+`
         : level.maxCount == null
           ? "-"
-          : `<=${level.maxCount}`;
+          : `${lowerBound}-${level.maxCount}`;
 
     return {
       ...level,
