@@ -239,16 +239,13 @@ async function fetchRepositoriesByForkState(isFork) {
 }
 
 async function fetchRepositories() {
-  const [owned, forks] = await Promise.all([
-    fetchRepositoriesByForkState(false),
-    fetchRepositoriesByForkState(true),
-  ]);
+  const owned = await fetchRepositoriesByForkState(false);
 
   return {
-    repositories: [...owned.repositories, ...forks.repositories],
+    repositories: owned.repositories,
     totals: {
       owned: owned.totalCount,
-      forks: forks.totalCount,
+      forks: 0,
     },
   };
 }
@@ -300,7 +297,7 @@ function buildSnapshot({ repositories, totals }) {
     generatedAt: new Date().toISOString(),
     source: {
       ownerAffiliations: ["OWNER"],
-      includeForks: true,
+      includeForks: false,
       repositoryBatchSize: REPOSITORY_BATCH_SIZE,
       languageBatchSize: LANGUAGE_BATCH_SIZE,
       metric: "GitHub repository language bytes",
@@ -345,7 +342,7 @@ function renderLanguageSvg(snapshot) {
   }
 
   const width = 900;
-  const height = 330;
+  const height = 292;
   const barX = 42;
   const barY = 120;
   const barWidth = 816;
@@ -364,13 +361,13 @@ function renderLanguageSvg(snapshot) {
     .map((language, index) => {
       const column = index % 2;
       const row = Math.floor(index / 2);
-      const x = column === 0 ? 48 : 488;
+      const x = column === 0 ? 48 : 500;
       const y = 170 + row * 32;
       return [
         `<circle cx="${x}" cy="${y - 4}" r="5.5" fill="${escapeXml(language.color)}" />`,
         `<text x="${x + 18}" y="${y}" class="language">${escapeXml(language.name)}</text>`,
-        `<text x="${x + 238}" y="${y}" class="value" text-anchor="end">${escapeXml(formatBytes(language.bytes))}</text>`,
-        `<text x="${x + 318}" y="${y}" class="muted" text-anchor="end">${escapeXml(formatPercent(language.share))}</text>`,
+        `<text x="${x + 260}" y="${y}" class="value" text-anchor="end">${escapeXml(formatBytes(language.bytes))}</text>`,
+        `<text x="${x + 340}" y="${y}" class="muted" text-anchor="end">${escapeXml(formatPercent(language.share))}</text>`,
       ].join("\n  ");
     })
     .join("\n  ");
@@ -382,7 +379,7 @@ function renderLanguageSvg(snapshot) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
   <title id="title">Languages</title>
-  <desc id="desc">Repository language mix for visible owned and forked repositories.</desc>
+  <desc id="desc">Repository language mix for visible owned repositories.</desc>
   <style>
     .bg { fill: #0d1117; }
     .card { fill: #161b22; stroke: #30363d; stroke-width: 1; }
@@ -405,10 +402,6 @@ function renderLanguageSvg(snapshot) {
   ${segments}
 
   ${renderedRows}
-
-  <text x="42" y="292" class="note">Includes owned repositories and forks visible to the token.</text>
-  <text x="42" y="312" class="note">Percentages use repository language bytes, not authored commit counts.</text>
-  <text x="858" y="312" text-anchor="end" class="note">generated ${escapeXml(snapshot.generatedAt.slice(0, 10))}</text>
 </svg>`;
 }
 
