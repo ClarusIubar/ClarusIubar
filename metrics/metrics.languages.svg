@@ -33,7 +33,7 @@
   <text x="840" y="170" class="muted" text-anchor="end">23.3%</text>
   <circle cx="48" cy="198" r="5.5" fill="#f1e05a" />
   <text x="66" y="202" class="language">JavaScript</text>
-  <text x="308" y="202" class="value" text-anchor="end">18.40 MB</text>
+  <text x="308" y="202" class="value" text-anchor="end">18.41 MB</text>
   <text x="388" y="202" class="muted" text-anchor="end">16.2%</text>
   <circle cx="500" cy="198" r="5.5" fill="#DA5B0B" />
   <text x="518" y="202" class="language">Jupyter Notebook</text>
