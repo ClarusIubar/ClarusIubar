@@ -1,59 +1,59 @@
 {
   "username": "ClarusIubar",
   "window": {
-    "start": "2025-07-13",
-    "end": "2026-07-13",
-    "totalDays": 366
+    "start": "2025-07-20",
+    "end": "2026-07-19",
+    "totalDays": 365
   },
   "summary": {
-    "totalContributions": 23409,
-    "activeDays": 223,
+    "totalContributions": 24616,
+    "activeDays": 229,
     "maxDayCount": 766,
     "currentMonth": "2026-07",
-    "currentMonthContributions": 2889,
-    "currentMonthActiveDays": 13,
-    "generatedAt": "2026-07-13T12:13:55.398Z"
+    "currentMonthContributions": 4098,
+    "currentMonthActiveDays": 19,
+    "generatedAt": "2026-07-19T01:54:44.061Z"
   },
   "levels": [
     {
       "key": "FIRST_QUARTILE",
       "label": "Q1",
-      "days": 168,
-      "share": 0.7533632286995515,
-      "shareOfYear": 0.45901639344262296,
+      "days": 185,
+      "share": 0.8078602620087336,
+      "shareOfYear": 0.5068493150684932,
       "minCount": 1,
-      "maxCount": 151,
-      "thresholdLabel": "1-151"
+      "maxCount": 178,
+      "thresholdLabel": "1-178"
     },
     {
       "key": "SECOND_QUARTILE",
       "label": "Q2",
-      "days": 38,
-      "share": 0.17040358744394618,
-      "shareOfYear": 0.10382513661202186,
-      "minCount": 156,
-      "maxCount": 309,
-      "thresholdLabel": "156-309"
+      "days": 29,
+      "share": 0.12663755458515283,
+      "shareOfYear": 0.07945205479452055,
+      "minCount": 187,
+      "maxCount": 358,
+      "thresholdLabel": "187-358"
     },
     {
       "key": "THIRD_QUARTILE",
       "label": "Q3",
-      "days": 11,
-      "share": 0.04932735426008968,
-      "shareOfYear": 0.030054644808743168,
-      "minCount": 335,
-      "maxCount": 453,
-      "thresholdLabel": "335-453"
+      "days": 12,
+      "share": 0.05240174672489083,
+      "shareOfYear": 0.03287671232876712,
+      "minCount": 385,
+      "maxCount": 530,
+      "thresholdLabel": "385-530"
     },
     {
       "key": "FOURTH_QUARTILE",
       "label": "Q4",
-      "days": 6,
-      "share": 0.026905829596412557,
-      "shareOfYear": 0.01639344262295082,
-      "minCount": 495,
+      "days": 3,
+      "share": 0.013100436681222707,
+      "shareOfYear": 0.00821917808219178,
+      "minCount": 566,
       "maxCount": 766,
-      "thresholdLabel": "495-766"
+      "thresholdLabel": "566-766"
     }
   ]
 }

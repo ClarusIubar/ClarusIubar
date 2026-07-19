@@ -1,4 +1,4 @@
-import { mkdir, writeFile } from "node:fs/promises";
+import { access, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
@@ -20,6 +20,8 @@ const volumeJsonPath = path.join(outputDir, "contribution-volume.json");
 const volumeSvgPath = path.join(outputDir, "contribution-volume.svg");
 const activityJsonPath = path.join(outputDir, "contribution-activity.json");
 const activitySvgPath = path.join(outputDir, "contribution-activity.svg");
+const graphqlMaxAttempts = Number.parseInt(process.env.CONTRIBUTION_GRAPHQL_MAX_ATTEMPTS || "4", 10);
+const graphqlRetryBaseDelayMs = Number.parseInt(process.env.CONTRIBUTION_GRAPHQL_RETRY_BASE_DELAY_MS || "1500", 10);
 
 const LEVELS = [
   { key: "FIRST_QUARTILE", label: "Q1", color: "#0e4429" },
@@ -81,6 +83,61 @@ function formatRange(minCount, maxCount) {
     return `${minCount}`;
   }
   return `${minCount}-${maxCount}`;
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+}
+
+function isRetryableStatus(status) {
+  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
+}
+
+function isRetryableMessage(message) {
+  const normalized = message.toLowerCase();
+  return (
+    normalized.includes("secondary rate limit") ||
+    normalized.includes("abuse detection") ||
+    normalized.includes("temporarily unavailable") ||
+    normalized.includes("try again later")
+  );
+}
+
+function retryAfterDelayMs(response) {
+  const retryAfter = response.headers.get("retry-after");
+  const parsedRetryAfter = retryAfter == null ? Number.NaN : Number.parseInt(retryAfter, 10);
+  if (Number.isFinite(parsedRetryAfter) && parsedRetryAfter >= 0) {
+    return parsedRetryAfter * 1000;
+  }
+  return null;
+}
+
+function transientGraphqlError(message, cause) {
+  const error = new Error(message);
+  error.transient = true;
+  if (cause) {
+    error.cause = cause;
+  }
+  return error;
+}
+
+async function existingGeneratedAssetsAvailable() {
+  const paths = [
+    densityJsonPath,
+    densitySvgPath,
+    volumeJsonPath,
+    volumeSvgPath,
+    activityJsonPath,
+    activitySvgPath,
+  ];
+  try {
+    await Promise.all(paths.map((assetPath) => access(assetPath)));
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function createLevelSnapshot(days, totalDays, activeDays) {
@@ -368,7 +425,7 @@ function renderActivitySvg(snapshot) {
 </svg>`;
 }
 
-async function fetchContributionCalendar() {
+async function requestContributionCalendar() {
   const response = await fetch("https://api.github.com/graphql", {
     method: "POST",
     headers: {
@@ -384,19 +441,62 @@ async function fetchContributionCalendar() {
 
   if (!response.ok) {
     const message = await response.text();
-    throw new Error(`GitHub GraphQL request failed: ${response.status} ${message}`);
+    const errorMessage = `GitHub GraphQL request failed: ${response.status} ${message}`;
+    if (isRetryableStatus(response.status) || (response.status === 403 && isRetryableMessage(message))) {
+      const error = transientGraphqlError(errorMessage);
+      error.retryDelayMs = retryAfterDelayMs(response);
+      throw error;
+    }
+    throw new Error(errorMessage);
   }
 
   const payload = await response.json();
   if (payload.errors?.length) {
-    throw new Error(`GitHub GraphQL errors: ${JSON.stringify(payload.errors)}`);
+    const message = JSON.stringify(payload.errors);
+    if (isRetryableMessage(message)) {
+      throw transientGraphqlError(`GitHub GraphQL errors: ${message}`);
+    }
+    throw new Error(`GitHub GraphQL errors: ${message}`);
   }
 
   return payload.data.user.contributionsCollection.contributionCalendar;
 }
 
+async function fetchContributionCalendar() {
+  const maxAttempts = Number.isFinite(graphqlMaxAttempts) && graphqlMaxAttempts > 0 ? graphqlMaxAttempts : 4;
+  let lastError = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      return await requestContributionCalendar();
+    } catch (error) {
+      lastError = error;
+      if (!error.transient || attempt === maxAttempts) {
+        throw error;
+      }
+      const delayMs = error.retryDelayMs ?? graphqlRetryBaseDelayMs * attempt;
+      console.warn(
+        `GitHub GraphQL request failed transiently; retrying ${attempt}/${maxAttempts - 1} after ${delayMs}ms.`,
+      );
+      await sleep(delayMs);
+    }
+  }
+
+  throw lastError ?? new Error("GitHub GraphQL request failed without an error payload.");
+}
+
 async function main() {
-  const calendar = await fetchContributionCalendar();
+  let calendar;
+  try {
+    calendar = await fetchContributionCalendar();
+  } catch (error) {
+    if (error.transient && (await existingGeneratedAssetsAvailable())) {
+      console.warn(`GitHub GraphQL is temporarily unavailable; preserving existing contribution assets.`);
+      console.warn(error.message);
+      return;
+    }
+    throw error;
+  }
   const snapshot = buildSnapshot(calendar);
   const densitySvg = renderDensitySvg(snapshot);
   const volumeSvg = renderVolumeSvg(snapshot);

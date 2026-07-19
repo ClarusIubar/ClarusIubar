@@ -1,26 +1,26 @@
 {
   "username": "ClarusIubar",
   "window": {
-    "start": "2025-07-13",
-    "end": "2026-07-13",
-    "totalDays": 366
+    "start": "2025-07-20",
+    "end": "2026-07-19",
+    "totalDays": 365
   },
   "summary": {
-    "totalContributions": 23409,
-    "activeDays": 223,
+    "totalContributions": 24616,
+    "activeDays": 229,
     "maxDayCount": 766,
     "currentMonth": "2026-07",
-    "currentMonthContributions": 2889,
-    "currentMonthActiveDays": 13,
-    "generatedAt": "2026-07-13T12:13:55.398Z"
+    "currentMonthContributions": 4098,
+    "currentMonthActiveDays": 19,
+    "generatedAt": "2026-07-19T01:54:44.061Z"
   },
   "buckets": [
     {
       "key": "COUNT_1_50",
       "label": "1-50",
-      "days": 110,
-      "share": 0.49327354260089684,
-      "shareOfYear": 0.3005464480874317,
+      "days": 111,
+      "share": 0.4847161572052402,
+      "shareOfYear": 0.3041095890410959,
       "minCount": 1,
       "maxCount": 50,
       "rangeLabel": "1-50"
@@ -28,9 +28,9 @@
     {
       "key": "COUNT_51_100",
       "label": "51-100",
-      "days": 33,
-      "share": 0.14798206278026907,
-      "shareOfYear": 0.09016393442622951,
+      "days": 34,
+      "share": 0.14847161572052403,
+      "shareOfYear": 0.09315068493150686,
       "minCount": 53,
       "maxCount": 100,
       "rangeLabel": "51-100"
@@ -38,9 +38,9 @@
     {
       "key": "COUNT_101_150",
       "label": "101-150",
-      "days": 24,
-      "share": 0.10762331838565023,
-      "shareOfYear": 0.06557377049180328,
+      "days": 25,
+      "share": 0.1091703056768559,
+      "shareOfYear": 0.0684931506849315,
       "minCount": 103,
       "maxCount": 147,
       "rangeLabel": "101-150"
@@ -48,9 +48,9 @@
     {
       "key": "COUNT_151_PLUS",
       "label": "150+",
-      "days": 56,
-      "share": 0.25112107623318386,
-      "shareOfYear": 0.15300546448087432,
+      "days": 59,
+      "share": 0.2576419213973799,
+      "shareOfYear": 0.16164383561643836,
       "minCount": 151,
       "maxCount": 766,
       "rangeLabel": "150+"
