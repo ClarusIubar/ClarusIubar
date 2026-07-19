@@ -100,6 +100,8 @@ function isRetryableMessage(message) {
   return (
     normalized.includes("secondary rate limit") ||
     normalized.includes("abuse detection") ||
+    normalized.includes("resource_limits_exceeded") ||
+    normalized.includes("resource limits for this query exceeded") ||
     normalized.includes("temporarily unavailable") ||
     normalized.includes("try again later")
   );
