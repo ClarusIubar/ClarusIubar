@@ -344,11 +344,11 @@ function renderLanguageSvg(snapshot) {
     return renderEmptySvg(snapshot);
   }
 
-  const width = 760;
-  const height = 290;
-  const barX = 38;
-  const barY = 112;
-  const barWidth = 684;
+  const width = 900;
+  const height = 330;
+  const barX = 42;
+  const barY = 120;
+  const barWidth = 816;
   const barHeight = 14;
   let offset = 0;
   const segments = snapshot.displayedLanguages
@@ -364,13 +364,13 @@ function renderLanguageSvg(snapshot) {
     .map((language, index) => {
       const column = index % 2;
       const row = Math.floor(index / 2);
-      const x = column === 0 ? 42 : 402;
-      const y = 158 + row * 30;
+      const x = column === 0 ? 48 : 488;
+      const y = 170 + row * 32;
       return [
         `<circle cx="${x}" cy="${y - 4}" r="5.5" fill="${escapeXml(language.color)}" />`,
         `<text x="${x + 18}" y="${y}" class="language">${escapeXml(language.name)}</text>`,
-        `<text x="${x + 174}" y="${y}" class="value" text-anchor="end">${escapeXml(formatBytes(language.bytes))}</text>`,
-        `<text x="${x + 244}" y="${y}" class="muted" text-anchor="end">${escapeXml(formatPercent(language.share))}</text>`,
+        `<text x="${x + 238}" y="${y}" class="value" text-anchor="end">${escapeXml(formatBytes(language.bytes))}</text>`,
+        `<text x="${x + 318}" y="${y}" class="muted" text-anchor="end">${escapeXml(formatPercent(language.share))}</text>`,
       ].join("\n  ");
     })
     .join("\n  ");
@@ -397,17 +397,18 @@ function renderLanguageSvg(snapshot) {
   <rect class="bg" width="${width}" height="${height}" rx="16" />
   <rect class="card" x="12" y="12" width="${width - 24}" height="${height - 24}" rx="14" />
 
-  <text x="38" y="46" class="eyebrow">VISIBLE REPOSITORIES</text>
-  <text x="38" y="78" class="title">Languages</text>
-  <text x="38" y="100" class="subtitle">${escapeXml(languageSummary)} - ${escapeXml(byteSummary)} - ${escapeXml(repoSummary)}</text>
+  <text x="42" y="48" class="eyebrow">VISIBLE REPOSITORIES</text>
+  <text x="42" y="82" class="title">Languages</text>
+  <text x="42" y="106" class="subtitle">${escapeXml(languageSummary)} - ${escapeXml(byteSummary)} - ${escapeXml(repoSummary)}</text>
 
   <rect x="${barX}" y="${barY}" width="${barWidth}" height="${barHeight}" rx="7" fill="#21262d" />
   ${segments}
 
   ${renderedRows}
 
-  <text x="38" y="262" class="note">Includes owned repositories and forks visible to the token. Percentages use repository language bytes, not authored commit counts.</text>
-  <text x="722" y="262" text-anchor="end" class="note">generated ${escapeXml(snapshot.generatedAt.slice(0, 10))}</text>
+  <text x="42" y="292" class="note">Includes owned repositories and forks visible to the token.</text>
+  <text x="42" y="312" class="note">Percentages use repository language bytes, not authored commit counts.</text>
+  <text x="858" y="312" text-anchor="end" class="note">generated ${escapeXml(snapshot.generatedAt.slice(0, 10))}</text>
 </svg>`;
 }
 
