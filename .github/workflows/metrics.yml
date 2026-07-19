@@ -34,6 +34,9 @@ jobs:
           PROFILE_USERNAME: ClarusIubar
         run: node scripts/render-contribution-density.mjs
 
+      - name: Update README asset cache keys
+        run: node scripts/update-readme-cache-bust.mjs
+
       - name: Commit generated assets
         run: |
           git config user.name github-actions
