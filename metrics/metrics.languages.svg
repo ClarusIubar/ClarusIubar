@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="290" viewBox="0 0 760 290" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="330" viewBox="0 0 900 330" role="img" aria-labelledby="title desc">
   <title id="title">Languages</title>
   <desc id="desc">Repository language mix for visible owned and forked repositories.</desc>
   <style>
@@ -13,49 +13,50 @@
     .muted { fill: #8b949e; font: 600 12px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
     .note { fill: #6e7681; font: 500 11px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
   </style>
-  <rect class="bg" width="760" height="290" rx="16" />
-  <rect class="card" x="12" y="12" width="736" height="266" rx="14" />
+  <rect class="bg" width="900" height="330" rx="16" />
+  <rect class="card" x="12" y="12" width="876" height="306" rx="14" />
 
-  <text x="38" y="46" class="eyebrow">VISIBLE REPOSITORIES</text>
-  <text x="38" y="78" class="title">Languages</text>
-  <text x="38" y="100" class="subtitle">41 languages - 463.87 MB visible language bytes - 74/84 repos with language data</text>
+  <text x="42" y="48" class="eyebrow">VISIBLE REPOSITORIES</text>
+  <text x="42" y="82" class="title">Languages</text>
+  <text x="42" y="106" class="subtitle">41 languages - 463.87 MB visible language bytes - 74/84 repos with language data</text>
 
-  <rect x="38" y="112" width="684" height="14" rx="7" fill="#21262d" />
-  <rect x="38" y="112" width="357" height="14" rx="3" fill="#3178c6" /><rect x="395" y="112" width="215" height="14" rx="3" fill="#3572A5" /><rect x="610" y="112" width="31" height="14" rx="3" fill="#DA5B0B" /><rect x="641" y="112" width="22" height="14" rx="3" fill="#dea584" /><rect x="663" y="112" width="16" height="14" rx="3" fill="#f1e05a" /><rect x="679" y="112" width="12" height="14" rx="3" fill="#b07219" /><rect x="691" y="112" width="8" height="14" rx="3" fill="#F05138" /><rect x="699" y="112" width="5" height="14" rx="3" fill="#89e051" />
+  <rect x="42" y="120" width="816" height="14" rx="7" fill="#21262d" />
+  <rect x="42" y="120" width="426" height="14" rx="3" fill="#3178c6" /><rect x="468" y="120" width="256" height="14" rx="3" fill="#3572A5" /><rect x="724" y="120" width="37" height="14" rx="3" fill="#DA5B0B" /><rect x="761" y="120" width="26" height="14" rx="3" fill="#dea584" /><rect x="787" y="120" width="19" height="14" rx="3" fill="#f1e05a" /><rect x="806" y="120" width="14" height="14" rx="3" fill="#b07219" /><rect x="820" y="120" width="10" height="14" rx="3" fill="#F05138" /><rect x="830" y="120" width="5" height="14" rx="3" fill="#89e051" />
 
-  <circle cx="42" cy="154" r="5.5" fill="#3178c6" />
-  <text x="60" y="158" class="language">TypeScript</text>
-  <text x="216" y="158" class="value" text-anchor="end">241.94 MB</text>
-  <text x="286" y="158" class="muted" text-anchor="end">52.2%</text>
-  <circle cx="402" cy="154" r="5.5" fill="#3572A5" />
-  <text x="420" y="158" class="language">Python</text>
-  <text x="576" y="158" class="value" text-anchor="end">145.70 MB</text>
-  <text x="646" y="158" class="muted" text-anchor="end">31.4%</text>
-  <circle cx="42" cy="184" r="5.5" fill="#DA5B0B" />
-  <text x="60" y="188" class="language">Jupyter Notebook</text>
-  <text x="216" y="188" class="value" text-anchor="end">20.87 MB</text>
-  <text x="286" y="188" class="muted" text-anchor="end">4.5%</text>
-  <circle cx="402" cy="184" r="5.5" fill="#dea584" />
-  <text x="420" y="188" class="language">Rust</text>
-  <text x="576" y="188" class="value" text-anchor="end">14.66 MB</text>
-  <text x="646" y="188" class="muted" text-anchor="end">3.2%</text>
-  <circle cx="42" cy="214" r="5.5" fill="#f1e05a" />
-  <text x="60" y="218" class="language">JavaScript</text>
-  <text x="216" y="218" class="value" text-anchor="end">10.61 MB</text>
-  <text x="286" y="218" class="muted" text-anchor="end">2.3%</text>
-  <circle cx="402" cy="214" r="5.5" fill="#b07219" />
-  <text x="420" y="218" class="language">Java</text>
-  <text x="576" y="218" class="value" text-anchor="end">8.20 MB</text>
-  <text x="646" y="218" class="muted" text-anchor="end">1.8%</text>
-  <circle cx="42" cy="244" r="5.5" fill="#F05138" />
-  <text x="60" y="248" class="language">Swift</text>
-  <text x="216" y="248" class="value" text-anchor="end">5.52 MB</text>
-  <text x="286" y="248" class="muted" text-anchor="end">1.2%</text>
-  <circle cx="402" cy="244" r="5.5" fill="#89e051" />
-  <text x="420" y="248" class="language">Shell</text>
-  <text x="576" y="248" class="value" text-anchor="end">3.08 MB</text>
-  <text x="646" y="248" class="muted" text-anchor="end">0.7%</text>
+  <circle cx="48" cy="166" r="5.5" fill="#3178c6" />
+  <text x="66" y="170" class="language">TypeScript</text>
+  <text x="286" y="170" class="value" text-anchor="end">241.94 MB</text>
+  <text x="366" y="170" class="muted" text-anchor="end">52.2%</text>
+  <circle cx="488" cy="166" r="5.5" fill="#3572A5" />
+  <text x="506" y="170" class="language">Python</text>
+  <text x="726" y="170" class="value" text-anchor="end">145.70 MB</text>
+  <text x="806" y="170" class="muted" text-anchor="end">31.4%</text>
+  <circle cx="48" cy="198" r="5.5" fill="#DA5B0B" />
+  <text x="66" y="202" class="language">Jupyter Notebook</text>
+  <text x="286" y="202" class="value" text-anchor="end">20.87 MB</text>
+  <text x="366" y="202" class="muted" text-anchor="end">4.5%</text>
+  <circle cx="488" cy="198" r="5.5" fill="#dea584" />
+  <text x="506" y="202" class="language">Rust</text>
+  <text x="726" y="202" class="value" text-anchor="end">14.66 MB</text>
+  <text x="806" y="202" class="muted" text-anchor="end">3.2%</text>
+  <circle cx="48" cy="230" r="5.5" fill="#f1e05a" />
+  <text x="66" y="234" class="language">JavaScript</text>
+  <text x="286" y="234" class="value" text-anchor="end">10.61 MB</text>
+  <text x="366" y="234" class="muted" text-anchor="end">2.3%</text>
+  <circle cx="488" cy="230" r="5.5" fill="#b07219" />
+  <text x="506" y="234" class="language">Java</text>
+  <text x="726" y="234" class="value" text-anchor="end">8.20 MB</text>
+  <text x="806" y="234" class="muted" text-anchor="end">1.8%</text>
+  <circle cx="48" cy="262" r="5.5" fill="#F05138" />
+  <text x="66" y="266" class="language">Swift</text>
+  <text x="286" y="266" class="value" text-anchor="end">5.52 MB</text>
+  <text x="366" y="266" class="muted" text-anchor="end">1.2%</text>
+  <circle cx="488" cy="262" r="5.5" fill="#89e051" />
+  <text x="506" y="266" class="language">Shell</text>
+  <text x="726" y="266" class="value" text-anchor="end">3.08 MB</text>
+  <text x="806" y="266" class="muted" text-anchor="end">0.7%</text>
 
-  <text x="38" y="262" class="note">Includes owned repositories and forks visible to the token. Percentages use repository language bytes, not authored commit counts.</text>
-  <text x="722" y="262" text-anchor="end" class="note">generated 2026-07-19</text>
+  <text x="42" y="292" class="note">Includes owned repositories and forks visible to the token.</text>
+  <text x="42" y="312" class="note">Percentages use repository language bytes, not authored commit counts.</text>
+  <text x="858" y="312" text-anchor="end" class="note">generated 2026-07-19</text>
 </svg>
