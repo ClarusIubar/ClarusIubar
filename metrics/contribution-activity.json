@@ -1,26 +1,26 @@
 {
   "username": "ClarusIubar",
   "window": {
-    "start": "2025-07-27",
-    "end": "2026-07-26",
+    "start": "2025-08-03",
+    "end": "2026-08-02",
     "totalDays": 365
   },
   "summary": {
-    "totalContributions": 25552,
-    "activeDays": 235,
+    "totalContributions": 26515,
+    "activeDays": 241,
     "maxDayCount": 766,
-    "currentMonth": "2026-07",
-    "currentMonthContributions": 5035,
-    "currentMonthActiveDays": 25,
-    "generatedAt": "2026-07-25T16:16:21.138Z"
+    "currentMonth": "2026-08",
+    "currentMonthContributions": 53,
+    "currentMonthActiveDays": 1,
+    "generatedAt": "2026-08-01T16:18:04.656Z"
   },
   "density": [
     {
       "key": "FIRST_QUARTILE",
       "label": "Q1",
-      "days": 188,
-      "share": 0.8,
-      "shareOfYear": 0.5150684931506849,
+      "days": 192,
+      "share": 0.7966804979253111,
+      "shareOfYear": 0.5260273972602739,
       "minCount": 1,
       "maxCount": 178,
       "thresholdLabel": "1-178"
@@ -28,9 +28,9 @@
     {
       "key": "SECOND_QUARTILE",
       "label": "Q2",
-      "days": 32,
-      "share": 0.13617021276595745,
-      "shareOfYear": 0.08767123287671233,
+      "days": 34,
+      "share": 0.14107883817427386,
+      "shareOfYear": 0.09315068493150686,
       "minCount": 180,
       "maxCount": 358,
       "thresholdLabel": "180-358"
@@ -39,7 +39,7 @@
       "key": "THIRD_QUARTILE",
       "label": "Q3",
       "days": 12,
-      "share": 0.05106382978723404,
+      "share": 0.04979253112033195,
       "shareOfYear": 0.03287671232876712,
       "minCount": 385,
       "maxCount": 530,
@@ -49,7 +49,7 @@
       "key": "FOURTH_QUARTILE",
       "label": "Q4",
       "days": 3,
-      "share": 0.01276595744680851,
+      "share": 0.012448132780082987,
       "shareOfYear": 0.00821917808219178,
       "minCount": 566,
       "maxCount": 766,
@@ -60,9 +60,9 @@
     {
       "key": "COUNT_1_50",
       "label": "1-50",
-      "days": 111,
-      "share": 0.4723404255319149,
-      "shareOfYear": 0.3041095890410959,
+      "days": 110,
+      "share": 0.45643153526970953,
+      "shareOfYear": 0.3013698630136986,
       "minCount": 1,
       "maxCount": 50,
       "rangeLabel": "1-50"
@@ -70,9 +70,9 @@
     {
       "key": "COUNT_51_100",
       "label": "51-100",
-      "days": 35,
-      "share": 0.14893617021276595,
-      "shareOfYear": 0.0958904109589041,
+      "days": 38,
+      "share": 0.15767634854771784,
+      "shareOfYear": 0.10410958904109589,
       "minCount": 53,
       "maxCount": 100,
       "rangeLabel": "51-100"
@@ -80,9 +80,9 @@
     {
       "key": "COUNT_101_150",
       "label": "101-150",
-      "days": 26,
-      "share": 0.11063829787234042,
-      "shareOfYear": 0.07123287671232877,
+      "days": 27,
+      "share": 0.11203319502074689,
+      "shareOfYear": 0.07397260273972603,
       "minCount": 103,
       "maxCount": 147,
       "rangeLabel": "101-150"
@@ -90,9 +90,9 @@
     {
       "key": "COUNT_151_PLUS",
       "label": "150+",
-      "days": 63,
-      "share": 0.2680851063829787,
-      "shareOfYear": 0.1726027397260274,
+      "days": 66,
+      "share": 0.27385892116182575,
+      "shareOfYear": 0.18082191780821918,
       "minCount": 151,
       "maxCount": 766,
       "rangeLabel": "150+"

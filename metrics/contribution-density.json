@@ -1,26 +1,26 @@
 {
   "username": "ClarusIubar",
   "window": {
-    "start": "2025-07-27",
-    "end": "2026-07-26",
+    "start": "2025-08-03",
+    "end": "2026-08-02",
     "totalDays": 365
   },
   "summary": {
-    "totalContributions": 25552,
-    "activeDays": 235,
+    "totalContributions": 26515,
+    "activeDays": 241,
     "maxDayCount": 766,
-    "currentMonth": "2026-07",
-    "currentMonthContributions": 5035,
-    "currentMonthActiveDays": 25,
-    "generatedAt": "2026-07-25T16:16:21.138Z"
+    "currentMonth": "2026-08",
+    "currentMonthContributions": 53,
+    "currentMonthActiveDays": 1,
+    "generatedAt": "2026-08-01T16:18:04.656Z"
   },
   "levels": [
     {
       "key": "FIRST_QUARTILE",
       "label": "Q1",
-      "days": 188,
-      "share": 0.8,
-      "shareOfYear": 0.5150684931506849,
+      "days": 192,
+      "share": 0.7966804979253111,
+      "shareOfYear": 0.5260273972602739,
       "minCount": 1,
       "maxCount": 178,
       "thresholdLabel": "1-178"
@@ -28,9 +28,9 @@
     {
       "key": "SECOND_QUARTILE",
       "label": "Q2",
-      "days": 32,
-      "share": 0.13617021276595745,
-      "shareOfYear": 0.08767123287671233,
+      "days": 34,
+      "share": 0.14107883817427386,
+      "shareOfYear": 0.09315068493150686,
       "minCount": 180,
       "maxCount": 358,
       "thresholdLabel": "180-358"
@@ -39,7 +39,7 @@
       "key": "THIRD_QUARTILE",
       "label": "Q3",
       "days": 12,
-      "share": 0.05106382978723404,
+      "share": 0.04979253112033195,
       "shareOfYear": 0.03287671232876712,
       "minCount": 385,
       "maxCount": 530,
@@ -49,7 +49,7 @@
       "key": "FOURTH_QUARTILE",
       "label": "Q4",
       "days": 3,
-      "share": 0.01276595744680851,
+      "share": 0.012448132780082987,
       "shareOfYear": 0.00821917808219178,
       "minCount": 566,
       "maxCount": 766,
