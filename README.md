@@ -1,7 +1,7 @@
 ## Contribution Activity
 
 <p align="center">
-  <img src="./metrics/contribution-activity.svg?v=310283059f08" width="100%" alt="contribution activity metrics" />
+  <img src="./metrics/contribution-activity.svg?v=5d59e3007e85" width="100%" alt="contribution activity metrics" />
 </p>
 
 ## Languages
