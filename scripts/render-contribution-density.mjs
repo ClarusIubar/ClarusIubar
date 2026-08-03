@@ -1,4 +1,4 @@
-import { access, mkdir, writeFile } from "node:fs/promises";
+import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
@@ -9,7 +9,7 @@ const TOKEN =
   process.env.GITHUB_TOKEN ||
   "";
 
-if (!TOKEN) {
+if (!TOKEN && !process.env.CONTRIBUTION_RENDERER_TEST_MODE) {
   throw new Error("Missing GitHub token. Set METRICS_TOKEN, METRICS_RUNTIME_TOKEN, or GITHUB_TOKEN.");
 }
 
@@ -125,24 +125,7 @@ function transientGraphqlError(message, cause) {
   return error;
 }
 
-async function existingGeneratedAssetsAvailable() {
-  const paths = [
-    densityJsonPath,
-    densitySvgPath,
-    volumeJsonPath,
-    volumeSvgPath,
-    activityJsonPath,
-    activitySvgPath,
-  ];
-  try {
-    await Promise.all(paths.map((assetPath) => access(assetPath)));
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function createLevelSnapshot(days, totalDays, activeDays) {
+export function createLevelSnapshot(days, totalDays, activeDays) {
   const levels = LEVELS.map((level) => {
     const matching = days.filter((day) => day.contributionLevel === level.key);
     const counts = matching.map((day) => day.contributionCount);
@@ -193,7 +176,7 @@ function createVolumeSnapshot(days, totalDays, activeDays) {
   });
 }
 
-function buildSnapshot(calendar) {
+export function buildSnapshot(calendar) {
   const days = calendar.weeks.flatMap((week) => week.contributionDays);
   const totalDays = days.length;
   const activeDays = days.filter((day) => day.contributionCount > 0).length;
@@ -226,6 +209,72 @@ function buildSnapshot(calendar) {
     levels,
     volumeBuckets,
   };
+}
+
+function rangeFor(level) {
+  return level?.thresholdLabel ?? formatRange(level?.minCount, level?.maxCount);
+}
+
+/**
+ * Compares the stable, user-visible contribution measurements between runs.
+ * The GitHub level enum is intentionally not treated as a fixed numeric policy;
+ * only the values observed in the returned calendar are reported.
+ */
+export function compareSnapshots(previous, current) {
+  if (!previous) {
+    return { changed: true, changes: [{ kind: "initial", message: "No previous snapshot available." }] };
+  }
+
+  const changes = [];
+  if (previous.summary?.totalContributions !== current.summary.totalContributions) {
+    changes.push({
+      kind: "totalContributions",
+      before: previous.summary?.totalContributions ?? null,
+      after: current.summary.totalContributions,
+    });
+  }
+  for (const key of ["start", "end"]) {
+    if (previous.window?.[key] !== current.window[key]) {
+      changes.push({ kind: `window.${key}`, before: previous.window?.[key] ?? null, after: current.window[key] });
+    }
+  }
+  const previousLevels = previous.levels ?? previous.density ?? [];
+  for (const level of current.levels) {
+    const prior = previousLevels.find((candidate) => candidate.key === level.key);
+    if (prior?.minCount !== level.minCount || prior?.maxCount !== level.maxCount) {
+      changes.push({ kind: "densityRange", level: level.label, before: rangeFor(prior), after: rangeFor(level) });
+    }
+  }
+  return { changed: changes.length > 0, changes };
+}
+
+async function readPreviousActivitySnapshot() {
+  try {
+    return JSON.parse(await readFile(activityJsonPath, "utf8"));
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      return null;
+    }
+    throw new Error(`Could not read previous contribution snapshot: ${error.message}`);
+  }
+}
+
+function formatChange(change) {
+  if (change.kind === "densityRange") {
+    return `${change.level}: ${change.before ?? "none"} -> ${change.after}`;
+  }
+  if (change.kind === "initial") {
+    return change.message;
+  }
+  return `${change.kind}: ${change.before ?? "none"} -> ${change.after}`;
+}
+
+async function writeActionsSummary(title, lines) {
+  const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+  if (!summaryPath) {
+    return;
+  }
+  await appendFile(summaryPath, `## ${title}\n\n${lines.map((line) => `- ${line}`).join("\n")}\n`, "utf8");
 }
 
 function renderMetricCard({ snapshot, title, desc, rows, paletteByKey }) {
@@ -361,10 +410,12 @@ function renderActivityStat({ x, label, value, accent = "#79c0ff" }) {
   `;
 }
 
-function renderActivitySvg(snapshot) {
+export function renderActivitySvg(snapshot) {
   const width = 900;
   const height = 420;
   const generatedDate = snapshot.summary.generatedAt.slice(0, 10);
+  const dataThrough = snapshot.freshness?.dataThrough ?? snapshot.window.end;
+  const freshnessStatus = snapshot.freshness?.status ?? "current";
   const densityPalette = new Map(LEVELS.map((level) => [level.key, level]));
   const volumePalette = new Map(VOLUME_BUCKETS.map((bucket) => [bucket.key, bucket]));
   const densityPanel = renderActivityPanel({
@@ -423,7 +474,7 @@ function renderActivitySvg(snapshot) {
   ${densityPanel}
   ${volumePanel}
   <text x="34" y="374" class="note">Percentages exclude zero-contribution days. Density uses GitHub contribution levels; Volume uses absolute daily count buckets.</text>
-  <text x="866" y="374" text-anchor="end" class="note">generated ${escapeXml(generatedDate)}</text>
+  <text x="866" y="374" text-anchor="end" class="note">data through ${escapeXml(dataThrough)} · ${escapeXml(freshnessStatus)} · generated ${escapeXml(generatedDate)}</text>
 </svg>`;
 }
 
@@ -488,18 +539,26 @@ async function fetchContributionCalendar() {
 }
 
 async function main() {
+  const previousSnapshot = await readPreviousActivitySnapshot();
   let calendar;
   try {
     calendar = await fetchContributionCalendar();
   } catch (error) {
-    if (error.transient && (await existingGeneratedAssetsAvailable())) {
-      console.warn(`GitHub GraphQL is temporarily unavailable; preserving existing contribution assets.`);
-      console.warn(error.message);
-      return;
-    }
+    const lastGeneratedAt = previousSnapshot?.summary?.generatedAt ?? "unknown";
+    await writeActionsSummary("Contribution metrics refresh failed", [
+      "Existing generated assets were preserved.",
+      `Last successful generation: ${lastGeneratedAt}`,
+      `Reason: ${error.message}`,
+    ]);
     throw error;
   }
   const snapshot = buildSnapshot(calendar);
+  const comparison = compareSnapshots(previousSnapshot, snapshot);
+  snapshot.freshness = {
+    status: "current",
+    dataThrough: snapshot.window.end,
+    comparison,
+  };
   const densitySvg = renderDensitySvg(snapshot);
   const volumeSvg = renderVolumeSvg(snapshot);
   const activitySvg = renderActivitySvg(snapshot);
@@ -526,6 +585,12 @@ async function main() {
   await writeFile(activityJsonPath, `${JSON.stringify(activitySnapshot, null, 2)}\n`, "utf8");
   await writeFile(activitySvgPath, activitySvg, "utf8");
 
+  await writeActionsSummary("Contribution metrics refresh", [
+    `Data through: ${snapshot.freshness.dataThrough}`,
+    comparison.changed ? "Observed contribution values changed." : "No observed contribution values changed.",
+    ...comparison.changes.map(formatChange),
+  ]);
+
   console.log(`Wrote ${densityJsonPath}`);
   console.log(`Wrote ${densitySvgPath}`);
   console.log(`Wrote ${volumeJsonPath}`);
@@ -534,4 +599,6 @@ async function main() {
   console.log(`Wrote ${activitySvgPath}`);
 }
 
-await main();
+if (!process.env.CONTRIBUTION_RENDERER_TEST_MODE) {
+  await main();
+}
