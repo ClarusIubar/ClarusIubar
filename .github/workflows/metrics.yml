@@ -2,7 +2,7 @@ name: GitHub Metrics
 
 on:
   schedule:
-    - cron: "0 16 * * 6"
+    - cron: "0 16 * * *"
   workflow_dispatch:
 
 permissions:
@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

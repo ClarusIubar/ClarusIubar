@@ -2,25 +2,25 @@
   "username": "ClarusIubar",
   "window": {
     "start": "2025-08-03",
-    "end": "2026-08-02",
-    "totalDays": 365
+    "end": "2026-08-03",
+    "totalDays": 366
   },
   "summary": {
-    "totalContributions": 26515,
-    "activeDays": 241,
+    "totalContributions": 26800,
+    "activeDays": 243,
     "maxDayCount": 766,
     "currentMonth": "2026-08",
-    "currentMonthContributions": 53,
-    "currentMonthActiveDays": 1,
-    "generatedAt": "2026-08-01T16:18:04.656Z"
+    "currentMonthContributions": 336,
+    "currentMonthActiveDays": 3,
+    "generatedAt": "2026-08-03T07:37:01.774Z"
   },
   "buckets": [
     {
       "key": "COUNT_1_50",
       "label": "1-50",
       "days": 110,
-      "share": 0.45643153526970953,
-      "shareOfYear": 0.3013698630136986,
+      "share": 0.45267489711934156,
+      "shareOfYear": 0.3005464480874317,
       "minCount": 1,
       "maxCount": 50,
       "rangeLabel": "1-50"
@@ -29,28 +29,28 @@
       "key": "COUNT_51_100",
       "label": "51-100",
       "days": 38,
-      "share": 0.15767634854771784,
-      "shareOfYear": 0.10410958904109589,
-      "minCount": 53,
+      "share": 0.15637860082304528,
+      "shareOfYear": 0.10382513661202186,
+      "minCount": 52,
       "maxCount": 100,
       "rangeLabel": "51-100"
     },
     {
       "key": "COUNT_101_150",
       "label": "101-150",
-      "days": 27,
-      "share": 0.11203319502074689,
-      "shareOfYear": 0.07397260273972603,
-      "minCount": 103,
+      "days": 28,
+      "share": 0.11522633744855967,
+      "shareOfYear": 0.07650273224043716,
+      "minCount": 101,
       "maxCount": 147,
       "rangeLabel": "101-150"
     },
     {
       "key": "COUNT_151_PLUS",
       "label": "150+",
-      "days": 66,
-      "share": 0.27385892116182575,
-      "shareOfYear": 0.18082191780821918,
+      "days": 67,
+      "share": 0.2757201646090535,
+      "shareOfYear": 0.1830601092896175,
       "minCount": 151,
       "maxCount": 766,
       "rangeLabel": "150+"
