@@ -538,6 +538,33 @@ async function fetchContributionCalendar() {
   throw lastError ?? new Error("GitHub GraphQL request failed without an error payload.");
 }
 
+/**
+ * Produces the three persisted asset snapshots from one normalized calendar result.
+ * Every artifact carries the same freshness contract so consumers do not need to
+ * infer whether an SVG and its companion JSON were generated in the same run.
+ */
+export function createAssetSnapshots(snapshot) {
+  const { volumeBuckets, ...densitySnapshot } = snapshot;
+  return {
+    densitySnapshot,
+    volumeSnapshot: {
+      username: snapshot.username,
+      window: snapshot.window,
+      summary: snapshot.summary,
+      freshness: snapshot.freshness,
+      buckets: volumeBuckets,
+    },
+    activitySnapshot: {
+      username: snapshot.username,
+      window: snapshot.window,
+      summary: snapshot.summary,
+      freshness: snapshot.freshness,
+      density: snapshot.levels,
+      volume: volumeBuckets,
+    },
+  };
+}
+
 async function main() {
   const previousSnapshot = await readPreviousActivitySnapshot();
   let calendar;
@@ -562,20 +589,7 @@ async function main() {
   const densitySvg = renderDensitySvg(snapshot);
   const volumeSvg = renderVolumeSvg(snapshot);
   const activitySvg = renderActivitySvg(snapshot);
-  const { volumeBuckets, ...densitySnapshot } = snapshot;
-  const volumeSnapshot = {
-    username: snapshot.username,
-    window: snapshot.window,
-    summary: snapshot.summary,
-    buckets: volumeBuckets,
-  };
-  const activitySnapshot = {
-    username: snapshot.username,
-    window: snapshot.window,
-    summary: snapshot.summary,
-    density: snapshot.levels,
-    volume: volumeBuckets,
-  };
+  const { densitySnapshot, volumeSnapshot, activitySnapshot } = createAssetSnapshots(snapshot);
 
   await mkdir(outputDir, { recursive: true });
   await writeFile(densityJsonPath, `${JSON.stringify(densitySnapshot, null, 2)}\n`, "utf8");
