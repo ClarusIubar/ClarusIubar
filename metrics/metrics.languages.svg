@@ -25,7 +25,7 @@
 
   <circle cx="48" cy="166" r="5.5" fill="#3572A5" />
   <text x="66" y="170" class="language">Python</text>
-  <text x="308" y="170" class="value" text-anchor="end">66.94 MB</text>
+  <text x="308" y="170" class="value" text-anchor="end">66.95 MB</text>
   <text x="388" y="170" class="muted" text-anchor="end">51.9%</text>
   <circle cx="500" cy="166" r="5.5" fill="#3178c6" />
   <text x="518" y="170" class="language">TypeScript</text>

@@ -24,13 +24,13 @@
 
   <text x="38" y="48" class="eyebrow">LAST 1 YEAR</text>
   <text x="38" y="82" class="title">Contribution Activity</text>
-  <text x="38" y="106" class="subtitle">2025-08-03 to 2026-08-03</text>
+  <text x="38" y="106" class="subtitle">2025-08-03 to 2026-08-04</text>
 
   
     <g>
       <rect x="34" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="34" y="92" width="4" height="52" rx="2" fill="#39d353" />
-      <text x="52" y="116" class="stat-value">26,832</text>
+      <text x="52" y="116" class="stat-value">26,836</text>
       <text x="52" y="134" class="stat-label">Total</text>
     </g>
   
@@ -38,7 +38,7 @@
     <g>
       <rect x="218" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="218" y="92" width="4" height="52" rx="2" fill="#54aeff" />
-      <text x="236" y="116" class="stat-value">368</text>
+      <text x="236" y="116" class="stat-value">372</text>
       <text x="236" y="134" class="stat-label">This month</text>
     </g>
   
@@ -46,7 +46,7 @@
     <g>
       <rect x="402" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="402" y="92" width="4" height="52" rx="2" fill="#f2cc60" />
-      <text x="420" y="116" class="stat-value">243/366</text>
+      <text x="420" y="116" class="stat-value">243/367</text>
       <text x="420" y="134" class="stat-label">Active days</text>
     </g>
   
@@ -158,5 +158,5 @@
     </g>
   
   <text x="34" y="374" class="note">Percentages exclude zero-contribution days. Density uses GitHub relative levels and the dark grass palette.</text>
-  <text x="866" y="374" text-anchor="end" class="note">data through 2026-08-03 | current | generated 2026-08-03</text>
+  <text x="866" y="374" text-anchor="end" class="note">data through 2026-08-04 | current | generated 2026-08-03</text>
 </svg>

@@ -17,11 +17,11 @@
   <rect class="card" x="12" y="12" width="696" height="246" rx="16" />
 
   <text x="36" y="48" class="title">Contribution Volume</text>
-  <text x="36" y="72" class="subtitle">2025-08-03 to 2026-08-03 - Last 1 year</text>
+  <text x="36" y="72" class="subtitle">2025-08-03 to 2026-08-04 - Last 1 year</text>
 
-  <text x="36" y="100" class="summary">26832</text>
+  <text x="36" y="100" class="summary">26836</text>
   <text x="88" y="100" class="summary-label">total contributions</text>
-  <text x="260" y="100" class="summary">243/366</text>
+  <text x="260" y="100" class="summary">243/367</text>
   <text x="348" y="100" class="summary-label">active days</text>
   <text x="420" y="100" class="summary">766</text>
   <text x="458" y="100" class="summary-label">max/day</text>
