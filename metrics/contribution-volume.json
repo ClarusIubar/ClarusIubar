@@ -6,20 +6,26 @@
     "totalDays": 366
   },
   "summary": {
-    "totalContributions": 26814,
+    "totalContributions": 26832,
     "activeDays": 243,
     "maxDayCount": 766,
     "currentMonth": "2026-08",
-    "currentMonthContributions": 350,
+    "currentMonthContributions": 368,
     "currentMonthActiveDays": 3,
-    "generatedAt": "2026-08-03T08:06:43.123Z"
+    "generatedAt": "2026-08-03T09:36:02.070Z"
   },
   "calendar": {
-    "colors": [
+    "apiColors": [
       "#9be9a8",
       "#40c463",
       "#30a14e",
       "#216e39"
+    ],
+    "displayColors": [
+      "#0e4429",
+      "#006d32",
+      "#26a641",
+      "#39d353"
     ],
     "isHalloween": false,
     "levelAssignmentFingerprint": "25c24ecf0ce395d9b6cfb9fcb48113c39a208ac0c0c1f337ede7098f4ec4c453"
@@ -32,23 +38,56 @@
       "changes": [
         {
           "kind": "totalContributions",
-          "before": 26810,
-          "after": 26814
+          "before": 26814,
+          "after": 26832
         },
         {
-          "kind": "calendarPalette",
-          "before": null,
-          "after": [
-            "#9be9a8",
-            "#40c463",
-            "#30a14e",
-            "#216e39"
-          ]
+          "kind": "densityLevel",
+          "level": "Q1",
+          "before": {
+            "days": 193,
+            "githubColor": null
+          },
+          "after": {
+            "days": 193,
+            "githubColor": "#9be9a8"
+          }
         },
         {
-          "kind": "levelAssignments",
-          "before": null,
-          "after": "25c24ecf0ce395d9b6cfb9fcb48113c39a208ac0c0c1f337ede7098f4ec4c453"
+          "kind": "densityLevel",
+          "level": "Q2",
+          "before": {
+            "days": 35,
+            "githubColor": null
+          },
+          "after": {
+            "days": 35,
+            "githubColor": "#40c463"
+          }
+        },
+        {
+          "kind": "densityLevel",
+          "level": "Q3",
+          "before": {
+            "days": 12,
+            "githubColor": null
+          },
+          "after": {
+            "days": 12,
+            "githubColor": "#30a14e"
+          }
+        },
+        {
+          "kind": "densityLevel",
+          "level": "Q4",
+          "before": {
+            "days": 3,
+            "githubColor": null
+          },
+          "after": {
+            "days": 3,
+            "githubColor": "#216e39"
+          }
         }
       ]
     }

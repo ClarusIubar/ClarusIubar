@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="420" viewBox="0 0 900 420" role="img" aria-labelledby="title desc">
   <title id="title">Contribution Activity</title>
-  <desc id="desc">GitHub-provided contribution levels and colors with absolute contribution volume for active days during the last year.</desc>
+  <desc id="desc">GitHub relative contribution levels with the dark grass palette and absolute contribution volume for active days during the last year.</desc>
   <style>
     .bg { fill: #0d1117; }
     .card { fill: #161b22; stroke: #30363d; stroke-width: 1; }
@@ -30,7 +30,7 @@
     <g>
       <rect x="34" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="34" y="92" width="4" height="52" rx="2" fill="#39d353" />
-      <text x="52" y="116" class="stat-value">26,814</text>
+      <text x="52" y="116" class="stat-value">26,832</text>
       <text x="52" y="134" class="stat-label">Total</text>
     </g>
   
@@ -38,7 +38,7 @@
     <g>
       <rect x="218" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="218" y="92" width="4" height="52" rx="2" fill="#54aeff" />
-      <text x="236" y="116" class="stat-value">350</text>
+      <text x="236" y="116" class="stat-value">368</text>
       <text x="236" y="134" class="stat-label">This month</text>
     </g>
   
@@ -65,46 +65,46 @@
     <g>
       <rect x="34" y="178" width="398" height="164" rx="12" fill="#0d1117" stroke="#21262d" />
       <text x="50" y="206" class="panel-title">Density</text>
-      <text x="50" y="226" class="panel-subtitle">GitHub relative levels and colors, active days only</text>
+      <text x="50" y="226" class="panel-subtitle">GitHub relative levels, dark grass palette, active days only</text>
       
         <rect x="50" y="231" width="366" height="22" rx="6" fill="#0d1117" />
-        <circle cx="65" cy="242" r="5.5" fill="#9be9a8" />
+        <circle cx="65" cy="242" r="5.5" fill="#0e4429" />
         <text x="82" y="246" class="row-label">Q1</text>
         
         <text x="145" y="246" class="row-value">193d</text>
         <text x="200" y="246" class="row-muted">79.4%</text>
         <rect x="264" y="236" width="98" height="10" rx="5" fill="#21262d" />
-        <rect x="264" y="236" width="78" height="10" rx="5" fill="#9be9a8" />
+        <rect x="264" y="236" width="78" height="10" rx="5" fill="#0e4429" />
         
       
         <rect x="50" y="260" width="366" height="22" rx="6" fill="#0d1117" />
-        <circle cx="65" cy="271" r="5.5" fill="#40c463" />
+        <circle cx="65" cy="271" r="5.5" fill="#006d32" />
         <text x="82" y="275" class="row-label">Q2</text>
         
         <text x="145" y="275" class="row-value">35d</text>
         <text x="200" y="275" class="row-muted">14.4%</text>
         <rect x="264" y="265" width="98" height="10" rx="5" fill="#21262d" />
-        <rect x="264" y="265" width="14" height="10" rx="5" fill="#40c463" />
+        <rect x="264" y="265" width="14" height="10" rx="5" fill="#006d32" />
         
       
         <rect x="50" y="289" width="366" height="22" rx="6" fill="#0d1117" />
-        <circle cx="65" cy="300" r="5.5" fill="#30a14e" />
+        <circle cx="65" cy="300" r="5.5" fill="#26a641" />
         <text x="82" y="304" class="row-label">Q3</text>
         
         <text x="145" y="304" class="row-value">12d</text>
         <text x="200" y="304" class="row-muted">4.9%</text>
         <rect x="264" y="294" width="98" height="10" rx="5" fill="#21262d" />
-        <rect x="264" y="294" width="5" height="10" rx="5" fill="#30a14e" />
+        <rect x="264" y="294" width="5" height="10" rx="5" fill="#26a641" />
         
       
         <rect x="50" y="318" width="366" height="22" rx="6" fill="#0d1117" />
-        <circle cx="65" cy="329" r="5.5" fill="#216e39" />
+        <circle cx="65" cy="329" r="5.5" fill="#39d353" />
         <text x="82" y="333" class="row-label">Q4</text>
         
         <text x="145" y="333" class="row-value">3d</text>
         <text x="200" y="333" class="row-muted">1.2%</text>
         <rect x="264" y="323" width="98" height="10" rx="5" fill="#21262d" />
-        <rect x="264" y="323" width="3" height="10" rx="5" fill="#216e39" />
+        <rect x="264" y="323" width="3" height="10" rx="5" fill="#39d353" />
         
       
     </g>
@@ -157,6 +157,6 @@
       
     </g>
   
-  <text x="34" y="374" class="note">Percentages exclude zero-contribution days. Density uses GitHub-provided relative levels and colors.</text>
+  <text x="34" y="374" class="note">Percentages exclude zero-contribution days. Density uses GitHub relative levels and the dark grass palette.</text>
   <text x="866" y="374" text-anchor="end" class="note">data through 2026-08-03 | current | generated 2026-08-03</text>
 </svg>
