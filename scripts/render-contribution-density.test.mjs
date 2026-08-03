@@ -64,6 +64,8 @@ test("persists the same freshness and GitHub calendar metadata in every JSON ass
   };
   const assets = createAssetSnapshots(source);
   assert.deepEqual(assets.densitySnapshot.calendar, source.calendar);
+  assert.deepEqual(assets.volumeSnapshot.calendar, source.calendar);
+  assert.deepEqual(assets.activitySnapshot.calendar, source.calendar);
   assert.deepEqual(assets.volumeSnapshot.freshness, source.freshness);
   assert.deepEqual(assets.activitySnapshot.freshness, source.freshness);
 });

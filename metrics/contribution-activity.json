@@ -6,13 +6,23 @@
     "totalDays": 366
   },
   "summary": {
-    "totalContributions": 26810,
+    "totalContributions": 26814,
     "activeDays": 243,
     "maxDayCount": 766,
     "currentMonth": "2026-08",
-    "currentMonthContributions": 346,
+    "currentMonthContributions": 350,
     "currentMonthActiveDays": 3,
-    "generatedAt": "2026-08-03T08:03:13.532Z"
+    "generatedAt": "2026-08-03T08:06:43.123Z"
+  },
+  "calendar": {
+    "colors": [
+      "#9be9a8",
+      "#40c463",
+      "#30a14e",
+      "#216e39"
+    ],
+    "isHalloween": false,
+    "levelAssignmentFingerprint": "25c24ecf0ce395d9b6cfb9fcb48113c39a208ac0c0c1f337ede7098f4ec4c453"
   },
   "freshness": {
     "status": "current",
@@ -22,8 +32,8 @@
       "changes": [
         {
           "kind": "totalContributions",
-          "before": 26805,
-          "after": 26810
+          "before": 26810,
+          "after": 26814
         },
         {
           "kind": "calendarPalette",
@@ -39,54 +49,6 @@
           "kind": "levelAssignments",
           "before": null,
           "after": "25c24ecf0ce395d9b6cfb9fcb48113c39a208ac0c0c1f337ede7098f4ec4c453"
-        },
-        {
-          "kind": "densityLevel",
-          "level": "Q1",
-          "before": {
-            "days": 193,
-            "color": null
-          },
-          "after": {
-            "days": 193,
-            "color": "#9be9a8"
-          }
-        },
-        {
-          "kind": "densityLevel",
-          "level": "Q2",
-          "before": {
-            "days": 35,
-            "color": null
-          },
-          "after": {
-            "days": 35,
-            "color": "#40c463"
-          }
-        },
-        {
-          "kind": "densityLevel",
-          "level": "Q3",
-          "before": {
-            "days": 12,
-            "color": null
-          },
-          "after": {
-            "days": 12,
-            "color": "#30a14e"
-          }
-        },
-        {
-          "kind": "densityLevel",
-          "level": "Q4",
-          "before": {
-            "days": 3,
-            "color": null
-          },
-          "after": {
-            "days": 3,
-            "color": "#216e39"
-          }
         }
       ]
     }
