@@ -1,4 +1,5 @@
 import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
 import path from "node:path";
 import process from "node:process";
 
@@ -43,6 +44,8 @@ query ($login: String!) {
     contributionsCollection {
       contributionCalendar {
         totalContributions
+        colors
+        isHalloween
         weeks {
           contributionDays {
             date
@@ -128,9 +131,6 @@ function transientGraphqlError(message, cause) {
 export function createLevelSnapshot(days, totalDays, activeDays) {
   const levels = LEVELS.map((level) => {
     const matching = days.filter((day) => day.contributionLevel === level.key);
-    const counts = matching.map((day) => day.contributionCount);
-    const minCount = counts.length > 0 ? Math.min(...counts) : null;
-    const maxCount = counts.length > 0 ? Math.max(...counts) : null;
 
     return {
       key: level.key,
@@ -138,16 +138,11 @@ export function createLevelSnapshot(days, totalDays, activeDays) {
       days: matching.length,
       share: activeDays === 0 ? 0 : matching.length / activeDays,
       shareOfYear: totalDays === 0 ? 0 : matching.length / totalDays,
-      minCount,
-      maxCount,
       color: matching[0]?.color ?? level.color,
     };
   });
 
-  return levels.map((level) => ({
-    ...level,
-    thresholdLabel: formatRange(level.minCount, level.maxCount),
-  }));
+  return levels;
 }
 
 function createVolumeSnapshot(days, totalDays, activeDays) {
@@ -187,8 +182,11 @@ export function buildSnapshot(calendar) {
   const currentMonthDays = currentMonth ? days.filter((day) => day.date.startsWith(currentMonth)) : [];
   const currentMonthContributions = currentMonthDays.reduce((total, day) => total + day.contributionCount, 0);
   const currentMonthActiveDays = currentMonthDays.filter((day) => day.contributionCount > 0).length;
-  const levels = createLevelSnapshot(days, totalDays, activeDays).map(({ color, ...level }) => level);
+  const levels = createLevelSnapshot(days, totalDays, activeDays);
   const volumeBuckets = createVolumeSnapshot(days, totalDays, activeDays).map(({ color, ...bucket }) => bucket);
+  const levelAssignmentFingerprint = createHash("sha256")
+    .update(days.map((day) => `${day.date}:${day.contributionLevel}:${day.color}`).join("\n"))
+    .digest("hex");
 
   return {
     username: OWNER,
@@ -206,19 +204,20 @@ export function buildSnapshot(calendar) {
       currentMonthActiveDays,
       generatedAt: new Date().toISOString(),
     },
+    calendar: {
+      colors: calendar.colors,
+      isHalloween: calendar.isHalloween,
+      levelAssignmentFingerprint,
+    },
     levels,
     volumeBuckets,
   };
 }
 
-function rangeFor(level) {
-  return level?.thresholdLabel ?? formatRange(level?.minCount, level?.maxCount);
-}
-
 /**
- * Compares the stable, user-visible contribution measurements between runs.
- * The GitHub level enum is intentionally not treated as a fixed numeric policy;
- * only the values observed in the returned calendar are reported.
+ * Compares GitHub-provided palette and relative-level assignments between runs.
+ * Numeric contribution counts are deliberately not converted into a made-up
+ * threshold table because the GraphQL API exposes relative levels, not bounds.
  */
 export function compareSnapshots(previous, current) {
   if (!previous) {
@@ -238,11 +237,22 @@ export function compareSnapshots(previous, current) {
       changes.push({ kind: `window.${key}`, before: previous.window?.[key] ?? null, after: current.window[key] });
     }
   }
+  if (JSON.stringify(previous.calendar?.colors ?? null) !== JSON.stringify(current.calendar.colors)) {
+    changes.push({ kind: "calendarPalette", before: previous.calendar?.colors ?? null, after: current.calendar.colors });
+  }
+  if (previous.calendar?.levelAssignmentFingerprint !== current.calendar.levelAssignmentFingerprint) {
+    changes.push({ kind: "levelAssignments", before: previous.calendar?.levelAssignmentFingerprint ?? null, after: current.calendar.levelAssignmentFingerprint });
+  }
   const previousLevels = previous.levels ?? previous.density ?? [];
   for (const level of current.levels) {
     const prior = previousLevels.find((candidate) => candidate.key === level.key);
-    if (prior?.minCount !== level.minCount || prior?.maxCount !== level.maxCount) {
-      changes.push({ kind: "densityRange", level: level.label, before: rangeFor(prior), after: rangeFor(level) });
+    if (prior?.days !== level.days || prior?.color !== level.color) {
+      changes.push({
+        kind: "densityLevel",
+        level: level.label,
+        before: prior ? { days: prior.days, color: prior.color ?? null } : null,
+        after: { days: level.days, color: level.color },
+      });
     }
   }
   return { changed: changes.length > 0, changes };
@@ -260,8 +270,14 @@ async function readPreviousActivitySnapshot() {
 }
 
 function formatChange(change) {
-  if (change.kind === "densityRange") {
-    return `${change.level}: ${change.before ?? "none"} -> ${change.after}`;
+  if (change.kind === "densityLevel") {
+    return `${change.level}: ${JSON.stringify(change.before)} -> ${JSON.stringify(change.after)}`;
+  }
+  if (change.kind === "calendarPalette") {
+    return `GitHub palette: ${JSON.stringify(change.before)} -> ${JSON.stringify(change.after)}`;
+  }
+  if (change.kind === "levelAssignments") {
+    return "GitHub day-level or color assignments changed.";
   }
   if (change.kind === "initial") {
     return change.message;
@@ -288,7 +304,7 @@ function renderMetricCard({ snapshot, title, desc, rows, paletteByKey }) {
       const palette = paletteByKey.get(row.key);
       const y = rowStartY + index * rowHeight;
       const barWidth = Math.max(2, Math.round(row.share * 260));
-      const rangeText = row.thresholdLabel || row.rangeLabel ? "" : formatRange(row.minCount, row.maxCount);
+      const rangeText = row.rangeLabel || row.minCount == null ? "" : formatRange(row.minCount, row.maxCount);
 
       return `
         <rect x="36" y="${y - 14}" width="648" height="22" rx="8" fill="#0d1117" />
@@ -340,9 +356,9 @@ function renderDensitySvg(snapshot) {
   return renderMetricCard({
     snapshot,
     title: "Contribution Density",
-    desc: "GitHub contribution density by contribution level for the last year.",
+    desc: "GitHub-provided contribution levels and colors for active days during the last year.",
     rows: snapshot.levels,
-    paletteByKey: new Map(LEVELS.map((level) => [level.key, level])),
+    paletteByKey: new Map(snapshot.levels.map((level) => [level.key, level])),
   });
 }
 
@@ -367,8 +383,8 @@ function renderActivityPanel({ title, subtitle, rows, paletteByKey, x, y, width 
     .map((row, index) => {
       const palette = paletteByKey.get(row.key);
       const rowY = y + 68 + index * rowHeight;
-      const rangeText = row.thresholdLabel || row.rangeLabel ? "" : formatRange(row.minCount, row.maxCount);
-      const hasThreshold = Boolean(row.thresholdLabel);
+      const rangeText = row.rangeLabel || row.minCount == null ? "" : formatRange(row.minCount, row.maxCount);
+      const hasThreshold = false;
       const daysX = hasThreshold ? x + 132 : x + 111;
       const rowPercentX = hasThreshold ? x + 178 : percentX;
       const barX = hasThreshold ? x + 240 : defaultBarX;
@@ -416,11 +432,11 @@ export function renderActivitySvg(snapshot) {
   const generatedDate = snapshot.summary.generatedAt.slice(0, 10);
   const dataThrough = snapshot.freshness?.dataThrough ?? snapshot.window.end;
   const freshnessStatus = snapshot.freshness?.status ?? "current";
-  const densityPalette = new Map(LEVELS.map((level) => [level.key, level]));
+  const densityPalette = new Map(snapshot.levels.map((level) => [level.key, level]));
   const volumePalette = new Map(VOLUME_BUCKETS.map((bucket) => [bucket.key, bucket]));
   const densityPanel = renderActivityPanel({
     title: "Density",
-    subtitle: "GitHub grass levels, active days only",
+    subtitle: "GitHub relative levels and colors, active days only",
     rows: snapshot.levels,
     paletteByKey: densityPalette,
     x: 34,
@@ -439,7 +455,7 @@ export function renderActivitySvg(snapshot) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
   <title id="title">Contribution Activity</title>
-  <desc id="desc">GitHub contribution density and absolute contribution volume for active days during the last year.</desc>
+  <desc id="desc">GitHub-provided contribution levels and colors with absolute contribution volume for active days during the last year.</desc>
   <style>
     .bg { fill: #0d1117; }
     .card { fill: #161b22; stroke: #30363d; stroke-width: 1; }
@@ -473,8 +489,8 @@ export function renderActivitySvg(snapshot) {
 
   ${densityPanel}
   ${volumePanel}
-  <text x="34" y="374" class="note">Percentages exclude zero-contribution days. Density uses GitHub contribution levels; Volume uses absolute daily count buckets.</text>
-  <text x="866" y="374" text-anchor="end" class="note">data through ${escapeXml(dataThrough)} · ${escapeXml(freshnessStatus)} · generated ${escapeXml(generatedDate)}</text>
+  <text x="34" y="374" class="note">Percentages exclude zero-contribution days. Density uses GitHub-provided relative levels and colors.</text>
+  <text x="866" y="374" text-anchor="end" class="note">data through ${escapeXml(dataThrough)} | ${escapeXml(freshnessStatus)} | generated ${escapeXml(generatedDate)}</text>
 </svg>`;
 }
 

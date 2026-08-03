@@ -1,8 +1,8 @@
 /*
 File: render-contribution-density.test.mjs
-Purpose: Verify contribution snapshot range comparison and freshness rendering.
+Purpose: Verify GitHub level/color synchronization and freshness rendering.
 Primary Responsibility: Exercise deterministic renderer behavior without GitHub GraphQL.
-Design Intent: Keep range-change detection testable from small in-memory fixtures.
+Design Intent: Keep palette and relative-level change detection testable with fixtures.
 Non-Goals: End-to-end validation of GitHub authentication or Actions commits.
 Dependencies: node:test, node:assert/strict, render-contribution-density.mjs.
 */
@@ -12,46 +12,50 @@ import test from "node:test";
 process.env.CONTRIBUTION_RENDERER_TEST_MODE = "1";
 const { compareSnapshots, createAssetSnapshots, renderActivitySvg } = await import("./render-contribution-density.mjs");
 
-function snapshot({ total = 100, start = "2026-01-01", end = "2026-12-31", q1 = [1, 25] } = {}) {
+function snapshot({ total = 100, colors = ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"], fingerprint = "same", q1Color = "#9be9a8" } = {}) {
   return {
-    window: { start, end },
+    window: { start: "2026-01-01", end: "2026-12-31" },
     summary: { totalContributions: total, generatedAt: "2026-08-03T00:00:00.000Z" },
+    calendar: { colors, isHalloween: false, levelAssignmentFingerprint: fingerprint },
     levels: [
-      { key: "FIRST_QUARTILE", label: "Q1", minCount: q1[0], maxCount: q1[1], thresholdLabel: `${q1[0]}-${q1[1]}` },
-      { key: "SECOND_QUARTILE", label: "Q2", minCount: 26, maxCount: 50, thresholdLabel: "26-50" },
-      { key: "THIRD_QUARTILE", label: "Q3", minCount: 51, maxCount: 75, thresholdLabel: "51-75" },
-      { key: "FOURTH_QUARTILE", label: "Q4", minCount: 76, maxCount: 100, thresholdLabel: "76-100" },
+      { key: "FIRST_QUARTILE", label: "Q1", days: 25, share: 0.25, color: q1Color },
+      { key: "SECOND_QUARTILE", label: "Q2", days: 25, share: 0.25, color: "#40c463" },
+      { key: "THIRD_QUARTILE", label: "Q3", days: 25, share: 0.25, color: "#30a14e" },
+      { key: "FOURTH_QUARTILE", label: "Q4", days: 25, share: 0.25, color: "#216e39" },
     ],
   };
 }
 
-test("does not report a change for identical snapshots", () => {
+test("does not report a change for identical GitHub snapshots", () => {
   assert.deepEqual(compareSnapshots(snapshot(), snapshot()), { changed: false, changes: [] });
 });
 
-test("reports total, window, and observed density-range changes", () => {
-  const result = compareSnapshots(snapshot(), snapshot({ total: 101, end: "2027-01-01", q1: [1, 30] }));
+test("detects GitHub palette and level/color assignment changes", () => {
+  const result = compareSnapshots(snapshot(), snapshot({ colors: ["#000000"], fingerprint: "changed", q1Color: "#ff0000" }));
   assert.equal(result.changed, true);
-  assert.deepEqual(result.changes, [
-    { kind: "totalContributions", before: 100, after: 101 },
-    { kind: "window.end", before: "2026-12-31", after: "2027-01-01" },
-    { kind: "densityRange", level: "Q1", before: "1-25", after: "1-30" },
-  ]);
+  assert.equal(result.changes.some((change) => change.kind === "calendarPalette"), true);
+  assert.equal(result.changes.some((change) => change.kind === "levelAssignments"), true);
+  assert.deepEqual(result.changes.find((change) => change.kind === "densityLevel"), {
+    kind: "densityLevel",
+    level: "Q1",
+    before: { days: 25, color: "#9be9a8" },
+    after: { days: 25, color: "#ff0000" },
+  });
 });
 
-test("renders data-through date and current freshness state", () => {
+test("renders GitHub-returned density colors without numeric ranges", () => {
   const rendered = renderActivitySvg({
-    ...snapshot(),
-    window: { start: "2026-01-01", end: "2026-08-02" },
+    ...snapshot({ q1Color: "#ff0000" }),
     summary: { totalContributions: 100, activeDays: 1, currentMonthContributions: 1, maxDayCount: 1, generatedAt: "2026-08-03T00:00:00.000Z" },
-    levels: snapshot().levels.map((level) => ({ ...level, days: 1, share: 0.25 })),
     volumeBuckets: [],
     freshness: { status: "current", dataThrough: "2026-08-02" },
   });
-  assert.match(rendered, /data through 2026-08-02 · current/);
+  assert.match(rendered, /fill="#ff0000"/);
+  assert.doesNotMatch(rendered, />1-25</);
+  assert.match(rendered, /data through 2026-08-02 \| current/);
 });
 
-test("persists the same freshness metadata in every JSON asset", () => {
+test("persists the same freshness and GitHub calendar metadata in every JSON asset", () => {
   const source = {
     ...snapshot(),
     username: "ClarusIubar",
@@ -59,7 +63,7 @@ test("persists the same freshness metadata in every JSON asset", () => {
     freshness: { status: "current", dataThrough: "2026-08-02", comparison: { changed: false, changes: [] } },
   };
   const assets = createAssetSnapshots(source);
-  assert.deepEqual(assets.densitySnapshot.freshness, source.freshness);
+  assert.deepEqual(assets.densitySnapshot.calendar, source.calendar);
   assert.deepEqual(assets.volumeSnapshot.freshness, source.freshness);
   assert.deepEqual(assets.activitySnapshot.freshness, source.freshness);
 });
