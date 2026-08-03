@@ -6,13 +6,23 @@
     "totalDays": 366
   },
   "summary": {
-    "totalContributions": 26805,
+    "totalContributions": 26810,
     "activeDays": 243,
     "maxDayCount": 766,
     "currentMonth": "2026-08",
-    "currentMonthContributions": 341,
+    "currentMonthContributions": 346,
     "currentMonthActiveDays": 3,
-    "generatedAt": "2026-08-03T07:40:11.222Z"
+    "generatedAt": "2026-08-03T08:03:13.532Z"
+  },
+  "calendar": {
+    "colors": [
+      "#9be9a8",
+      "#40c463",
+      "#30a14e",
+      "#216e39"
+    ],
+    "isHalloween": false,
+    "levelAssignmentFingerprint": "25c24ecf0ce395d9b6cfb9fcb48113c39a208ac0c0c1f337ede7098f4ec4c453"
   },
   "levels": [
     {
@@ -21,9 +31,7 @@
       "days": 193,
       "share": 0.7942386831275721,
       "shareOfYear": 0.5273224043715847,
-      "minCount": 1,
-      "maxCount": 178,
-      "thresholdLabel": "1-178"
+      "color": "#9be9a8"
     },
     {
       "key": "SECOND_QUARTILE",
@@ -31,9 +39,7 @@
       "days": 35,
       "share": 0.1440329218106996,
       "shareOfYear": 0.09562841530054644,
-      "minCount": 180,
-      "maxCount": 358,
-      "thresholdLabel": "180-358"
+      "color": "#40c463"
     },
     {
       "key": "THIRD_QUARTILE",
@@ -41,9 +47,7 @@
       "days": 12,
       "share": 0.04938271604938271,
       "shareOfYear": 0.03278688524590164,
-      "minCount": 385,
-      "maxCount": 530,
-      "thresholdLabel": "385-530"
+      "color": "#30a14e"
     },
     {
       "key": "FOURTH_QUARTILE",
@@ -51,9 +55,7 @@
       "days": 3,
       "share": 0.012345679012345678,
       "shareOfYear": 0.00819672131147541,
-      "minCount": 566,
-      "maxCount": 766,
-      "thresholdLabel": "566-766"
+      "color": "#216e39"
     }
   ],
   "freshness": {
@@ -64,8 +66,71 @@
       "changes": [
         {
           "kind": "totalContributions",
-          "before": 26800,
-          "after": 26805
+          "before": 26805,
+          "after": 26810
+        },
+        {
+          "kind": "calendarPalette",
+          "before": null,
+          "after": [
+            "#9be9a8",
+            "#40c463",
+            "#30a14e",
+            "#216e39"
+          ]
+        },
+        {
+          "kind": "levelAssignments",
+          "before": null,
+          "after": "25c24ecf0ce395d9b6cfb9fcb48113c39a208ac0c0c1f337ede7098f4ec4c453"
+        },
+        {
+          "kind": "densityLevel",
+          "level": "Q1",
+          "before": {
+            "days": 193,
+            "color": null
+          },
+          "after": {
+            "days": 193,
+            "color": "#9be9a8"
+          }
+        },
+        {
+          "kind": "densityLevel",
+          "level": "Q2",
+          "before": {
+            "days": 35,
+            "color": null
+          },
+          "after": {
+            "days": 35,
+            "color": "#40c463"
+          }
+        },
+        {
+          "kind": "densityLevel",
+          "level": "Q3",
+          "before": {
+            "days": 12,
+            "color": null
+          },
+          "after": {
+            "days": 12,
+            "color": "#30a14e"
+          }
+        },
+        {
+          "kind": "densityLevel",
+          "level": "Q4",
+          "before": {
+            "days": 3,
+            "color": null
+          },
+          "after": {
+            "days": 3,
+            "color": "#216e39"
+          }
         }
       ]
     }
