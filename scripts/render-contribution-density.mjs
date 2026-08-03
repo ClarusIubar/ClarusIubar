@@ -138,7 +138,11 @@ export function createLevelSnapshot(days, totalDays, activeDays) {
       days: matching.length,
       share: activeDays === 0 ? 0 : matching.length / activeDays,
       shareOfYear: totalDays === 0 ? 0 : matching.length / totalDays,
-      color: matching[0]?.color ?? level.color,
+      // GitHub's GraphQL colors are its light-palette values. The profile SVG is
+      // dark-themed, so render the same relative level with GitHub's dark grass
+      // palette while keeping the API color for change detection and diagnostics.
+      color: level.color,
+      githubColor: matching[0]?.color ?? null,
     };
   });
 
@@ -205,7 +209,8 @@ export function buildSnapshot(calendar) {
       generatedAt: new Date().toISOString(),
     },
     calendar: {
-      colors: calendar.colors,
+      apiColors: calendar.colors,
+      displayColors: levels.map((level) => level.color),
       isHalloween: calendar.isHalloween,
       levelAssignmentFingerprint,
     },
@@ -237,8 +242,9 @@ export function compareSnapshots(previous, current) {
       changes.push({ kind: `window.${key}`, before: previous.window?.[key] ?? null, after: current.window[key] });
     }
   }
-  if (JSON.stringify(previous.calendar?.colors ?? null) !== JSON.stringify(current.calendar.colors)) {
-    changes.push({ kind: "calendarPalette", before: previous.calendar?.colors ?? null, after: current.calendar.colors });
+  const previousApiColors = previous.calendar?.apiColors ?? previous.calendar?.colors ?? null;
+  if (JSON.stringify(previousApiColors) !== JSON.stringify(current.calendar.apiColors)) {
+    changes.push({ kind: "calendarPalette", before: previousApiColors, after: current.calendar.apiColors });
   }
   if (previous.calendar?.levelAssignmentFingerprint !== current.calendar.levelAssignmentFingerprint) {
     changes.push({ kind: "levelAssignments", before: previous.calendar?.levelAssignmentFingerprint ?? null, after: current.calendar.levelAssignmentFingerprint });
@@ -246,12 +252,12 @@ export function compareSnapshots(previous, current) {
   const previousLevels = previous.levels ?? previous.density ?? [];
   for (const level of current.levels) {
     const prior = previousLevels.find((candidate) => candidate.key === level.key);
-    if (prior?.days !== level.days || prior?.color !== level.color) {
+    if (prior?.days !== level.days || prior?.githubColor !== level.githubColor) {
       changes.push({
         kind: "densityLevel",
         level: level.label,
-        before: prior ? { days: prior.days, color: prior.color ?? null } : null,
-        after: { days: level.days, color: level.color },
+        before: prior ? { days: prior.days, githubColor: prior.githubColor ?? null } : null,
+        after: { days: level.days, githubColor: level.githubColor },
       });
     }
   }
@@ -356,7 +362,7 @@ function renderDensitySvg(snapshot) {
   return renderMetricCard({
     snapshot,
     title: "Contribution Density",
-    desc: "GitHub-provided contribution levels and colors for active days during the last year.",
+    desc: "GitHub relative contribution levels with the GitHub dark grass palette for active days during the last year.",
     rows: snapshot.levels,
     paletteByKey: new Map(snapshot.levels.map((level) => [level.key, level])),
   });
@@ -436,7 +442,7 @@ export function renderActivitySvg(snapshot) {
   const volumePalette = new Map(VOLUME_BUCKETS.map((bucket) => [bucket.key, bucket]));
   const densityPanel = renderActivityPanel({
     title: "Density",
-    subtitle: "GitHub relative levels and colors, active days only",
+    subtitle: "GitHub relative levels, dark grass palette, active days only",
     rows: snapshot.levels,
     paletteByKey: densityPalette,
     x: 34,
@@ -455,7 +461,7 @@ export function renderActivitySvg(snapshot) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
   <title id="title">Contribution Activity</title>
-  <desc id="desc">GitHub-provided contribution levels and colors with absolute contribution volume for active days during the last year.</desc>
+  <desc id="desc">GitHub relative contribution levels with the dark grass palette and absolute contribution volume for active days during the last year.</desc>
   <style>
     .bg { fill: #0d1117; }
     .card { fill: #161b22; stroke: #30363d; stroke-width: 1; }
@@ -489,7 +495,7 @@ export function renderActivitySvg(snapshot) {
 
   ${densityPanel}
   ${volumePanel}
-  <text x="34" y="374" class="note">Percentages exclude zero-contribution days. Density uses GitHub-provided relative levels and colors.</text>
+  <text x="34" y="374" class="note">Percentages exclude zero-contribution days. Density uses GitHub relative levels and the dark grass palette.</text>
   <text x="866" y="374" text-anchor="end" class="note">data through ${escapeXml(dataThrough)} | ${escapeXml(freshnessStatus)} | generated ${escapeXml(generatedDate)}</text>
 </svg>`;
 }
