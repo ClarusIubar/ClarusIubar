@@ -30,7 +30,7 @@
     <g>
       <rect x="34" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="34" y="92" width="4" height="52" rx="2" fill="#39d353" />
-      <text x="52" y="116" class="stat-value">26,800</text>
+      <text x="52" y="116" class="stat-value">26,805</text>
       <text x="52" y="134" class="stat-label">Total</text>
     </g>
   
@@ -38,7 +38,7 @@
     <g>
       <rect x="218" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="218" y="92" width="4" height="52" rx="2" fill="#54aeff" />
-      <text x="236" y="116" class="stat-value">336</text>
+      <text x="236" y="116" class="stat-value">341</text>
       <text x="236" y="134" class="stat-label">This month</text>
     </g>
   

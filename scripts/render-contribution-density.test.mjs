@@ -10,7 +10,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 process.env.CONTRIBUTION_RENDERER_TEST_MODE = "1";
-const { compareSnapshots, renderActivitySvg } = await import("./render-contribution-density.mjs");
+const { compareSnapshots, createAssetSnapshots, renderActivitySvg } = await import("./render-contribution-density.mjs");
 
 function snapshot({ total = 100, start = "2026-01-01", end = "2026-12-31", q1 = [1, 25] } = {}) {
   return {
@@ -49,4 +49,17 @@ test("renders data-through date and current freshness state", () => {
     freshness: { status: "current", dataThrough: "2026-08-02" },
   });
   assert.match(rendered, /data through 2026-08-02 · current/);
+});
+
+test("persists the same freshness metadata in every JSON asset", () => {
+  const source = {
+    ...snapshot(),
+    username: "ClarusIubar",
+    volumeBuckets: [],
+    freshness: { status: "current", dataThrough: "2026-08-02", comparison: { changed: false, changes: [] } },
+  };
+  const assets = createAssetSnapshots(source);
+  assert.deepEqual(assets.densitySnapshot.freshness, source.freshness);
+  assert.deepEqual(assets.volumeSnapshot.freshness, source.freshness);
+  assert.deepEqual(assets.activitySnapshot.freshness, source.freshness);
 });
