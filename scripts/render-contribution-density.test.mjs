@@ -12,16 +12,16 @@ import test from "node:test";
 process.env.CONTRIBUTION_RENDERER_TEST_MODE = "1";
 const { compareSnapshots, createAssetSnapshots, renderActivitySvg } = await import("./render-contribution-density.mjs");
 
-function snapshot({ total = 100, colors = ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"], fingerprint = "same", q1Color = "#9be9a8" } = {}) {
+function snapshot({ total = 100, apiColors = ["#9be9a8", "#40c463", "#30a14e", "#216e39"], fingerprint = "same", q1GithubColor = "#9be9a8" } = {}) {
   return {
     window: { start: "2026-01-01", end: "2026-12-31" },
     summary: { totalContributions: total, generatedAt: "2026-08-03T00:00:00.000Z" },
-    calendar: { colors, isHalloween: false, levelAssignmentFingerprint: fingerprint },
+    calendar: { apiColors, displayColors: ["#0e4429", "#006d32", "#26a641", "#39d353"], isHalloween: false, levelAssignmentFingerprint: fingerprint },
     levels: [
-      { key: "FIRST_QUARTILE", label: "Q1", days: 25, share: 0.25, color: q1Color },
-      { key: "SECOND_QUARTILE", label: "Q2", days: 25, share: 0.25, color: "#40c463" },
-      { key: "THIRD_QUARTILE", label: "Q3", days: 25, share: 0.25, color: "#30a14e" },
-      { key: "FOURTH_QUARTILE", label: "Q4", days: 25, share: 0.25, color: "#216e39" },
+      { key: "FIRST_QUARTILE", label: "Q1", days: 25, share: 0.25, color: "#0e4429", githubColor: q1GithubColor },
+      { key: "SECOND_QUARTILE", label: "Q2", days: 25, share: 0.25, color: "#006d32", githubColor: "#40c463" },
+      { key: "THIRD_QUARTILE", label: "Q3", days: 25, share: 0.25, color: "#26a641", githubColor: "#30a14e" },
+      { key: "FOURTH_QUARTILE", label: "Q4", days: 25, share: 0.25, color: "#39d353", githubColor: "#216e39" },
     ],
   };
 }
@@ -31,26 +31,27 @@ test("does not report a change for identical GitHub snapshots", () => {
 });
 
 test("detects GitHub palette and level/color assignment changes", () => {
-  const result = compareSnapshots(snapshot(), snapshot({ colors: ["#000000"], fingerprint: "changed", q1Color: "#ff0000" }));
+  const result = compareSnapshots(snapshot(), snapshot({ apiColors: ["#000000"], fingerprint: "changed", q1GithubColor: "#ff0000" }));
   assert.equal(result.changed, true);
   assert.equal(result.changes.some((change) => change.kind === "calendarPalette"), true);
   assert.equal(result.changes.some((change) => change.kind === "levelAssignments"), true);
   assert.deepEqual(result.changes.find((change) => change.kind === "densityLevel"), {
     kind: "densityLevel",
     level: "Q1",
-    before: { days: 25, color: "#9be9a8" },
-    after: { days: 25, color: "#ff0000" },
+    before: { days: 25, githubColor: "#9be9a8" },
+    after: { days: 25, githubColor: "#ff0000" },
   });
 });
 
-test("renders GitHub-returned density colors without numeric ranges", () => {
+test("renders the dark grass palette without numeric ranges", () => {
   const rendered = renderActivitySvg({
-    ...snapshot({ q1Color: "#ff0000" }),
+    ...snapshot(),
     summary: { totalContributions: 100, activeDays: 1, currentMonthContributions: 1, maxDayCount: 1, generatedAt: "2026-08-03T00:00:00.000Z" },
     volumeBuckets: [],
     freshness: { status: "current", dataThrough: "2026-08-02" },
   });
-  assert.match(rendered, /fill="#ff0000"/);
+  assert.match(rendered, /fill="#0e4429"/);
+  assert.match(rendered, /fill="#39d353"/);
   assert.doesNotMatch(rendered, />1-25</);
   assert.match(rendered, /data through 2026-08-02 \| current/);
 });

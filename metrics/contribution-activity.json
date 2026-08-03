@@ -6,20 +6,26 @@
     "totalDays": 366
   },
   "summary": {
-    "totalContributions": 26814,
+    "totalContributions": 26832,
     "activeDays": 243,
     "maxDayCount": 766,
     "currentMonth": "2026-08",
-    "currentMonthContributions": 350,
+    "currentMonthContributions": 368,
     "currentMonthActiveDays": 3,
-    "generatedAt": "2026-08-03T08:06:43.123Z"
+    "generatedAt": "2026-08-03T09:36:02.070Z"
   },
   "calendar": {
-    "colors": [
+    "apiColors": [
       "#9be9a8",
       "#40c463",
       "#30a14e",
       "#216e39"
+    ],
+    "displayColors": [
+      "#0e4429",
+      "#006d32",
+      "#26a641",
+      "#39d353"
     ],
     "isHalloween": false,
     "levelAssignmentFingerprint": "25c24ecf0ce395d9b6cfb9fcb48113c39a208ac0c0c1f337ede7098f4ec4c453"
@@ -32,23 +38,56 @@
       "changes": [
         {
           "kind": "totalContributions",
-          "before": 26810,
-          "after": 26814
+          "before": 26814,
+          "after": 26832
         },
         {
-          "kind": "calendarPalette",
-          "before": null,
-          "after": [
-            "#9be9a8",
-            "#40c463",
-            "#30a14e",
-            "#216e39"
-          ]
+          "kind": "densityLevel",
+          "level": "Q1",
+          "before": {
+            "days": 193,
+            "githubColor": null
+          },
+          "after": {
+            "days": 193,
+            "githubColor": "#9be9a8"
+          }
         },
         {
-          "kind": "levelAssignments",
-          "before": null,
-          "after": "25c24ecf0ce395d9b6cfb9fcb48113c39a208ac0c0c1f337ede7098f4ec4c453"
+          "kind": "densityLevel",
+          "level": "Q2",
+          "before": {
+            "days": 35,
+            "githubColor": null
+          },
+          "after": {
+            "days": 35,
+            "githubColor": "#40c463"
+          }
+        },
+        {
+          "kind": "densityLevel",
+          "level": "Q3",
+          "before": {
+            "days": 12,
+            "githubColor": null
+          },
+          "after": {
+            "days": 12,
+            "githubColor": "#30a14e"
+          }
+        },
+        {
+          "kind": "densityLevel",
+          "level": "Q4",
+          "before": {
+            "days": 3,
+            "githubColor": null
+          },
+          "after": {
+            "days": 3,
+            "githubColor": "#216e39"
+          }
         }
       ]
     }
@@ -60,7 +99,8 @@
       "days": 193,
       "share": 0.7942386831275721,
       "shareOfYear": 0.5273224043715847,
-      "color": "#9be9a8"
+      "color": "#0e4429",
+      "githubColor": "#9be9a8"
     },
     {
       "key": "SECOND_QUARTILE",
@@ -68,7 +108,8 @@
       "days": 35,
       "share": 0.1440329218106996,
       "shareOfYear": 0.09562841530054644,
-      "color": "#40c463"
+      "color": "#006d32",
+      "githubColor": "#40c463"
     },
     {
       "key": "THIRD_QUARTILE",
@@ -76,7 +117,8 @@
       "days": 12,
       "share": 0.04938271604938271,
       "shareOfYear": 0.03278688524590164,
-      "color": "#30a14e"
+      "color": "#26a641",
+      "githubColor": "#30a14e"
     },
     {
       "key": "FOURTH_QUARTILE",
@@ -84,7 +126,8 @@
       "days": 3,
       "share": 0.012345679012345678,
       "shareOfYear": 0.00819672131147541,
-      "color": "#216e39"
+      "color": "#39d353",
+      "githubColor": "#216e39"
     }
   ],
   "volume": [
