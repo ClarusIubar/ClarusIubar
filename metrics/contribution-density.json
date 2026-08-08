@@ -1,18 +1,18 @@
 {
   "username": "ClarusIubar",
   "window": {
-    "start": "2025-08-03",
-    "end": "2026-08-08",
-    "totalDays": 371
+    "start": "2025-08-10",
+    "end": "2026-08-09",
+    "totalDays": 365
   },
   "summary": {
-    "totalContributions": 27219,
-    "activeDays": 246,
+    "totalContributions": 27470,
+    "activeDays": 248,
     "maxDayCount": 766,
     "currentMonth": "2026-08",
-    "currentMonthContributions": 756,
-    "currentMonthActiveDays": 7,
-    "generatedAt": "2026-08-07T16:18:40.052Z"
+    "currentMonthContributions": 1007,
+    "currentMonthActiveDays": 9,
+    "generatedAt": "2026-08-08T16:08:10.617Z"
   },
   "calendar": {
     "apiColors": [
@@ -28,24 +28,24 @@
       "#39d353"
     ],
     "isHalloween": false,
-    "levelAssignmentFingerprint": "fb9056fb3a5f561994b5f2ca4f299427b66c7ab735f771573408a732bb747b8a"
+    "levelAssignmentFingerprint": "b2ca8162e90feb2cdd0f368af33fc4871362a82bb4e8f7d75bd3a105527d80cb"
   },
   "levels": [
     {
       "key": "FIRST_QUARTILE",
       "label": "Q1",
-      "days": 196,
-      "share": 0.7967479674796748,
-      "shareOfYear": 0.5283018867924528,
+      "days": 197,
+      "share": 0.7943548387096774,
+      "shareOfYear": 0.5397260273972603,
       "color": "#0e4429",
       "githubColor": "#9be9a8"
     },
     {
       "key": "SECOND_QUARTILE",
       "label": "Q2",
-      "days": 35,
-      "share": 0.14227642276422764,
-      "shareOfYear": 0.09433962264150944,
+      "days": 36,
+      "share": 0.14516129032258066,
+      "shareOfYear": 0.09863013698630137,
       "color": "#006d32",
       "githubColor": "#40c463"
     },
@@ -53,8 +53,8 @@
       "key": "THIRD_QUARTILE",
       "label": "Q3",
       "days": 12,
-      "share": 0.04878048780487805,
-      "shareOfYear": 0.03234501347708895,
+      "share": 0.04838709677419355,
+      "shareOfYear": 0.03287671232876712,
       "color": "#26a641",
       "githubColor": "#30a14e"
     },
@@ -62,32 +62,61 @@
       "key": "FOURTH_QUARTILE",
       "label": "Q4",
       "days": 3,
-      "share": 0.012195121951219513,
-      "shareOfYear": 0.008086253369272238,
+      "share": 0.012096774193548387,
+      "shareOfYear": 0.00821917808219178,
       "color": "#39d353",
       "githubColor": "#216e39"
     }
   ],
   "freshness": {
     "status": "current",
-    "dataThrough": "2026-08-08",
+    "dataThrough": "2026-08-09",
     "comparison": {
       "changed": true,
       "changes": [
         {
           "kind": "totalContributions",
-          "before": 27027,
-          "after": 27219
+          "before": 27219,
+          "after": 27470
+        },
+        {
+          "kind": "window.start",
+          "before": "2025-08-03",
+          "after": "2025-08-10"
         },
         {
           "kind": "window.end",
-          "before": "2026-08-06",
-          "after": "2026-08-08"
+          "before": "2026-08-08",
+          "after": "2026-08-09"
         },
         {
           "kind": "levelAssignments",
-          "before": "53da44c132eae0b1b21a5bd207c8e9d9a64b8b625c87dab30ab0c19f7f6afa6d",
-          "after": "fb9056fb3a5f561994b5f2ca4f299427b66c7ab735f771573408a732bb747b8a"
+          "before": "fb9056fb3a5f561994b5f2ca4f299427b66c7ab735f771573408a732bb747b8a",
+          "after": "b2ca8162e90feb2cdd0f368af33fc4871362a82bb4e8f7d75bd3a105527d80cb"
+        },
+        {
+          "kind": "densityLevel",
+          "level": "Q1",
+          "before": {
+            "days": 196,
+            "githubColor": "#9be9a8"
+          },
+          "after": {
+            "days": 197,
+            "githubColor": "#9be9a8"
+          }
+        },
+        {
+          "kind": "densityLevel",
+          "level": "Q2",
+          "before": {
+            "days": 35,
+            "githubColor": "#40c463"
+          },
+          "after": {
+            "days": 36,
+            "githubColor": "#40c463"
+          }
         }
       ]
     }
