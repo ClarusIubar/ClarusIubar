@@ -1,11 +1,11 @@
 ## Contribution Activity
 
 <p align="center">
-  <img src="./metrics/contribution-activity.svg?v=0c462571e6e5" width="100%" alt="contribution activity metrics" />
+  <img src="./metrics/contribution-activity.svg?v=e91effafc215" width="100%" alt="contribution activity metrics" />
 </p>
 
 ## Languages
 
 <p align="center">
-  <img src="./metrics/metrics.languages.svg?v=37fec21d1c42" width="100%" alt="language metrics" />
+  <img src="./metrics/metrics.languages.svg?v=3de362bb1be1" width="100%" alt="language metrics" />
 </p>
