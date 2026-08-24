@@ -24,13 +24,13 @@
 
   <text x="38" y="48" class="eyebrow">LAST 1 YEAR</text>
   <text x="38" y="82" class="title">Contribution Activity</text>
-  <text x="38" y="106" class="subtitle">2025-08-24 to 2026-08-24</text>
+  <text x="38" y="106" class="subtitle">2025-08-24 to 2026-08-25</text>
 
   
     <g>
       <rect x="34" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="34" y="92" width="4" height="52" rx="2" fill="#39d353" />
-      <text x="52" y="116" class="stat-value">29,802</text>
+      <text x="52" y="116" class="stat-value">29,960</text>
       <text x="52" y="134" class="stat-label">Total</text>
     </g>
   
@@ -38,7 +38,7 @@
     <g>
       <rect x="218" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="218" y="92" width="4" height="52" rx="2" fill="#54aeff" />
-      <text x="236" y="116" class="stat-value">3,341</text>
+      <text x="236" y="116" class="stat-value">3,499</text>
       <text x="236" y="134" class="stat-label">This month</text>
     </g>
   
@@ -46,7 +46,7 @@
     <g>
       <rect x="402" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="402" y="92" width="4" height="52" rx="2" fill="#f2cc60" />
-      <text x="420" y="116" class="stat-value">263/366</text>
+      <text x="420" y="116" class="stat-value">263/367</text>
       <text x="420" y="134" class="stat-label">Active days</text>
     </g>
   
@@ -71,8 +71,8 @@
         <circle cx="65" cy="242" r="5.5" fill="#0e4429" />
         <text x="82" y="246" class="row-label">Q1</text>
         
-        <text x="145" y="246" class="row-value">177d</text>
-        <text x="200" y="246" class="row-muted">67.3%</text>
+        <text x="145" y="246" class="row-value">176d</text>
+        <text x="200" y="246" class="row-muted">66.9%</text>
         <rect x="264" y="236" width="98" height="10" rx="5" fill="#21262d" />
         <rect x="264" y="236" width="66" height="10" rx="5" fill="#0e4429" />
         
@@ -81,8 +81,8 @@
         <circle cx="65" cy="271" r="5.5" fill="#006d32" />
         <text x="82" y="275" class="row-label">Q2</text>
         
-        <text x="145" y="275" class="row-value">58d</text>
-        <text x="200" y="275" class="row-muted">22.1%</text>
+        <text x="145" y="275" class="row-value">59d</text>
+        <text x="200" y="275" class="row-muted">22.4%</text>
         <rect x="264" y="265" width="98" height="10" rx="5" fill="#21262d" />
         <rect x="264" y="265" width="22" height="10" rx="5" fill="#006d32" />
         
@@ -119,8 +119,8 @@
         <circle cx="499" cy="242" r="5.5" fill="#0a3069" />
         <text x="516" y="246" class="row-label">1-50</text>
         
-        <text x="579" y="246" class="row-value">110d</text>
-        <text x="634" y="246" class="row-muted">41.8%</text>
+        <text x="579" y="246" class="row-value">109d</text>
+        <text x="634" y="246" class="row-muted">41.4%</text>
         <rect x="698" y="236" width="98" height="10" rx="5" fill="#21262d" />
         <rect x="698" y="236" width="41" height="10" rx="5" fill="#0a3069" />
         
@@ -149,8 +149,8 @@
         <circle cx="499" cy="329" r="5.5" fill="#b6e3ff" />
         <text x="516" y="333" class="row-label">150+</text>
         
-        <text x="579" y="333" class="row-value">74d</text>
-        <text x="634" y="333" class="row-muted">28.1%</text>
+        <text x="579" y="333" class="row-value">75d</text>
+        <text x="634" y="333" class="row-muted">28.5%</text>
         <rect x="698" y="323" width="98" height="10" rx="5" fill="#21262d" />
         <rect x="698" y="323" width="28" height="10" rx="5" fill="#b6e3ff" />
         
@@ -158,5 +158,5 @@
     </g>
   
   <text x="34" y="374" class="note">Percentages exclude zero-contribution days. Density uses GitHub relative levels and the dark grass palette.</text>
-  <text x="866" y="374" text-anchor="end" class="note">data through 2026-08-24 | current | generated 2026-08-23</text>
+  <text x="866" y="374" text-anchor="end" class="note">data through 2026-08-25 | current | generated 2026-08-24</text>
 </svg>
