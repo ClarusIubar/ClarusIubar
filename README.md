@@ -7,5 +7,5 @@
 ## Languages
 
 <p align="center">
-  <img src="./metrics/metrics.languages.svg?v=8d562da386b1" width="100%" alt="language metrics" />
+  <img src="./metrics/metrics.languages.svg?v=8fb9ca9f5925" width="100%" alt="language metrics" />
 </p>

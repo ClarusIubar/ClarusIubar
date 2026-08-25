@@ -12,7 +12,7 @@
     "currentMonth": "2026-08",
     "currentMonthContributions": 3515,
     "currentMonthActiveDays": 25,
-    "generatedAt": "2026-08-25T01:02:05.607Z"
+    "generatedAt": "2026-08-25T01:07:58.849Z"
   },
   "calendar": {
     "apiColors": [
@@ -34,14 +34,8 @@
     "status": "current",
     "dataThrough": "2026-08-25",
     "comparison": {
-      "changed": true,
-      "changes": [
-        {
-          "kind": "totalContributions",
-          "before": 29969,
-          "after": 29976
-        }
-      ]
+      "changed": false,
+      "changes": []
     }
   },
   "buckets": [
