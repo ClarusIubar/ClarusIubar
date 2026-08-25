@@ -39,6 +39,46 @@ test("excludes Obsidian installed-plugin bundles and common build directories", 
   assert.equal(isExcludedArtifactPath("src/main.ts", ignore), false);
 });
 
+test("uses GitHub-provided Linguist colors instead of a local language whitelist", () => {
+  const snapshot = buildSnapshot({
+    repositories: [{
+      languages: {
+        nodes: [
+          { name: "SVG", color: "#ff9900" },
+          { name: "Dart", color: "#00B4AB" },
+          { name: "SQL", color: "#e38c00" },
+        ],
+      },
+      files: [
+        { path: "assets/logo.svg", size: 30 },
+        { path: "lib/main.dart", size: 20 },
+        { path: "db/schema.sql", size: 10 },
+      ],
+    }],
+    totals: { owned: 1, forks: 0, explicitlyExcluded: 0, privateExcluded: 0, privateIncluded: 0 },
+  }, parseMetricsIgnore(""));
+
+  assert.deepEqual(
+    snapshot.languages.map(({ name, color }) => ({ name, color })),
+    [
+      { name: "SVG", color: "#ff9900" },
+      { name: "Dart", color: "#00B4AB" },
+      { name: "SQL", color: "#e38c00" },
+    ],
+  );
+  assert.equal(snapshot.source.languageColorSource, "GitHub GraphQL Language.color");
+});
+
+test("uses a neutral color only when GitHub does not provide one", () => {
+  const snapshot = buildSnapshot({
+    repositories: [{ files: [{ path: "config/settings.yaml", size: 10 }] }],
+    totals: { owned: 1, forks: 0, explicitlyExcluded: 0, privateExcluded: 0, privateIncluded: 0 },
+  }, parseMetricsIgnore(""));
+
+  assert.equal(snapshot.languages[0].name, "YAML");
+  assert.equal(snapshot.languages[0].color, "#8b949e");
+});
+
 test("counts source files but omits generated plugin bundles", () => {
   const snapshot = buildSnapshot({
     repositories: [{

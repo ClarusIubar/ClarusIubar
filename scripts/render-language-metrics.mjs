@@ -23,25 +23,6 @@ const displayedLanguageLimit = Number.parseInt(process.env.LANGUAGE_DISPLAY_LIMI
 
 const REPOSITORY_BATCH_SIZE = 100;
 const TREE_FETCH_CONCURRENCY = 5;
-const LANGUAGE_COLORS = new Map([
-  ["TypeScript", "#3178c6"],
-  ["TSX", "#3178c6"],
-  ["Python", "#3572a5"],
-  ["Rust", "#dea584"],
-  ["JavaScript", "#f1e05a"],
-  ["Shell", "#89e051"],
-  ["PowerShell", "#012456"],
-  ["HTML", "#e34c26"],
-  ["CSS", "#563d7c"],
-  ["Java", "#b07219"],
-  ["Kotlin", "#a97bff"],
-  ["Swift", "#f05138"],
-  ["Jupyter Notebook", "#da5b0b"],
-  ["PLpgSQL", "#336790"],
-  ["Dockerfile", "#384d54"],
-  ["Makefile", "#427819"],
-  ["Astro", "#ff5d01"],
-]);
 
 const LANGUAGE_BY_EXTENSION = new Map([
   [".astro", "Astro"], [".c", "C"], [".cpp", "C++"], [".cs", "C#"], [".css", "CSS"], [".dart", "Dart"],
@@ -74,6 +55,12 @@ query ($login: String!, $isFork: Boolean!, $after: String) {
         isFork
         isPrivate
         pushedAt
+        languages(first: 100) {
+          nodes {
+            name
+            color
+          }
+        }
         defaultBranchRef {
           name
         }
@@ -110,8 +97,20 @@ function formatPercent(value) {
   return `${(value * 100).toFixed(1)}%`;
 }
 
-function colorForLanguage(name, fallback) {
-  return fallback || LANGUAGE_COLORS.get(name) || "#8b949e";
+function githubLanguageColors(repositories) {
+  const colors = new Map();
+  for (const repository of repositories) {
+    for (const language of repository.languages?.nodes ?? []) {
+      if (language.name && language.color && !colors.has(language.name)) {
+        colors.set(language.name, language.color);
+      }
+    }
+  }
+  return colors;
+}
+
+function colorForLanguage(name, githubColors) {
+  return githubColors.get(name) || "#8b949e";
 }
 
 /** Parses the public `.metricsignore` file. `repo:` values may only exclude public repositories. */
@@ -391,6 +390,7 @@ async function fetchRepositories(metricsIgnore, privateExcludedRepositories) {
 }
 
 export function buildSnapshot({ repositories, totals }, metricsIgnore) {
+  const githubColors = githubLanguageColors(repositories);
   const languages = new Map();
   let repositoryLanguageBytes = 0;
   let repositoriesWithLanguages = 0;
@@ -420,7 +420,7 @@ export function buildSnapshot({ repositories, totals }, metricsIgnore) {
         name,
         bytes: 0,
         repositories: 0,
-        color: colorForLanguage(name),
+        color: colorForLanguage(name, githubColors),
       };
       current.bytes += bytes;
       current.repositories++;
@@ -448,6 +448,7 @@ export function buildSnapshot({ repositories, totals }, metricsIgnore) {
       metricsIgnoreFile: ".metricsignore",
       privateRepositoriesIncluded: true,
       privateExclusionSecretConfigured: Boolean(totals.privateExclusionSecretConfigured),
+      languageColorSource: "GitHub GraphQL Language.color",
       repositoryBatchSize: REPOSITORY_BATCH_SIZE,
       metric: "Tracked source-file bytes after build-artifact exclusion",
       excludedPathRuleCount: metricsIgnore.pathPatterns.length,
