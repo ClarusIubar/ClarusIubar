@@ -10,7 +10,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 process.env.LANGUAGE_RENDERER_TEST_MODE = "1";
-const { buildSnapshot, isExcludedArtifactPath, isExcludedRepository, parseMetricsIgnore, parsePrivateExcludedRepositories } = await import("./render-language-metrics.mjs");
+const { buildSnapshot, colorForLanguage, isExcludedArtifactPath, isExcludedRepository, parseMetricsIgnore, parsePrivateExcludedRepositories } = await import("./render-language-metrics.mjs");
 
 const metricsIgnore = parseMetricsIgnore("repo:obsidian\npath:**/dist/**\npath:**/*.min.js\n");
 
@@ -37,6 +37,33 @@ test("excludes Obsidian installed-plugin bundles and common build directories", 
   assert.equal(isExcludedArtifactPath("web/dist/app.js", ignore), true);
   assert.equal(isExcludedArtifactPath("packages/app/node_modules/react/index.js", ignore), true);
   assert.equal(isExcludedArtifactPath("src/main.ts", ignore), false);
+});
+
+test("uses the complete GitHub Linguist color catalog instead of a local language whitelist", () => {
+  const snapshot = buildSnapshot({
+    repositories: [{
+      files: [
+        { path: "assets/logo.svg", size: 30 },
+        { path: "lib/main.dart", size: 20 },
+        { path: "db/schema.sql", size: 10 },
+      ],
+    }],
+    totals: { owned: 1, forks: 0, explicitlyExcluded: 0, privateExcluded: 0, privateIncluded: 0 },
+  }, parseMetricsIgnore(""));
+
+  assert.deepEqual(
+    snapshot.languages.map(({ name, color }) => ({ name, color })),
+    [
+      { name: "SVG", color: "#ff9900" },
+      { name: "Dart", color: "#00B4AB" },
+      { name: "SQL", color: "#e38c00" },
+    ],
+  );
+  assert.equal(snapshot.source.languageColorSource, "GitHub Linguist languages.yml snapshot");
+});
+
+test("uses a neutral color only when a language is absent from GitHub Linguist", () => {
+  assert.equal(colorForLanguage("Uncatalogued Language"), "#8b949e");
 });
 
 test("counts source files but omits generated plugin bundles", () => {

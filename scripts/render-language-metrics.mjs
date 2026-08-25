@@ -1,6 +1,7 @@
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import { GITHUB_LINGUIST_COLORS } from "./github-linguist-colors.mjs";
 
 const OWNER = process.env.PROFILE_USERNAME || process.env.GITHUB_REPOSITORY_OWNER || "ClarusIubar";
 const TOKEN =
@@ -23,25 +24,6 @@ const displayedLanguageLimit = Number.parseInt(process.env.LANGUAGE_DISPLAY_LIMI
 
 const REPOSITORY_BATCH_SIZE = 100;
 const TREE_FETCH_CONCURRENCY = 5;
-const LANGUAGE_COLORS = new Map([
-  ["TypeScript", "#3178c6"],
-  ["TSX", "#3178c6"],
-  ["Python", "#3572a5"],
-  ["Rust", "#dea584"],
-  ["JavaScript", "#f1e05a"],
-  ["Shell", "#89e051"],
-  ["PowerShell", "#012456"],
-  ["HTML", "#e34c26"],
-  ["CSS", "#563d7c"],
-  ["Java", "#b07219"],
-  ["Kotlin", "#a97bff"],
-  ["Swift", "#f05138"],
-  ["Jupyter Notebook", "#da5b0b"],
-  ["PLpgSQL", "#336790"],
-  ["Dockerfile", "#384d54"],
-  ["Makefile", "#427819"],
-  ["Astro", "#ff5d01"],
-]);
 
 const LANGUAGE_BY_EXTENSION = new Map([
   [".astro", "Astro"], [".c", "C"], [".cpp", "C++"], [".cs", "C#"], [".css", "CSS"], [".dart", "Dart"],
@@ -110,8 +92,8 @@ function formatPercent(value) {
   return `${(value * 100).toFixed(1)}%`;
 }
 
-function colorForLanguage(name, fallback) {
-  return fallback || LANGUAGE_COLORS.get(name) || "#8b949e";
+export function colorForLanguage(name) {
+  return GITHUB_LINGUIST_COLORS.get(name) || "#8b949e";
 }
 
 /** Parses the public `.metricsignore` file. `repo:` values may only exclude public repositories. */
@@ -448,6 +430,7 @@ export function buildSnapshot({ repositories, totals }, metricsIgnore) {
       metricsIgnoreFile: ".metricsignore",
       privateRepositoriesIncluded: true,
       privateExclusionSecretConfigured: Boolean(totals.privateExclusionSecretConfigured),
+      languageColorSource: "GitHub Linguist languages.yml snapshot",
       repositoryBatchSize: REPOSITORY_BATCH_SIZE,
       metric: "Tracked source-file bytes after build-artifact exclusion",
       excludedPathRuleCount: metricsIgnore.pathPatterns.length,
