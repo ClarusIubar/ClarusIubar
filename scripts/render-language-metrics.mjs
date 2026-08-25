@@ -1,6 +1,7 @@
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import { GITHUB_LINGUIST_COLORS } from "./github-linguist-colors.mjs";
 
 const OWNER = process.env.PROFILE_USERNAME || process.env.GITHUB_REPOSITORY_OWNER || "ClarusIubar";
 const TOKEN =
@@ -55,12 +56,6 @@ query ($login: String!, $isFork: Boolean!, $after: String) {
         isFork
         isPrivate
         pushedAt
-        languages(first: 100) {
-          nodes {
-            name
-            color
-          }
-        }
         defaultBranchRef {
           name
         }
@@ -97,20 +92,8 @@ function formatPercent(value) {
   return `${(value * 100).toFixed(1)}%`;
 }
 
-function githubLanguageColors(repositories) {
-  const colors = new Map();
-  for (const repository of repositories) {
-    for (const language of repository.languages?.nodes ?? []) {
-      if (language.name && language.color && !colors.has(language.name)) {
-        colors.set(language.name, language.color);
-      }
-    }
-  }
-  return colors;
-}
-
-function colorForLanguage(name, githubColors) {
-  return githubColors.get(name) || "#8b949e";
+export function colorForLanguage(name) {
+  return GITHUB_LINGUIST_COLORS.get(name) || "#8b949e";
 }
 
 /** Parses the public `.metricsignore` file. `repo:` values may only exclude public repositories. */
@@ -390,7 +373,6 @@ async function fetchRepositories(metricsIgnore, privateExcludedRepositories) {
 }
 
 export function buildSnapshot({ repositories, totals }, metricsIgnore) {
-  const githubColors = githubLanguageColors(repositories);
   const languages = new Map();
   let repositoryLanguageBytes = 0;
   let repositoriesWithLanguages = 0;
@@ -420,7 +402,7 @@ export function buildSnapshot({ repositories, totals }, metricsIgnore) {
         name,
         bytes: 0,
         repositories: 0,
-        color: colorForLanguage(name, githubColors),
+        color: colorForLanguage(name),
       };
       current.bytes += bytes;
       current.repositories++;
@@ -448,7 +430,7 @@ export function buildSnapshot({ repositories, totals }, metricsIgnore) {
       metricsIgnoreFile: ".metricsignore",
       privateRepositoriesIncluded: true,
       privateExclusionSecretConfigured: Boolean(totals.privateExclusionSecretConfigured),
-      languageColorSource: "GitHub GraphQL Language.color",
+      languageColorSource: "GitHub Linguist languages.yml snapshot",
       repositoryBatchSize: REPOSITORY_BATCH_SIZE,
       metric: "Tracked source-file bytes after build-artifact exclusion",
       excludedPathRuleCount: metricsIgnore.pathPatterns.length,
