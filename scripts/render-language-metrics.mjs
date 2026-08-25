@@ -15,7 +15,7 @@ if (!TOKEN && !process.env.LANGUAGE_RENDERER_TEST_MODE) {
 }
 
 const outputDir = path.resolve(process.cwd(), "metrics");
-const languageSvgPath = path.join(outputDir, "metrics.languages.svg");
+const languageSvgPath = path.join(outputDir, "metrics.languages.linguist.svg");
 const languageJsonPath = path.join(outputDir, "metrics.languages.json");
 const metricsIgnorePath = path.resolve(process.cwd(), ".metricsignore");
 const graphqlMaxAttempts = Number.parseInt(process.env.LANGUAGE_GRAPHQL_MAX_ATTEMPTS || "4", 10);
