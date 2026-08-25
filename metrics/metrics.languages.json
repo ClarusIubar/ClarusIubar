@@ -1,226 +1,166 @@
 {
   "username": "ClarusIubar",
-  "generatedAt": "2026-08-25T00:54:35.613Z",
+  "generatedAt": "2026-08-25T01:01:59.674Z",
   "source": {
     "ownerAffiliations": [
       "OWNER"
     ],
     "includeForks": false,
-    "excludedRepositories": [
-      "obsidian"
-    ],
+    "metricsIgnoreFile": ".metricsignore",
+    "privateRepositoriesExcluded": true,
     "repositoryBatchSize": 100,
     "metric": "Tracked source-file bytes after build-artifact exclusion",
-    "excludedPathRules": [
-      "build directories",
-      "minified bundles",
-      "Obsidian installed plugin assets"
-    ]
+    "excludedPathRuleCount": 18
   },
   "summary": {
-    "totalRepositories": 101,
+    "totalRepositories": 30,
     "ownedRepositories": 102,
     "forkRepositories": 0,
-    "explicitlyExcludedRepositories": 1,
-    "repositoriesWithLanguages": 84,
-    "languageCount": 19,
-    "totalLanguageBytes": 143196885,
-    "displayedLanguageBytes": 141020900,
+    "explicitlyExcludedRepositories": 0,
+    "privateRepositoriesExcluded": 72,
+    "repositoriesWithLanguages": 23,
+    "languageCount": 11,
+    "totalLanguageBytes": 6161432,
+    "displayedLanguageBytes": 6123963,
     "displayedLanguageCount": 8,
-    "excludedArtifactFiles": 224,
-    "excludedArtifactBytes": 2311800
+    "excludedArtifactFiles": 1,
+    "excludedArtifactBytes": 1842
   },
   "languages": [
     {
-      "name": "Python",
-      "bytes": 83951592,
-      "repositories": 57,
-      "color": "#3572a5",
-      "share": 0.586266887020622
-    },
-    {
-      "name": "TypeScript",
-      "bytes": 29395257,
-      "repositories": 20,
-      "color": "#3178c6",
-      "share": 0.20527860644454662
+      "name": "SVG",
+      "bytes": 2449694,
+      "repositories": 3,
+      "color": "#8b949e",
+      "share": 0.39758517175877295
     },
     {
       "name": "JavaScript",
-      "bytes": 19943872,
-      "repositories": 34,
+      "bytes": 2242768,
+      "repositories": 9,
       "color": "#f1e05a",
-      "share": 0.13927587880141387
+      "share": 0.36400109584914675
     },
     {
-      "name": "SVG",
-      "bytes": 2482890,
-      "repositories": 6,
-      "color": "#8b949e",
-      "share": 0.017338994489998857
-    },
-    {
-      "name": "Shell",
-      "bytes": 1598393,
+      "name": "Python",
+      "bytes": 658400,
       "repositories": 14,
-      "color": "#89e051",
-      "share": 0.011162205099643054
+      "color": "#3572a5",
+      "share": 0.10685827580341713
     },
     {
-      "name": "Dart",
-      "bytes": 1570954,
-      "repositories": 2,
-      "color": "#8b949e",
-      "share": 0.010970587802939987
+      "name": "TypeScript",
+      "bytes": 352206,
+      "repositories": 3,
+      "color": "#3178c6",
+      "share": 0.057163010157379
     },
     {
       "name": "Jupyter Notebook",
-      "bytes": 1260951,
-      "repositories": 3,
+      "bytes": 273440,
+      "repositories": 2,
       "color": "#da5b0b",
-      "share": 0.00880571529192133
-    },
-    {
-      "name": "SQL",
-      "bytes": 816991,
-      "repositories": 15,
-      "color": "#8b949e",
-      "share": 0.005705368521109939
-    },
-    {
-      "name": "CSS",
-      "bytes": 804370,
-      "repositories": 29,
-      "color": "#563d7c",
-      "share": 0.005617231129015132
-    },
-    {
-      "name": "YAML",
-      "bytes": 765932,
-      "repositories": 44,
-      "color": "#8b949e",
-      "share": 0.005348803502254955
+      "share": 0.04437929364472415
     },
     {
       "name": "HTML",
-      "bytes": 296868,
-      "repositories": 37,
+      "bytes": 60662,
+      "repositories": 12,
       "color": "#e34c26",
-      "share": 0.002073145655368132
+      "share": 0.009845438527926624
     },
     {
-      "name": "Rust",
-      "bytes": 130419,
-      "repositories": 1,
-      "color": "#dea584",
-      "share": 0.0009107670184306034
-    },
-    {
-      "name": "PowerShell",
-      "bytes": 58082,
-      "repositories": 6,
-      "color": "#012456",
-      "share": 0.000405609381796259
-    },
-    {
-      "name": "XML",
-      "bytes": 38545,
-      "repositories": 3,
-      "color": "#8b949e",
-      "share": 0.00026917484971827427
-    },
-    {
-      "name": "C++",
-      "bytes": 32704,
-      "repositories": 2,
-      "color": "#8b949e",
-      "share": 0.00022838485627672697
+      "name": "CSS",
+      "bytes": 60214,
+      "repositories": 8,
+      "color": "#563d7c",
+      "share": 0.009772728157999634
     },
     {
       "name": "C",
-      "bytes": 32511,
-      "repositories": 3,
-      "color": "#8b949e",
-      "share": 0.00022703706159529937
-    },
-    {
-      "name": "Kotlin",
-      "bytes": 9722,
-      "repositories": 2,
-      "color": "#a97bff",
-      "share": 0.00006789253830486606
-    },
-    {
-      "name": "C#",
-      "bytes": 5032,
+      "bytes": 26579,
       "repositories": 1,
       "color": "#8b949e",
-      "share": 0.000035140429206962146
+      "share": 0.004313769915824763
     },
     {
-      "name": "Swift",
-      "bytes": 1800,
-      "repositories": 2,
-      "color": "#f05138",
-      "share": 0.000012570105837148622
+      "name": "C++",
+      "bytes": 18983,
+      "repositories": 1,
+      "color": "#8b949e",
+      "share": 0.0030809396257233707
+    },
+    {
+      "name": "YAML",
+      "bytes": 10554,
+      "repositories": 8,
+      "color": "#8b949e",
+      "share": 0.0017129134915389798
+    },
+    {
+      "name": "SQL",
+      "bytes": 7932,
+      "repositories": 1,
+      "color": "#8b949e",
+      "share": 0.0012873630675466353
     }
   ],
   "displayedLanguages": [
     {
-      "name": "Python",
-      "bytes": 83951592,
-      "repositories": 57,
-      "color": "#3572a5",
-      "share": 0.586266887020622
-    },
-    {
-      "name": "TypeScript",
-      "bytes": 29395257,
-      "repositories": 20,
-      "color": "#3178c6",
-      "share": 0.20527860644454662
+      "name": "SVG",
+      "bytes": 2449694,
+      "repositories": 3,
+      "color": "#8b949e",
+      "share": 0.39758517175877295
     },
     {
       "name": "JavaScript",
-      "bytes": 19943872,
-      "repositories": 34,
+      "bytes": 2242768,
+      "repositories": 9,
       "color": "#f1e05a",
-      "share": 0.13927587880141387
+      "share": 0.36400109584914675
     },
     {
-      "name": "SVG",
-      "bytes": 2482890,
-      "repositories": 6,
-      "color": "#8b949e",
-      "share": 0.017338994489998857
-    },
-    {
-      "name": "Shell",
-      "bytes": 1598393,
+      "name": "Python",
+      "bytes": 658400,
       "repositories": 14,
-      "color": "#89e051",
-      "share": 0.011162205099643054
+      "color": "#3572a5",
+      "share": 0.10685827580341713
     },
     {
-      "name": "Dart",
-      "bytes": 1570954,
-      "repositories": 2,
-      "color": "#8b949e",
-      "share": 0.010970587802939987
+      "name": "TypeScript",
+      "bytes": 352206,
+      "repositories": 3,
+      "color": "#3178c6",
+      "share": 0.057163010157379
     },
     {
       "name": "Jupyter Notebook",
-      "bytes": 1260951,
-      "repositories": 3,
+      "bytes": 273440,
+      "repositories": 2,
       "color": "#da5b0b",
-      "share": 0.00880571529192133
+      "share": 0.04437929364472415
     },
     {
-      "name": "SQL",
-      "bytes": 816991,
-      "repositories": 15,
+      "name": "HTML",
+      "bytes": 60662,
+      "repositories": 12,
+      "color": "#e34c26",
+      "share": 0.009845438527926624
+    },
+    {
+      "name": "CSS",
+      "bytes": 60214,
+      "repositories": 8,
+      "color": "#563d7c",
+      "share": 0.009772728157999634
+    },
+    {
+      "name": "C",
+      "bytes": 26579,
+      "repositories": 1,
       "color": "#8b949e",
-      "share": 0.005705368521109939
+      "share": 0.004313769915824763
     }
   ]
 }
