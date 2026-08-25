@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 const readmePath = "README.md";
 const assetPaths = [
   { path: "metrics/contribution-activity.svg", pattern: /src="\.\/metrics\/contribution-activity\.svg(?:\?v=[^"]*)?"/ },
-  { path: "metrics/metrics.languages.svg", pattern: /src="\.\/metrics\/metrics\.languages\.svg(?:\?v=[^"]*)?"/ },
+  { path: "metrics/metrics.languages.linguist.svg", pattern: /src="\.\/metrics\/metrics\.languages\.linguist\.svg(?:\?v=[^"]*)?"/ },
 ];
 
 function cacheKey(content) {
