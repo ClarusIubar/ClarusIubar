@@ -6,13 +6,13 @@
     "totalDays": 367
   },
   "summary": {
-    "totalContributions": 29980,
+    "totalContributions": 29984,
     "activeDays": 264,
     "maxDayCount": 768,
     "currentMonth": "2026-08",
-    "currentMonthContributions": 3519,
+    "currentMonthContributions": 3523,
     "currentMonthActiveDays": 25,
-    "generatedAt": "2026-08-25T01:29:59.728Z"
+    "generatedAt": "2026-08-25T01:35:00.651Z"
   },
   "calendar": {
     "apiColors": [
@@ -34,8 +34,14 @@
     "status": "current",
     "dataThrough": "2026-08-25",
     "comparison": {
-      "changed": false,
-      "changes": []
+      "changed": true,
+      "changes": [
+        {
+          "kind": "totalContributions",
+          "before": 29980,
+          "after": 29984
+        }
+      ]
     }
   },
   "buckets": [
