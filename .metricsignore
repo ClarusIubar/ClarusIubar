@@ -1,8 +1,8 @@
 # Profile language metrics exclusions.
 #
 # `repo:` only accepts a bare public repository name. Private repositories are
-# automatically excluded and must never be listed here.
-repo:obsidian
+# included by default and must never be listed here. To exclude a private
+# repository, set the `LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES` Actions secret.
 
 # Generated build output and dependency trees.
 path:**/.next/**

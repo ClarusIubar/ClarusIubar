@@ -28,6 +28,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ env.METRICS_RUNTIME_TOKEN }}
           PROFILE_USERNAME: ClarusIubar
+          LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES: ${{ secrets.LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES }}
         run: node scripts/render-language-metrics.mjs
 
       - name: Generate contribution density assets

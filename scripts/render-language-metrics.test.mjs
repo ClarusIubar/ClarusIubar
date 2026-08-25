@@ -10,7 +10,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 process.env.LANGUAGE_RENDERER_TEST_MODE = "1";
-const { buildSnapshot, isExcludedArtifactPath, isExcludedRepository, parseMetricsIgnore } = await import("./render-language-metrics.mjs");
+const { buildSnapshot, isExcludedArtifactPath, isExcludedRepository, parseMetricsIgnore, parsePrivateExcludedRepositories } = await import("./render-language-metrics.mjs");
 
 const metricsIgnore = parseMetricsIgnore("repo:obsidian\npath:**/dist/**\npath:**/*.min.js\n");
 
@@ -20,8 +20,14 @@ test("accepts only bare repository names and file-path rules from .metricsignore
   assert.throws(() => parseMetricsIgnore("repo:ClarusIubar/private-repo"), /bare repository name/);
 });
 
-test("always excludes private repositories without retaining their names", () => {
-  assert.equal(isExcludedRepository({ name: "secret", nameWithOwner: "ClarusIubar/secret", isPrivate: true }, metricsIgnore), true);
+test("includes private repositories unless a private exclusion secret matches", () => {
+  const privateExcluded = parsePrivateExcludedRepositories("secret");
+  const privateRepository = { name: "secret", nameWithOwner: "ClarusIubar/secret", isPrivate: true, isFork: false };
+  assert.equal(isExcludedRepository(privateRepository, metricsIgnore, privateExcluded), true);
+  assert.equal(isExcludedRepository({ ...privateRepository, name: "included", nameWithOwner: "ClarusIubar/included" }, metricsIgnore, privateExcluded), false);
+  assert.equal(isExcludedRepository({ ...privateRepository, name: "obsidian", nameWithOwner: "ClarusIubar/obsidian" }, metricsIgnore), false);
+  assert.equal(isExcludedRepository({ name: "fork", isFork: true, isPrivate: false }, metricsIgnore), true);
+  assert.throws(() => parsePrivateExcludedRepositories("ClarusIubar/private-repo"), /invalid repository name/);
 });
 
 test("excludes Obsidian installed-plugin bundles and common build directories", () => {
@@ -44,7 +50,7 @@ test("counts source files but omits generated plugin bundles", () => {
         { path: "scripts/clean.js", size: 120 },
       ],
     }],
-    totals: { owned: 1, forks: 0, explicitlyExcluded: 0, privateExcluded: 0 },
+    totals: { owned: 1, forks: 0, explicitlyExcluded: 0, privateExcluded: 0, privateIncluded: 0 },
   }, parseMetricsIgnore("path:**/.obsidian*/plugins/**/main.js\npath:**/.obsidian*/plugins/**/styles.css\n"));
 
   assert.equal(snapshot.summary.totalLanguageBytes, 120);
@@ -52,4 +58,6 @@ test("counts source files but omits generated plugin bundles", () => {
   assert.equal(snapshot.summary.excludedArtifactFiles, 2);
   assert.deepEqual(snapshot.languages.map(({ name, bytes }) => ({ name, bytes })), [{ name: "JavaScript", bytes: 120 }]);
   assert.equal("excludedRepositories" in snapshot.source, false);
+  assert.equal(snapshot.source.privateRepositoriesIncluded, true);
+  assert.equal(snapshot.source.privateExclusionSecretConfigured, false);
 });

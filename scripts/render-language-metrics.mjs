@@ -114,10 +114,7 @@ function colorForLanguage(name, fallback) {
   return fallback || LANGUAGE_COLORS.get(name) || "#8b949e";
 }
 
-/**
- * Parses the repository-tracked `.metricsignore` file. `repo:` values must be
- * bare public names; private repositories are always excluded without a name rule.
- */
+/** Parses the public `.metricsignore` file. `repo:` values may only exclude public repositories. */
 export function parseMetricsIgnore(contents) {
   const repositoryNames = new Set();
   const pathPatterns = [];
@@ -141,6 +138,23 @@ export function parseMetricsIgnore(contents) {
     throw new Error(`.metricsignore line ${index + 1}: expected repo: or path: rule.`);
   }
   return { repositoryNames, pathPatterns, pathMatchers: pathPatterns.map(globToRegExp) };
+}
+
+/**
+ * Parses private repository exclusions supplied only through GitHub Actions secrets.
+ * The generic error deliberately does not echo the secret value.
+ */
+export function parsePrivateExcludedRepositories(value) {
+  const names = new Set();
+  for (const rawName of value.split(/[\r\n,]+/)) {
+    const name = rawName.trim();
+    if (!name) continue;
+    if (!/^[A-Za-z0-9._-]+$/.test(name)) {
+      throw new Error("LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES contains an invalid repository name.");
+    }
+    names.add(name.toLowerCase());
+  }
+  return names;
 }
 
 function globToRegExp(pattern) {
@@ -176,8 +190,10 @@ export function languageForPath(filePath) {
   return LANGUAGE_BY_EXTENSION.get(extension) ?? null;
 }
 
-export function isExcludedRepository(repository, metricsIgnore) {
-  return repository.isPrivate || metricsIgnore.repositoryNames.has(repository.name.toLowerCase());
+export function isExcludedRepository(repository, metricsIgnore, privateExcludedRepositories = new Set()) {
+  if (repository.isFork) return true;
+  if (repository.isPrivate) return privateExcludedRepositories.has(repository.name.toLowerCase());
+  return metricsIgnore.repositoryNames.has(repository.name.toLowerCase());
 }
 
 function sleep(ms) {
@@ -335,11 +351,20 @@ async function fetchRepositoriesByForkState(isFork) {
   }
 }
 
-async function fetchRepositories(metricsIgnore) {
+async function fetchRepositories(metricsIgnore, privateExcludedRepositories) {
   const owned = await fetchRepositoriesByForkState(false);
-  const explicitlyExcluded = owned.repositories.filter((repository) => !repository.isPrivate && isExcludedRepository(repository, metricsIgnore));
-  const privateExcluded = owned.repositories.filter((repository) => repository.isPrivate);
-  const includedRepositories = owned.repositories.filter((repository) => !isExcludedRepository(repository, metricsIgnore));
+  if (owned.repositories.some((repository) => repository.isPrivate && metricsIgnore.repositoryNames.has(repository.name.toLowerCase()))) {
+    throw new Error(".metricsignore must not list private repositories; use LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES instead.");
+  }
+  const explicitlyExcluded = owned.repositories.filter(
+    (repository) => !repository.isPrivate && metricsIgnore.repositoryNames.has(repository.name.toLowerCase()),
+  );
+  const privateExcluded = owned.repositories.filter(
+    (repository) => repository.isPrivate && privateExcludedRepositories.has(repository.name.toLowerCase()),
+  );
+  const includedRepositories = owned.repositories.filter(
+    (repository) => !isExcludedRepository(repository, metricsIgnore, privateExcludedRepositories),
+  );
   const repositories = await mapWithConcurrency(includedRepositories, TREE_FETCH_CONCURRENCY, async (repository) => {
     const branch = repository.defaultBranchRef?.name;
     if (!branch) return { ...repository, files: [] };
@@ -347,7 +372,7 @@ async function fetchRepositories(metricsIgnore) {
       `https://api.github.com/repos/${repository.nameWithOwner}/git/trees/${encodeURIComponent(branch)}?recursive=1`,
     );
     if (tree.truncated) {
-      throw new Error(`Git tree is truncated for ${repository.nameWithOwner}; cannot calculate accurate file-level language metrics.`);
+      throw new Error("A repository Git tree is truncated; cannot calculate accurate file-level language metrics.");
     }
     return { ...repository, files: tree.tree.filter((entry) => entry.type === "blob" && Number.isFinite(entry.size)) };
   });
@@ -359,6 +384,8 @@ async function fetchRepositories(metricsIgnore) {
       forks: 0,
       explicitlyExcluded: explicitlyExcluded.length,
       privateExcluded: privateExcluded.length,
+      privateIncluded: owned.repositories.filter((repository) => repository.isPrivate).length - privateExcluded.length,
+      privateExclusionSecretConfigured: privateExcludedRepositories.size > 0,
     },
   };
 }
@@ -419,7 +446,8 @@ export function buildSnapshot({ repositories, totals }, metricsIgnore) {
       ownerAffiliations: ["OWNER"],
       includeForks: false,
       metricsIgnoreFile: ".metricsignore",
-      privateRepositoriesExcluded: true,
+      privateRepositoriesIncluded: true,
+      privateExclusionSecretConfigured: Boolean(totals.privateExclusionSecretConfigured),
       repositoryBatchSize: REPOSITORY_BATCH_SIZE,
       metric: "Tracked source-file bytes after build-artifact exclusion",
       excludedPathRuleCount: metricsIgnore.pathPatterns.length,
@@ -430,6 +458,7 @@ export function buildSnapshot({ repositories, totals }, metricsIgnore) {
       forkRepositories: totals.forks,
       explicitlyExcludedRepositories: totals.explicitlyExcluded,
       privateRepositoriesExcluded: totals.privateExcluded,
+      privateRepositoriesIncluded: totals.privateIncluded,
       repositoriesWithLanguages,
       languageCount: sortedLanguages.length,
       totalLanguageBytes: repositoryLanguageBytes,
@@ -538,9 +567,12 @@ function stripTrailingWhitespace(value) {
 
 async function main() {
   const metricsIgnore = parseMetricsIgnore(await readFile(metricsIgnorePath, "utf8"));
+  const privateExcludedRepositories = parsePrivateExcludedRepositories(
+    process.env.LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES || "",
+  );
   let source;
   try {
-    source = await fetchRepositories(metricsIgnore);
+    source = await fetchRepositories(metricsIgnore, privateExcludedRepositories);
   } catch (error) {
     if (error.transient && (await existingGeneratedAssetsAvailable())) {
       console.warn("GitHub GraphQL is temporarily unavailable; preserving existing language assets.");
