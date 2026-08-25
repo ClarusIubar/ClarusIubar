@@ -1,4 +1,4 @@
-import { access, mkdir, writeFile } from "node:fs/promises";
+import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 
@@ -16,13 +16,12 @@ if (!TOKEN && !process.env.LANGUAGE_RENDERER_TEST_MODE) {
 const outputDir = path.resolve(process.cwd(), "metrics");
 const languageSvgPath = path.join(outputDir, "metrics.languages.svg");
 const languageJsonPath = path.join(outputDir, "metrics.languages.json");
+const metricsIgnorePath = path.resolve(process.cwd(), ".metricsignore");
 const graphqlMaxAttempts = Number.parseInt(process.env.LANGUAGE_GRAPHQL_MAX_ATTEMPTS || "4", 10);
 const graphqlRetryBaseDelayMs = Number.parseInt(process.env.LANGUAGE_GRAPHQL_RETRY_BASE_DELAY_MS || "1500", 10);
 const displayedLanguageLimit = Number.parseInt(process.env.LANGUAGE_DISPLAY_LIMIT || "8", 10);
-const excludedRepositories = parseExcludedRepositories(process.env.LANGUAGE_EXCLUDED_REPOSITORIES || "");
 
 const REPOSITORY_BATCH_SIZE = 100;
-const LANGUAGE_BATCH_SIZE = 10;
 const TREE_FETCH_CONCURRENCY = 5;
 const LANGUAGE_COLORS = new Map([
   ["TypeScript", "#3178c6"],
@@ -52,10 +51,6 @@ const LANGUAGE_BY_EXTENSION = new Map([
   [".r", "R"], [".rb", "Ruby"], [".rs", "Rust"], [".scala", "Scala"], [".scss", "SCSS"], [".sh", "Shell"],
   [".sql", "SQL"], [".swift", "Swift"], [".svg", "SVG"], [".ts", "TypeScript"], [".tsx", "TypeScript"],
   [".vue", "Vue"], [".xml", "XML"], [".yml", "YAML"], [".yaml", "YAML"],
-]);
-
-const BUILD_DIRECTORY_NAMES = new Set([
-  ".next", ".nuxt", ".svelte-kit", "artifacts", "build", "coverage", "dist", "node_modules", "out", "target",
 ]);
 
 const repositoriesQuery = `
@@ -120,20 +115,60 @@ function colorForLanguage(name, fallback) {
 }
 
 /**
- * Returns true for paths whose bytes are generated output rather than authored source.
- * Obsidian plugin installations are treated as build output because their main.js and
- * styles.css files are downloaded bundles, not code maintained in the vault repository.
+ * Parses the repository-tracked `.metricsignore` file. `repo:` values must be
+ * bare public names; private repositories are always excluded without a name rule.
  */
-export function isExcludedArtifactPath(filePath) {
-  const segments = filePath.split("/");
-  if (segments.some((segment) => BUILD_DIRECTORY_NAMES.has(segment))) {
-    return true;
+export function parseMetricsIgnore(contents) {
+  const repositoryNames = new Set();
+  const pathPatterns = [];
+  for (const [index, rawLine] of contents.split(/\r?\n/).entries()) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) continue;
+    if (line.startsWith("repo:")) {
+      const name = line.slice("repo:".length).trim();
+      if (!/^[A-Za-z0-9._-]+$/.test(name)) {
+        throw new Error(`.metricsignore line ${index + 1}: repo rules require a bare repository name.`);
+      }
+      repositoryNames.add(name.toLowerCase());
+      continue;
+    }
+    if (line.startsWith("path:")) {
+      const pattern = line.slice("path:".length).trim();
+      if (!pattern) throw new Error(`.metricsignore line ${index + 1}: path rule cannot be empty.`);
+      pathPatterns.push(pattern);
+      continue;
+    }
+    throw new Error(`.metricsignore line ${index + 1}: expected repo: or path: rule.`);
   }
-  if (segments.some((segment) => segment.startsWith(".obsidian")) && segments.includes("plugins")) {
-    const fileName = segments.at(-1);
-    return fileName === "main.js" || fileName === "styles.css";
+  return { repositoryNames, pathPatterns, pathMatchers: pathPatterns.map(globToRegExp) };
+}
+
+function globToRegExp(pattern) {
+  let expression = "^";
+  for (let index = 0; index < pattern.length; index++) {
+    const character = pattern[index];
+    if (character === "*" && pattern[index + 1] === "*") {
+      index++;
+      if (pattern[index + 1] === "/") {
+        index++;
+        expression += "(?:.*/)?";
+      } else {
+        expression += ".*";
+      }
+    } else if (character === "*") {
+      expression += "[^/]*";
+    } else if (character === "?") {
+      expression += "[^/]";
+    } else {
+      expression += character.replace(/[|\\{}()[\]^$+?.]/g, "\\$&");
+    }
   }
-  return /(?:\.min\.(?:css|js)$|(?:^|\/)(?:bundle|vendor)\.(?:css|js)$)/i.test(filePath);
+  return new RegExp(`${expression}$`);
+}
+
+/** Returns true when a tracked file matches a `.metricsignore` path rule. */
+export function isExcludedArtifactPath(filePath, metricsIgnore) {
+  return metricsIgnore.pathMatchers.some((matcher) => matcher.test(filePath));
 }
 
 export function languageForPath(filePath) {
@@ -141,13 +176,8 @@ export function languageForPath(filePath) {
   return LANGUAGE_BY_EXTENSION.get(extension) ?? null;
 }
 
-/** Parses comma-separated repository names, accepting either owner/name or name. */
-export function parseExcludedRepositories(value) {
-  return new Set(value.split(",").map((name) => name.trim().toLowerCase()).filter(Boolean));
-}
-
-export function isExcludedRepository(repository, excluded = excludedRepositories) {
-  return excluded.has(repository.name.toLowerCase()) || excluded.has(repository.nameWithOwner.toLowerCase());
+export function isExcludedRepository(repository, metricsIgnore) {
+  return repository.isPrivate || metricsIgnore.repositoryNames.has(repository.name.toLowerCase());
 }
 
 function sleep(ms) {
@@ -305,9 +335,11 @@ async function fetchRepositoriesByForkState(isFork) {
   }
 }
 
-async function fetchRepositories() {
+async function fetchRepositories(metricsIgnore) {
   const owned = await fetchRepositoriesByForkState(false);
-  const includedRepositories = owned.repositories.filter((repository) => !isExcludedRepository(repository));
+  const explicitlyExcluded = owned.repositories.filter((repository) => !repository.isPrivate && isExcludedRepository(repository, metricsIgnore));
+  const privateExcluded = owned.repositories.filter((repository) => repository.isPrivate);
+  const includedRepositories = owned.repositories.filter((repository) => !isExcludedRepository(repository, metricsIgnore));
   const repositories = await mapWithConcurrency(includedRepositories, TREE_FETCH_CONCURRENCY, async (repository) => {
     const branch = repository.defaultBranchRef?.name;
     if (!branch) return { ...repository, files: [] };
@@ -325,12 +357,13 @@ async function fetchRepositories() {
     totals: {
       owned: owned.totalCount,
       forks: 0,
-      explicitlyExcluded: owned.repositories.length - includedRepositories.length,
+      explicitlyExcluded: explicitlyExcluded.length,
+      privateExcluded: privateExcluded.length,
     },
   };
 }
 
-export function buildSnapshot({ repositories, totals }) {
+export function buildSnapshot({ repositories, totals }, metricsIgnore) {
   const languages = new Map();
   let repositoryLanguageBytes = 0;
   let repositoriesWithLanguages = 0;
@@ -340,7 +373,7 @@ export function buildSnapshot({ repositories, totals }) {
   for (const repository of repositories) {
     const repositoryLanguages = new Map();
     for (const file of repository.files ?? []) {
-      if (isExcludedArtifactPath(file.path)) {
+      if (isExcludedArtifactPath(file.path, metricsIgnore)) {
         excludedArtifactFiles++;
         excludedArtifactBytes += file.size;
         continue;
@@ -385,16 +418,18 @@ export function buildSnapshot({ repositories, totals }) {
     source: {
       ownerAffiliations: ["OWNER"],
       includeForks: false,
-      excludedRepositories: [...excludedRepositories],
+      metricsIgnoreFile: ".metricsignore",
+      privateRepositoriesExcluded: true,
       repositoryBatchSize: REPOSITORY_BATCH_SIZE,
       metric: "Tracked source-file bytes after build-artifact exclusion",
-      excludedPathRules: ["build directories", "minified bundles", "Obsidian installed plugin assets"],
+      excludedPathRuleCount: metricsIgnore.pathPatterns.length,
     },
     summary: {
       totalRepositories: repositories.length,
       ownedRepositories: totals.owned,
       forkRepositories: totals.forks,
       explicitlyExcludedRepositories: totals.explicitlyExcluded,
+      privateRepositoriesExcluded: totals.privateExcluded,
       repositoriesWithLanguages,
       languageCount: sortedLanguages.length,
       totalLanguageBytes: repositoryLanguageBytes,
@@ -502,9 +537,10 @@ function stripTrailingWhitespace(value) {
 }
 
 async function main() {
+  const metricsIgnore = parseMetricsIgnore(await readFile(metricsIgnorePath, "utf8"));
   let source;
   try {
-    source = await fetchRepositories();
+    source = await fetchRepositories(metricsIgnore);
   } catch (error) {
     if (error.transient && (await existingGeneratedAssetsAvailable())) {
       console.warn("GitHub GraphQL is temporarily unavailable; preserving existing language assets.");
@@ -514,7 +550,7 @@ async function main() {
     throw error;
   }
 
-  const snapshot = buildSnapshot(source);
+  const snapshot = buildSnapshot(source, metricsIgnore);
   const svg = stripTrailingWhitespace(renderLanguageSvg(snapshot));
 
   await mkdir(outputDir, { recursive: true });

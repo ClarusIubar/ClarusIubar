@@ -28,7 +28,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ env.METRICS_RUNTIME_TOKEN }}
           PROFILE_USERNAME: ClarusIubar
-          LANGUAGE_EXCLUDED_REPOSITORIES: obsidian
         run: node scripts/render-language-metrics.mjs
 
       - name: Generate contribution density assets
