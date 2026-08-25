@@ -9,7 +9,7 @@ const TOKEN =
   process.env.GITHUB_TOKEN ||
   "";
 
-if (!TOKEN) {
+if (!TOKEN && !process.env.LANGUAGE_RENDERER_TEST_MODE) {
   throw new Error("Missing GitHub token. Set METRICS_TOKEN, METRICS_RUNTIME_TOKEN, or GITHUB_TOKEN.");
 }
 
@@ -19,9 +19,11 @@ const languageJsonPath = path.join(outputDir, "metrics.languages.json");
 const graphqlMaxAttempts = Number.parseInt(process.env.LANGUAGE_GRAPHQL_MAX_ATTEMPTS || "4", 10);
 const graphqlRetryBaseDelayMs = Number.parseInt(process.env.LANGUAGE_GRAPHQL_RETRY_BASE_DELAY_MS || "1500", 10);
 const displayedLanguageLimit = Number.parseInt(process.env.LANGUAGE_DISPLAY_LIMIT || "8", 10);
+const excludedRepositories = parseExcludedRepositories(process.env.LANGUAGE_EXCLUDED_REPOSITORIES || "");
 
 const REPOSITORY_BATCH_SIZE = 100;
 const LANGUAGE_BATCH_SIZE = 10;
+const TREE_FETCH_CONCURRENCY = 5;
 const LANGUAGE_COLORS = new Map([
   ["TypeScript", "#3178c6"],
   ["TSX", "#3178c6"],
@@ -40,6 +42,20 @@ const LANGUAGE_COLORS = new Map([
   ["Dockerfile", "#384d54"],
   ["Makefile", "#427819"],
   ["Astro", "#ff5d01"],
+]);
+
+const LANGUAGE_BY_EXTENSION = new Map([
+  [".astro", "Astro"], [".c", "C"], [".cpp", "C++"], [".cs", "C#"], [".css", "CSS"], [".dart", "Dart"],
+  [".go", "Go"], [".h", "C"], [".html", "HTML"], [".ipynb", "Jupyter Notebook"], [".java", "Java"],
+  [".js", "JavaScript"], [".jsx", "JavaScript"], [".kt", "Kotlin"], [".kts", "Kotlin"], [".lua", "Lua"],
+  [".mjs", "JavaScript"], [".php", "PHP"], [".pl", "Perl"], [".ps1", "PowerShell"], [".py", "Python"],
+  [".r", "R"], [".rb", "Ruby"], [".rs", "Rust"], [".scala", "Scala"], [".scss", "SCSS"], [".sh", "Shell"],
+  [".sql", "SQL"], [".swift", "Swift"], [".svg", "SVG"], [".ts", "TypeScript"], [".tsx", "TypeScript"],
+  [".vue", "Vue"], [".xml", "XML"], [".yml", "YAML"], [".yaml", "YAML"],
+]);
+
+const BUILD_DIRECTORY_NAMES = new Set([
+  ".next", ".nuxt", ".svelte-kit", "artifacts", "build", "coverage", "dist", "node_modules", "out", "target",
 ]);
 
 const repositoriesQuery = `
@@ -63,15 +79,8 @@ query ($login: String!, $isFork: Boolean!, $after: String) {
         isFork
         isPrivate
         pushedAt
-        languages(first: ${LANGUAGE_BATCH_SIZE}, orderBy: { field: SIZE, direction: DESC }) {
-          totalSize
-          edges {
-            size
-            node {
-              name
-              color
-            }
-          }
+        defaultBranchRef {
+          name
         }
       }
     }
@@ -108,6 +117,37 @@ function formatPercent(value) {
 
 function colorForLanguage(name, fallback) {
   return fallback || LANGUAGE_COLORS.get(name) || "#8b949e";
+}
+
+/**
+ * Returns true for paths whose bytes are generated output rather than authored source.
+ * Obsidian plugin installations are treated as build output because their main.js and
+ * styles.css files are downloaded bundles, not code maintained in the vault repository.
+ */
+export function isExcludedArtifactPath(filePath) {
+  const segments = filePath.split("/");
+  if (segments.some((segment) => BUILD_DIRECTORY_NAMES.has(segment))) {
+    return true;
+  }
+  if (segments.some((segment) => segment.startsWith(".obsidian")) && segments.includes("plugins")) {
+    const fileName = segments.at(-1);
+    return fileName === "main.js" || fileName === "styles.css";
+  }
+  return /(?:\.min\.(?:css|js)$|(?:^|\/)(?:bundle|vendor)\.(?:css|js)$)/i.test(filePath);
+}
+
+export function languageForPath(filePath) {
+  const extension = path.extname(filePath).toLowerCase();
+  return LANGUAGE_BY_EXTENSION.get(extension) ?? null;
+}
+
+/** Parses comma-separated repository names, accepting either owner/name or name. */
+export function parseExcludedRepositories(value) {
+  return new Set(value.split(",").map((name) => name.trim().toLowerCase()).filter(Boolean));
+}
+
+export function isExcludedRepository(repository, excluded = excludedRepositories) {
+  return excluded.has(repository.name.toLowerCase()) || excluded.has(repository.nameWithOwner.toLowerCase());
 }
 
 function sleep(ms) {
@@ -214,6 +254,33 @@ async function requestGraphqlWithRetry(query, variables) {
   throw lastError ?? new Error("GitHub GraphQL request failed without an error payload.");
 }
 
+async function requestGitHubApiWithRetry(url) {
+  const maxAttempts = Number.isFinite(graphqlMaxAttempts) && graphqlMaxAttempts > 0 ? graphqlMaxAttempts : 4;
+  let lastError = null;
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    try {
+      const response = await fetch(url, {
+        headers: { Authorization: `Bearer ${TOKEN}`, "User-Agent": "ClarusIubar-profile-language-metrics" },
+      });
+      if (!response.ok) {
+        const message = await response.text();
+        const error = new Error(`GitHub API request failed: ${response.status} ${message}`);
+        if (isRetryableStatus(response.status) || (response.status === 403 && isRetryableMessage(message))) {
+          error.transient = true;
+          error.retryDelayMs = retryAfterDelayMs(response);
+        }
+        throw error;
+      }
+      return response.json();
+    } catch (error) {
+      lastError = error;
+      if (!error.transient || attempt === maxAttempts) throw error;
+      await sleep(error.retryDelayMs ?? graphqlRetryBaseDelayMs * attempt);
+    }
+  }
+  throw lastError ?? new Error("GitHub API request failed without an error payload.");
+}
+
 async function fetchRepositoriesByForkState(isFork) {
   const repositories = [];
   let after = null;
@@ -240,43 +307,63 @@ async function fetchRepositoriesByForkState(isFork) {
 
 async function fetchRepositories() {
   const owned = await fetchRepositoriesByForkState(false);
+  const includedRepositories = owned.repositories.filter((repository) => !isExcludedRepository(repository));
+  const repositories = await mapWithConcurrency(includedRepositories, TREE_FETCH_CONCURRENCY, async (repository) => {
+    const branch = repository.defaultBranchRef?.name;
+    if (!branch) return { ...repository, files: [] };
+    const tree = await requestGitHubApiWithRetry(
+      `https://api.github.com/repos/${repository.nameWithOwner}/git/trees/${encodeURIComponent(branch)}?recursive=1`,
+    );
+    if (tree.truncated) {
+      throw new Error(`Git tree is truncated for ${repository.nameWithOwner}; cannot calculate accurate file-level language metrics.`);
+    }
+    return { ...repository, files: tree.tree.filter((entry) => entry.type === "blob" && Number.isFinite(entry.size)) };
+  });
 
   return {
-    repositories: owned.repositories,
+    repositories,
     totals: {
       owned: owned.totalCount,
       forks: 0,
+      explicitlyExcluded: owned.repositories.length - includedRepositories.length,
     },
   };
 }
 
-function buildSnapshot({ repositories, totals }) {
+export function buildSnapshot({ repositories, totals }) {
   const languages = new Map();
   let repositoryLanguageBytes = 0;
   let repositoriesWithLanguages = 0;
+  let excludedArtifactFiles = 0;
+  let excludedArtifactBytes = 0;
 
   for (const repository of repositories) {
-    const edges = repository.languages?.edges ?? [];
-    const repositoryBytes = edges.reduce((total, edge) => total + edge.size, 0);
+    const repositoryLanguages = new Map();
+    for (const file of repository.files ?? []) {
+      if (isExcludedArtifactPath(file.path)) {
+        excludedArtifactFiles++;
+        excludedArtifactBytes += file.size;
+        continue;
+      }
+      const name = languageForPath(file.path);
+      if (name) repositoryLanguages.set(name, (repositoryLanguages.get(name) ?? 0) + file.size);
+    }
+    const repositoryBytes = [...repositoryLanguages.values()].reduce((total, size) => total + size, 0);
     if (repositoryBytes <= 0) {
       continue;
     }
     repositoriesWithLanguages++;
     repositoryLanguageBytes += repositoryBytes;
 
-    for (const edge of edges) {
-      const name = edge.node.name;
+    for (const [name, bytes] of repositoryLanguages) {
       const current = languages.get(name) ?? {
         name,
         bytes: 0,
         repositories: 0,
-        color: colorForLanguage(name, edge.node.color),
+        color: colorForLanguage(name),
       };
-      current.bytes += edge.size;
+      current.bytes += bytes;
       current.repositories++;
-      if (!current.color && edge.node.color) {
-        current.color = edge.node.color;
-      }
       languages.set(name, current);
     }
   }
@@ -298,19 +385,23 @@ function buildSnapshot({ repositories, totals }) {
     source: {
       ownerAffiliations: ["OWNER"],
       includeForks: false,
+      excludedRepositories: [...excludedRepositories],
       repositoryBatchSize: REPOSITORY_BATCH_SIZE,
-      languageBatchSize: LANGUAGE_BATCH_SIZE,
-      metric: "GitHub repository language bytes",
+      metric: "Tracked source-file bytes after build-artifact exclusion",
+      excludedPathRules: ["build directories", "minified bundles", "Obsidian installed plugin assets"],
     },
     summary: {
       totalRepositories: repositories.length,
       ownedRepositories: totals.owned,
       forkRepositories: totals.forks,
+      explicitlyExcludedRepositories: totals.explicitlyExcluded,
       repositoriesWithLanguages,
       languageCount: sortedLanguages.length,
       totalLanguageBytes: repositoryLanguageBytes,
       displayedLanguageBytes: displayedBytes,
       displayedLanguageCount: displayedLanguages.length,
+      excludedArtifactFiles,
+      excludedArtifactBytes,
     },
     languages: sortedLanguages,
     displayedLanguages,
@@ -375,6 +466,7 @@ function renderLanguageSvg(snapshot) {
   const repoSummary = `${formatNumber(snapshot.summary.repositoriesWithLanguages)}/${formatNumber(snapshot.summary.totalRepositories)} repos with language data`;
   const languageSummary = `${formatNumber(snapshot.summary.languageCount)} languages`;
   const byteSummary = `${formatBytes(snapshot.summary.totalLanguageBytes)} visible language bytes`;
+  const exclusionSummary = `${formatNumber(snapshot.summary.excludedArtifactFiles)} build artifacts excluded`;
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" role="img" aria-labelledby="title desc">
@@ -396,7 +488,7 @@ function renderLanguageSvg(snapshot) {
 
   <text x="42" y="48" class="eyebrow">VISIBLE REPOSITORIES</text>
   <text x="42" y="82" class="title">Languages</text>
-  <text x="42" y="106" class="subtitle">${escapeXml(languageSummary)} - ${escapeXml(byteSummary)} - ${escapeXml(repoSummary)}</text>
+  <text x="42" y="106" class="subtitle">${escapeXml(languageSummary)} - ${escapeXml(byteSummary)} - ${escapeXml(repoSummary)} - ${escapeXml(exclusionSummary)}</text>
 
   <rect x="${barX}" y="${barY}" width="${barWidth}" height="${barHeight}" rx="7" fill="#21262d" />
   ${segments}
@@ -436,4 +528,19 @@ async function main() {
   );
 }
 
-await main();
+if (!process.env.LANGUAGE_RENDERER_TEST_MODE) {
+  await main();
+}
+
+async function mapWithConcurrency(values, limit, mapper) {
+  const results = new Array(values.length);
+  let nextIndex = 0;
+  const workerCount = Math.min(limit, values.length);
+  await Promise.all(Array.from({ length: workerCount }, async () => {
+    while (nextIndex < values.length) {
+      const index = nextIndex++;
+      results[index] = await mapper(values[index]);
+    }
+  }));
+  return results;
+}
