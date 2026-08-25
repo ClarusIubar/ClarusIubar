@@ -1,0 +1,29 @@
+# Profile language metrics exclusions.
+#
+# `repo:` only accepts a bare public repository name. Private repositories are
+# included by default and must never be listed here. To exclude a private
+# repository, set the `LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES` Actions secret.
+
+# Generated build output and dependency trees.
+path:**/.next/**
+path:**/.nuxt/**
+path:**/.svelte-kit/**
+path:**/artifacts/**
+path:**/build/**
+path:**/coverage/**
+path:**/dist/**
+path:**/node_modules/**
+path:**/out/**
+path:**/target/**
+
+# Generated/minified web bundles.
+path:**/*.min.js
+path:**/*.min.css
+path:**/bundle.js
+path:**/bundle.css
+path:**/vendor.js
+path:**/vendor.css
+
+# Obsidian installed-plugin bundles inside vault repositories.
+path:**/.obsidian*/plugins/**/main.js
+path:**/.obsidian*/plugins/**/styles.css

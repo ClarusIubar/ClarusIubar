@@ -18,10 +18,10 @@
 
   <text x="42" y="48" class="eyebrow">VISIBLE REPOSITORIES</text>
   <text x="42" y="82" class="title">Languages</text>
-  <text x="42" y="106" class="subtitle">19 languages - 136.56 MB visible language bytes - 84/101 repos with language data - 224 build artifacts excluded</text>
+  <text x="42" y="106" class="subtitle">19 languages - 136.57 MB visible language bytes - 84/101 repos with language data - 224 build artifacts excluded</text>
 
   <rect x="42" y="120" width="816" height="14" rx="7" fill="#21262d" />
-  <rect x="42" y="120" width="478" height="14" rx="3" fill="#3572a5" /><rect x="520" y="120" width="168" height="14" rx="3" fill="#3178c6" /><rect x="688" y="120" width="114" height="14" rx="3" fill="#f1e05a" /><rect x="802" y="120" width="14" height="14" rx="3" fill="#8b949e" /><rect x="816" y="120" width="9" height="14" rx="3" fill="#89e051" /><rect x="825" y="120" width="9" height="14" rx="3" fill="#8b949e" /><rect x="834" y="120" width="7" height="14" rx="3" fill="#da5b0b" /><rect x="841" y="120" width="5" height="14" rx="3" fill="#8b949e" />
+  <rect x="42" y="120" width="478" height="14" rx="3" fill="#3572a5" /><rect x="520" y="120" width="167" height="14" rx="3" fill="#3178c6" /><rect x="687" y="120" width="114" height="14" rx="3" fill="#f1e05a" /><rect x="801" y="120" width="14" height="14" rx="3" fill="#8b949e" /><rect x="815" y="120" width="9" height="14" rx="3" fill="#89e051" /><rect x="824" y="120" width="9" height="14" rx="3" fill="#8b949e" /><rect x="833" y="120" width="7" height="14" rx="3" fill="#da5b0b" /><rect x="840" y="120" width="5" height="14" rx="3" fill="#8b949e" />
 
   <circle cx="48" cy="166" r="5.5" fill="#3572a5" />
   <text x="66" y="170" class="language">Python</text>
@@ -33,7 +33,7 @@
   <text x="840" y="170" class="muted" text-anchor="end">20.5%</text>
   <circle cx="48" cy="198" r="5.5" fill="#f1e05a" />
   <text x="66" y="202" class="language">JavaScript</text>
-  <text x="308" y="202" class="value" text-anchor="end">19.02 MB</text>
+  <text x="308" y="202" class="value" text-anchor="end">19.03 MB</text>
   <text x="388" y="202" class="muted" text-anchor="end">13.9%</text>
   <circle cx="500" cy="198" r="5.5" fill="#8b949e" />
   <text x="518" y="202" class="language">SVG</text>
