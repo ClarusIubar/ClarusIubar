@@ -7,6 +7,7 @@ Non-Goals: Validate GitHub authentication or network retry behavior.
 Dependencies: node:test, node:assert/strict, render-language-metrics.mjs.
 */
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 process.env.LANGUAGE_RENDERER_TEST_MODE = "1";
@@ -37,6 +38,27 @@ test("excludes Obsidian installed-plugin bundles and common build directories", 
   assert.equal(isExcludedArtifactPath("web/dist/app.js", ignore), true);
   assert.equal(isExcludedArtifactPath("packages/app/node_modules/react/index.js", ignore), true);
   assert.equal(isExcludedArtifactPath("src/main.ts", ignore), false);
+});
+
+test("excludes SVG image assets from source-language totals", () => {
+  const snapshot = buildSnapshot({
+    repositories: [{
+      files: [
+        { path: "assets/logo.svg", size: 2_000 },
+        { path: "src/main.ts", size: 100 },
+      ],
+    }],
+    totals: { owned: 1, forks: 0, explicitlyExcluded: 0, privateExcluded: 0, privateIncluded: 0 },
+  }, parseMetricsIgnore("path:**/*.svg\n"));
+
+  assert.equal(snapshot.summary.totalLanguageBytes, 100);
+  assert.equal(snapshot.summary.excludedArtifactBytes, 2_000);
+  assert.deepEqual(snapshot.languages.map(({ name, bytes }) => ({ name, bytes })), [{ name: "TypeScript", bytes: 100 }]);
+});
+
+test("configures SVG files as excluded language assets", async () => {
+  const configuredIgnore = parseMetricsIgnore(await readFile(new URL("../.metricsignore", import.meta.url), "utf8"));
+  assert.equal(isExcludedArtifactPath("assets/logo.svg", configuredIgnore), true);
 });
 
 test("uses the complete GitHub Linguist color catalog instead of a local language whitelist", () => {

@@ -17,6 +17,7 @@ path:**/out/**
 path:**/target/**
 
 # Generated/minified web bundles.
+path:**/*.svg
 path:**/*.min.js
 path:**/*.min.css
 path:**/bundle.js
