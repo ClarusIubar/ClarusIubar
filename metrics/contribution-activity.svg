@@ -24,13 +24,13 @@
 
   <text x="38" y="48" class="eyebrow">LAST 1 YEAR</text>
   <text x="38" y="82" class="title">Contribution Activity</text>
-  <text x="38" y="106" class="subtitle">2025-08-24 to 2026-08-25</text>
+  <text x="38" y="106" class="subtitle">2025-08-24 to 2026-08-26</text>
 
   
     <g>
       <rect x="34" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="34" y="92" width="4" height="52" rx="2" fill="#39d353" />
-      <text x="52" y="116" class="stat-value">29,988</text>
+      <text x="52" y="116" class="stat-value">30,047</text>
       <text x="52" y="134" class="stat-label">Total</text>
     </g>
   
@@ -38,7 +38,7 @@
     <g>
       <rect x="218" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="218" y="92" width="4" height="52" rx="2" fill="#54aeff" />
-      <text x="236" y="116" class="stat-value">3,527</text>
+      <text x="236" y="116" class="stat-value">3,586</text>
       <text x="236" y="134" class="stat-label">This month</text>
     </g>
   
@@ -46,7 +46,7 @@
     <g>
       <rect x="402" y="92" width="172" height="52" rx="12" fill="#0d1117" stroke="#21262d" />
       <rect x="402" y="92" width="4" height="52" rx="2" fill="#f2cc60" />
-      <text x="420" y="116" class="stat-value">264/367</text>
+      <text x="420" y="116" class="stat-value">264/368</text>
       <text x="420" y="134" class="stat-label">Active days</text>
     </g>
   
@@ -119,20 +119,20 @@
         <circle cx="499" cy="242" r="5.5" fill="#0a3069" />
         <text x="516" y="246" class="row-label">1-50</text>
         
-        <text x="579" y="246" class="row-value">110d</text>
-        <text x="634" y="246" class="row-muted">41.7%</text>
+        <text x="579" y="246" class="row-value">109d</text>
+        <text x="634" y="246" class="row-muted">41.3%</text>
         <rect x="698" y="236" width="98" height="10" rx="5" fill="#21262d" />
-        <rect x="698" y="236" width="41" height="10" rx="5" fill="#0a3069" />
+        <rect x="698" y="236" width="40" height="10" rx="5" fill="#0a3069" />
         
       
         <rect x="484" y="260" width="366" height="22" rx="6" fill="#0d1117" />
         <circle cx="499" cy="271" r="5.5" fill="#0969da" />
         <text x="516" y="275" class="row-label">51-100</text>
         
-        <text x="579" y="275" class="row-value">41d</text>
-        <text x="634" y="275" class="row-muted">15.5%</text>
+        <text x="579" y="275" class="row-value">42d</text>
+        <text x="634" y="275" class="row-muted">15.9%</text>
         <rect x="698" y="265" width="98" height="10" rx="5" fill="#21262d" />
-        <rect x="698" y="265" width="15" height="10" rx="5" fill="#0969da" />
+        <rect x="698" y="265" width="16" height="10" rx="5" fill="#0969da" />
         
       
         <rect x="484" y="289" width="366" height="22" rx="6" fill="#0d1117" />
@@ -158,5 +158,5 @@
     </g>
   
   <text x="34" y="374" class="note">Percentages exclude zero-contribution days. Density uses GitHub relative levels and the dark grass palette.</text>
-  <text x="866" y="374" text-anchor="end" class="note">data through 2026-08-25 | current | generated 2026-08-25</text>
+  <text x="866" y="374" text-anchor="end" class="note">data through 2026-08-26 | current | generated 2026-08-25</text>
 </svg>
