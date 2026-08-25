@@ -21,7 +21,7 @@
   <text x="42" y="106" class="subtitle">19 languages - 136.58 MB visible language bytes - 84/101 repos with language data - 224 build artifacts excluded</text>
 
   <rect x="42" y="120" width="816" height="14" rx="7" fill="#21262d" />
-  <rect x="42" y="120" width="478" height="14" rx="3" fill="#3572A5" /><rect x="520" y="120" width="167" height="14" rx="3" fill="#3178c6" /><rect x="687" y="120" width="114" height="14" rx="3" fill="#f1e05a" /><rect x="801" y="120" width="14" height="14" rx="3" fill="#8b949e" /><rect x="815" y="120" width="9" height="14" rx="3" fill="#89e051" /><rect x="824" y="120" width="9" height="14" rx="3" fill="#00B4AB" /><rect x="833" y="120" width="7" height="14" rx="3" fill="#DA5B0B" /><rect x="840" y="120" width="5" height="14" rx="3" fill="#8b949e" />
+  <rect x="42" y="120" width="478" height="14" rx="3" fill="#3572A5" /><rect x="520" y="120" width="167" height="14" rx="3" fill="#3178c6" /><rect x="687" y="120" width="114" height="14" rx="3" fill="#f1e05a" /><rect x="801" y="120" width="14" height="14" rx="3" fill="#ff9900" /><rect x="815" y="120" width="9" height="14" rx="3" fill="#89e051" /><rect x="824" y="120" width="9" height="14" rx="3" fill="#00B4AB" /><rect x="833" y="120" width="7" height="14" rx="3" fill="#DA5B0B" /><rect x="840" y="120" width="5" height="14" rx="3" fill="#e38c00" />
 
   <circle cx="48" cy="166" r="5.5" fill="#3572A5" />
   <text x="66" y="170" class="language">Python</text>
@@ -35,7 +35,7 @@
   <text x="66" y="202" class="language">JavaScript</text>
   <text x="308" y="202" class="value" text-anchor="end">19.03 MB</text>
   <text x="388" y="202" class="muted" text-anchor="end">13.9%</text>
-  <circle cx="500" cy="198" r="5.5" fill="#8b949e" />
+  <circle cx="500" cy="198" r="5.5" fill="#ff9900" />
   <text x="518" y="202" class="language">SVG</text>
   <text x="760" y="202" class="value" text-anchor="end">2.37 MB</text>
   <text x="840" y="202" class="muted" text-anchor="end">1.7%</text>
@@ -51,7 +51,7 @@
   <text x="66" y="266" class="language">Jupyter Notebook</text>
   <text x="308" y="266" class="value" text-anchor="end">1.20 MB</text>
   <text x="388" y="266" class="muted" text-anchor="end">0.9%</text>
-  <circle cx="500" cy="262" r="5.5" fill="#8b949e" />
+  <circle cx="500" cy="262" r="5.5" fill="#e38c00" />
   <text x="518" y="266" class="language">SQL</text>
   <text x="760" y="266" class="value" text-anchor="end">798 KB</text>
   <text x="840" y="266" class="muted" text-anchor="end">0.6%</text>

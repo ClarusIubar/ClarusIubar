@@ -1,6 +1,6 @@
 {
   "username": "ClarusIubar",
-  "generatedAt": "2026-08-25T01:26:20.331Z",
+  "generatedAt": "2026-08-25T01:29:55.030Z",
   "source": {
     "ownerAffiliations": [
       "OWNER"
@@ -9,7 +9,7 @@
     "metricsIgnoreFile": ".metricsignore",
     "privateRepositoriesIncluded": true,
     "privateExclusionSecretConfigured": true,
-    "languageColorSource": "GitHub GraphQL Language.color",
+    "languageColorSource": "GitHub Linguist languages.yml snapshot",
     "repositoryBatchSize": 100,
     "metric": "Tracked source-file bytes after build-artifact exclusion",
     "excludedPathRuleCount": 18
@@ -55,7 +55,7 @@
       "name": "SVG",
       "bytes": 2482919,
       "repositories": 6,
-      "color": "#8b949e",
+      "color": "#ff9900",
       "share": 0.01733768138115903
     },
     {
@@ -83,7 +83,7 @@
       "name": "SQL",
       "bytes": 816991,
       "repositories": 15,
-      "color": "#8b949e",
+      "color": "#e38c00",
       "share": 0.005704869812214775
     },
     {
@@ -97,7 +97,7 @@
       "name": "YAML",
       "bytes": 766052,
       "repositories": 44,
-      "color": "#8b949e",
+      "color": "#cb171e",
       "share": 0.005349173894677851
     },
     {
@@ -125,7 +125,7 @@
       "name": "XML",
       "bytes": 38545,
       "repositories": 3,
-      "color": "#8b949e",
+      "color": "#0060ac",
       "share": 0.00026915132102045005
     },
     {
@@ -153,7 +153,7 @@
       "name": "C#",
       "bytes": 5032,
       "repositories": 1,
-      "color": "#178600",
+      "color": "#7355dd",
       "share": 0.000035137357565829666
     },
     {
@@ -190,7 +190,7 @@
       "name": "SVG",
       "bytes": 2482919,
       "repositories": 6,
-      "color": "#8b949e",
+      "color": "#ff9900",
       "share": 0.01733768138115903
     },
     {
@@ -218,7 +218,7 @@
       "name": "SQL",
       "bytes": 816991,
       "repositories": 15,
-      "color": "#8b949e",
+      "color": "#e38c00",
       "share": 0.005704869812214775
     }
   ]
