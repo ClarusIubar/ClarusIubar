@@ -28,6 +28,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ env.METRICS_RUNTIME_TOKEN }}
           PROFILE_USERNAME: ClarusIubar
+          LANGUAGE_EXCLUDED_REPOSITORIES: obsidian
         run: node scripts/render-language-metrics.mjs
 
       - name: Generate contribution density assets
@@ -49,5 +50,5 @@ jobs:
             exit 0
           fi
           git commit -m "chore: update profile metrics"
-          git pull --rebase origin main
+          git pull --rebase origin "${GITHUB_REF_NAME}"
           git push
