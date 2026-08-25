@@ -50,5 +50,5 @@ jobs:
             exit 0
           fi
           git commit -m "chore: update profile metrics"
-          git pull --rebase origin main
+          git pull --rebase origin "${GITHUB_REF_NAME}"
           git push
