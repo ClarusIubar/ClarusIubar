@@ -18,26 +18,26 @@
 
   <text x="42" y="48" class="eyebrow">VISIBLE REPOSITORIES</text>
   <text x="42" y="82" class="title">Languages</text>
-  <text x="42" y="106" class="subtitle">18 languages - 134.51 MB visible language bytes - 85/101 repos with language data - 260 build artifacts excluded</text>
+  <text x="42" y="106" class="subtitle">18 languages - 135.53 MB visible language bytes - 85/101 repos with language data - 260 build artifacts excluded</text>
 
   <rect x="42" y="120" width="816" height="14" rx="7" fill="#21262d" />
-  <rect x="42" y="120" width="487" height="14" rx="3" fill="#3572A5" /><rect x="529" y="120" width="170" height="14" rx="3" fill="#3178c6" /><rect x="699" y="120" width="116" height="14" rx="3" fill="#f1e05a" /><rect x="815" y="120" width="9" height="14" rx="3" fill="#89e051" /><rect x="824" y="120" width="9" height="14" rx="3" fill="#00B4AB" /><rect x="833" y="120" width="7" height="14" rx="3" fill="#DA5B0B" /><rect x="840" y="120" width="5" height="14" rx="3" fill="#e38c00" /><rect x="845" y="120" width="5" height="14" rx="3" fill="#663399" />
+  <rect x="42" y="120" width="489" height="14" rx="3" fill="#3572A5" /><rect x="531" y="120" width="169" height="14" rx="3" fill="#3178c6" /><rect x="700" y="120" width="115" height="14" rx="3" fill="#f1e05a" /><rect x="815" y="120" width="9" height="14" rx="3" fill="#89e051" /><rect x="824" y="120" width="9" height="14" rx="3" fill="#00B4AB" /><rect x="833" y="120" width="7" height="14" rx="3" fill="#DA5B0B" /><rect x="840" y="120" width="5" height="14" rx="3" fill="#e38c00" /><rect x="845" y="120" width="5" height="14" rx="3" fill="#663399" />
 
   <circle cx="48" cy="166" r="5.5" fill="#3572A5" />
   <text x="66" y="170" class="language">Python</text>
-  <text x="308" y="170" class="value" text-anchor="end">80.33 MB</text>
-  <text x="388" y="170" class="muted" text-anchor="end">59.7%</text>
+  <text x="308" y="170" class="value" text-anchor="end">81.16 MB</text>
+  <text x="388" y="170" class="muted" text-anchor="end">59.9%</text>
   <circle cx="500" cy="166" r="5.5" fill="#3178c6" />
   <text x="518" y="170" class="language">TypeScript</text>
-  <text x="760" y="170" class="value" text-anchor="end">28.03 MB</text>
-  <text x="840" y="170" class="muted" text-anchor="end">20.8%</text>
+  <text x="760" y="170" class="value" text-anchor="end">28.05 MB</text>
+  <text x="840" y="170" class="muted" text-anchor="end">20.7%</text>
   <circle cx="48" cy="198" r="5.5" fill="#f1e05a" />
   <text x="66" y="202" class="language">JavaScript</text>
-  <text x="308" y="202" class="value" text-anchor="end">19.05 MB</text>
-  <text x="388" y="202" class="muted" text-anchor="end">14.2%</text>
+  <text x="308" y="202" class="value" text-anchor="end">19.17 MB</text>
+  <text x="388" y="202" class="muted" text-anchor="end">14.1%</text>
   <circle cx="500" cy="198" r="5.5" fill="#89e051" />
   <text x="518" y="202" class="language">Shell</text>
-  <text x="760" y="202" class="value" text-anchor="end">1.52 MB</text>
+  <text x="760" y="202" class="value" text-anchor="end">1.53 MB</text>
   <text x="840" y="202" class="muted" text-anchor="end">1.1%</text>
   <circle cx="48" cy="230" r="5.5" fill="#00B4AB" />
   <text x="66" y="234" class="language">Dart</text>
@@ -49,10 +49,10 @@
   <text x="840" y="234" class="muted" text-anchor="end">0.9%</text>
   <circle cx="48" cy="262" r="5.5" fill="#e38c00" />
   <text x="66" y="266" class="language">SQL</text>
-  <text x="308" y="266" class="value" text-anchor="end">798 KB</text>
+  <text x="308" y="266" class="value" text-anchor="end">805 KB</text>
   <text x="388" y="266" class="muted" text-anchor="end">0.6%</text>
   <circle cx="500" cy="262" r="5.5" fill="#663399" />
   <text x="518" y="266" class="language">CSS</text>
-  <text x="760" y="266" class="value" text-anchor="end">786 KB</text>
+  <text x="760" y="266" class="value" text-anchor="end">787 KB</text>
   <text x="840" y="266" class="muted" text-anchor="end">0.6%</text>
 </svg>
