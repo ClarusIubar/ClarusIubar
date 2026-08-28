@@ -17,22 +17,22 @@
   <rect class="card" x="12" y="12" width="696" height="246" rx="16" />
 
   <text x="36" y="48" class="title">Contribution Volume</text>
-  <text x="36" y="72" class="subtitle">2025-08-24 to 2026-08-28 - Last 1 year</text>
+  <text x="36" y="72" class="subtitle">2025-08-24 to 2026-08-29 - Last 1 year</text>
 
-  <text x="36" y="100" class="summary">30424</text>
+  <text x="36" y="100" class="summary">30653</text>
   <text x="88" y="100" class="summary-label">total contributions</text>
-  <text x="260" y="100" class="summary">267/370</text>
+  <text x="260" y="100" class="summary">268/371</text>
   <text x="348" y="100" class="summary-label">active days</text>
   <text x="420" y="100" class="summary">768</text>
   <text x="458" y="100" class="summary-label">max/day</text>
-  <text x="684" y="100" text-anchor="end" class="summary-label">generated 2026-08-27</text>
+  <text x="684" y="100" text-anchor="end" class="summary-label">generated 2026-08-28</text>
 
   
         <rect x="36" y="102" width="648" height="22" rx="8" fill="#0d1117" />
         <circle cx="54" cy="116" r="6" fill="#0a3069" />
         <text x="72" y="120" class="label">1-50</text>
         <text x="205" y="120" class="value">110 days</text>
-        <text x="320" y="120" class="muted">41.2%</text>
+        <text x="320" y="120" class="muted">41.0%</text>
         <rect x="398" y="109" width="260" height="12" rx="6" fill="#21262d" />
         <rect x="398" y="109" width="107" height="12" rx="6" fill="#0a3069" />
         
@@ -58,10 +58,10 @@
         <rect x="36" y="186" width="648" height="22" rx="8" fill="#0d1117" />
         <circle cx="54" cy="200" r="6" fill="#b6e3ff" />
         <text x="72" y="204" class="label">150+</text>
-        <text x="205" y="204" class="value">77 days</text>
-        <text x="320" y="204" class="muted">28.8%</text>
+        <text x="205" y="204" class="value">78 days</text>
+        <text x="320" y="204" class="muted">29.1%</text>
         <rect x="398" y="193" width="260" height="12" rx="6" fill="#21262d" />
-        <rect x="398" y="193" width="75" height="12" rx="6" fill="#b6e3ff" />
+        <rect x="398" y="193" width="76" height="12" rx="6" fill="#b6e3ff" />
         
       
 </svg>
