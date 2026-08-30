@@ -17,21 +17,21 @@
   <rect class="card" x="12" y="12" width="696" height="246" rx="16" />
 
   <text x="36" y="48" class="title">Contribution Volume</text>
-  <text x="36" y="72" class="subtitle">2025-08-31 to 2026-08-30 - Last 1 year</text>
+  <text x="36" y="72" class="subtitle">2025-08-31 to 2026-08-31 - Last 1 year</text>
 
-  <text x="36" y="100" class="summary">30742</text>
+  <text x="36" y="100" class="summary">30810</text>
   <text x="88" y="100" class="summary-label">total contributions</text>
-  <text x="260" y="100" class="summary">268/365</text>
+  <text x="260" y="100" class="summary">270/366</text>
   <text x="348" y="100" class="summary-label">active days</text>
   <text x="420" y="100" class="summary">768</text>
   <text x="458" y="100" class="summary-label">max/day</text>
-  <text x="684" y="100" text-anchor="end" class="summary-label">generated 2026-08-29</text>
+  <text x="684" y="100" text-anchor="end" class="summary-label">generated 2026-08-30</text>
 
   
         <rect x="36" y="102" width="648" height="22" rx="8" fill="#0d1117" />
         <circle cx="54" cy="116" r="6" fill="#0a3069" />
         <text x="72" y="120" class="label">1-50</text>
-        <text x="205" y="120" class="value">109 days</text>
+        <text x="205" y="120" class="value">110 days</text>
         <text x="320" y="120" class="muted">40.7%</text>
         <rect x="398" y="109" width="260" height="12" rx="6" fill="#21262d" />
         <rect x="398" y="109" width="106" height="12" rx="6" fill="#0a3069" />
@@ -40,8 +40,8 @@
         <rect x="36" y="130" width="648" height="22" rx="8" fill="#0d1117" />
         <circle cx="54" cy="144" r="6" fill="#0969da" />
         <text x="72" y="148" class="label">51-100</text>
-        <text x="205" y="148" class="value">42 days</text>
-        <text x="320" y="148" class="muted">15.7%</text>
+        <text x="205" y="148" class="value">43 days</text>
+        <text x="320" y="148" class="muted">15.9%</text>
         <rect x="398" y="137" width="260" height="12" rx="6" fill="#21262d" />
         <rect x="398" y="137" width="41" height="12" rx="6" fill="#0969da" />
         
@@ -50,7 +50,7 @@
         <circle cx="54" cy="172" r="6" fill="#54aeff" />
         <text x="72" y="176" class="label">101-150</text>
         <text x="205" y="176" class="value">39 days</text>
-        <text x="320" y="176" class="muted">14.6%</text>
+        <text x="320" y="176" class="muted">14.4%</text>
         <rect x="398" y="165" width="260" height="12" rx="6" fill="#21262d" />
         <rect x="398" y="165" width="38" height="12" rx="6" fill="#54aeff" />
         
@@ -59,9 +59,9 @@
         <circle cx="54" cy="200" r="6" fill="#b6e3ff" />
         <text x="72" y="204" class="label">150+</text>
         <text x="205" y="204" class="value">78 days</text>
-        <text x="320" y="204" class="muted">29.1%</text>
+        <text x="320" y="204" class="muted">28.9%</text>
         <rect x="398" y="193" width="260" height="12" rx="6" fill="#21262d" />
-        <rect x="398" y="193" width="76" height="12" rx="6" fill="#b6e3ff" />
+        <rect x="398" y="193" width="75" height="12" rx="6" fill="#b6e3ff" />
         
       
 </svg>
