@@ -18,7 +18,7 @@
 
   <text x="42" y="48" class="eyebrow">VISIBLE REPOSITORIES</text>
   <text x="42" y="82" class="title">Languages</text>
-  <text x="42" y="106" class="subtitle">18 languages - 140.32 MB visible language bytes - 85/101 repos with language data - 260 build artifacts excluded</text>
+  <text x="42" y="106" class="subtitle">18 languages - 140.43 MB visible language bytes - 85/101 repos with language data - 260 build artifacts excluded</text>
 
   <rect x="42" y="120" width="816" height="14" rx="7" fill="#21262d" />
   <rect x="42" y="120" width="493" height="14" rx="3" fill="#3572A5" /><rect x="535" y="120" width="168" height="14" rx="3" fill="#3178c6" /><rect x="703" y="120" width="113" height="14" rx="3" fill="#f1e05a" /><rect x="816" y="120" width="9" height="14" rx="3" fill="#89e051" /><rect x="825" y="120" width="9" height="14" rx="3" fill="#00B4AB" /><rect x="834" y="120" width="7" height="14" rx="3" fill="#DA5B0B" /><rect x="841" y="120" width="5" height="14" rx="3" fill="#e38c00" /><rect x="846" y="120" width="5" height="14" rx="3" fill="#cb171e" />
@@ -29,12 +29,12 @@
   <text x="388" y="170" class="muted" text-anchor="end">60.4%</text>
   <circle cx="500" cy="166" r="5.5" fill="#3178c6" />
   <text x="518" y="170" class="language">TypeScript</text>
-  <text x="760" y="170" class="value" text-anchor="end">28.97 MB</text>
+  <text x="760" y="170" class="value" text-anchor="end">28.98 MB</text>
   <text x="840" y="170" class="muted" text-anchor="end">20.6%</text>
   <circle cx="48" cy="198" r="5.5" fill="#f1e05a" />
   <text x="66" y="202" class="language">JavaScript</text>
-  <text x="308" y="202" class="value" text-anchor="end">19.37 MB</text>
-  <text x="388" y="202" class="muted" text-anchor="end">13.8%</text>
+  <text x="308" y="202" class="value" text-anchor="end">19.46 MB</text>
+  <text x="388" y="202" class="muted" text-anchor="end">13.9%</text>
   <circle cx="500" cy="198" r="5.5" fill="#89e051" />
   <text x="518" y="202" class="language">Shell</text>
   <text x="760" y="202" class="value" text-anchor="end">1.55 MB</text>
@@ -53,6 +53,6 @@
   <text x="388" y="266" class="muted" text-anchor="end">0.6%</text>
   <circle cx="500" cy="262" r="5.5" fill="#cb171e" />
   <text x="518" y="266" class="language">YAML</text>
-  <text x="760" y="266" class="value" text-anchor="end">794 KB</text>
+  <text x="760" y="266" class="value" text-anchor="end">796 KB</text>
   <text x="840" y="266" class="muted" text-anchor="end">0.6%</text>
 </svg>
