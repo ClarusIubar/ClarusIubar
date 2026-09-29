@@ -18,23 +18,23 @@
 
   <text x="42" y="48" class="eyebrow">VISIBLE REPOSITORIES</text>
   <text x="42" y="82" class="title">Languages</text>
-  <text x="42" y="106" class="subtitle">18 languages - 160.40 MB visible language bytes - 90/109 repos with language data - 292 build artifacts excluded</text>
+  <text x="42" y="106" class="subtitle">18 languages - 161.02 MB visible language bytes - 91/109 repos with language data - 339 build artifacts excluded</text>
 
   <rect x="42" y="120" width="816" height="14" rx="7" fill="#21262d" />
-  <rect x="42" y="120" width="494" height="14" rx="3" fill="#3572A5" /><rect x="536" y="120" width="163" height="14" rx="3" fill="#3178c6" /><rect x="699" y="120" width="105" height="14" rx="3" fill="#f1e05a" /><rect x="804" y="120" width="9" height="14" rx="3" fill="#89e051" /><rect x="813" y="120" width="8" height="14" rx="3" fill="#00B4AB" /><rect x="821" y="120" width="7" height="14" rx="3" fill="#dea584" /><rect x="828" y="120" width="6" height="14" rx="3" fill="#DA5B0B" /><rect x="834" y="120" width="6" height="14" rx="3" fill="#7355dd" />
+  <rect x="42" y="120" width="493" height="14" rx="3" fill="#3572A5" /><rect x="535" y="120" width="162" height="14" rx="3" fill="#3178c6" /><rect x="697" y="120" width="105" height="14" rx="3" fill="#f1e05a" /><rect x="802" y="120" width="9" height="14" rx="3" fill="#89e051" /><rect x="811" y="120" width="8" height="14" rx="3" fill="#00B4AB" /><rect x="819" y="120" width="7" height="14" rx="3" fill="#dea584" /><rect x="826" y="120" width="6" height="14" rx="3" fill="#7355dd" /><rect x="832" y="120" width="6" height="14" rx="3" fill="#DA5B0B" />
 
   <circle cx="48" cy="166" r="5.5" fill="#3572A5" />
   <text x="66" y="170" class="language">Python</text>
-  <text x="308" y="170" class="value" text-anchor="end">97.19 MB</text>
-  <text x="388" y="170" class="muted" text-anchor="end">60.6%</text>
+  <text x="308" y="170" class="value" text-anchor="end">97.27 MB</text>
+  <text x="388" y="170" class="muted" text-anchor="end">60.4%</text>
   <circle cx="500" cy="166" r="5.5" fill="#3178c6" />
   <text x="518" y="170" class="language">TypeScript</text>
-  <text x="760" y="170" class="value" text-anchor="end">32.04 MB</text>
-  <text x="840" y="170" class="muted" text-anchor="end">20.0%</text>
+  <text x="760" y="170" class="value" text-anchor="end">32.05 MB</text>
+  <text x="840" y="170" class="muted" text-anchor="end">19.9%</text>
   <circle cx="48" cy="198" r="5.5" fill="#f1e05a" />
   <text x="66" y="202" class="language">JavaScript</text>
-  <text x="308" y="202" class="value" text-anchor="end">20.56 MB</text>
-  <text x="388" y="202" class="muted" text-anchor="end">12.8%</text>
+  <text x="308" y="202" class="value" text-anchor="end">20.80 MB</text>
+  <text x="388" y="202" class="muted" text-anchor="end">12.9%</text>
   <circle cx="500" cy="198" r="5.5" fill="#89e051" />
   <text x="518" y="202" class="language">Shell</text>
   <text x="760" y="202" class="value" text-anchor="end">1.76 MB</text>
@@ -47,12 +47,12 @@
   <text x="518" y="234" class="language">Rust</text>
   <text x="760" y="234" class="value" text-anchor="end">1.46 MB</text>
   <text x="840" y="234" class="muted" text-anchor="end">0.9%</text>
-  <circle cx="48" cy="262" r="5.5" fill="#DA5B0B" />
-  <text x="66" y="266" class="language">Jupyter Notebook</text>
-  <text x="308" y="266" class="value" text-anchor="end">1.20 MB</text>
+  <circle cx="48" cy="262" r="5.5" fill="#7355dd" />
+  <text x="66" y="266" class="language">C#</text>
+  <text x="308" y="266" class="value" text-anchor="end">1.25 MB</text>
   <text x="388" y="266" class="muted" text-anchor="end">0.8%</text>
-  <circle cx="500" cy="262" r="5.5" fill="#7355dd" />
-  <text x="518" y="266" class="language">C#</text>
-  <text x="760" y="266" class="value" text-anchor="end">1.10 MB</text>
+  <circle cx="500" cy="262" r="5.5" fill="#DA5B0B" />
+  <text x="518" y="266" class="language">Jupyter Notebook</text>
+  <text x="760" y="266" class="value" text-anchor="end">1.20 MB</text>
   <text x="840" y="266" class="muted" text-anchor="end">0.7%</text>
 </svg>
