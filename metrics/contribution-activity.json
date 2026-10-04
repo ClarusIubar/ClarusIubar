@@ -1,18 +1,18 @@
 {
   "username": "ClarusIubar",
   "window": {
-    "start": "2025-09-28",
-    "end": "2026-10-03",
-    "totalDays": 371
+    "start": "2025-10-05",
+    "end": "2026-10-05",
+    "totalDays": 366
   },
   "summary": {
-    "totalContributions": 37148,
-    "activeDays": 302,
+    "totalContributions": 37657,
+    "activeDays": 304,
     "maxDayCount": 768,
     "currentMonth": "2026-10",
-    "currentMonthContributions": 470,
-    "currentMonthActiveDays": 3,
-    "generatedAt": "2026-10-02T16:11:35.370Z"
+    "currentMonthContributions": 979,
+    "currentMonthActiveDays": 5,
+    "generatedAt": "2026-10-04T17:28:17.726Z"
   },
   "calendar": {
     "apiColors": [
@@ -28,39 +28,80 @@
       "#39d353"
     ],
     "isHalloween": false,
-    "levelAssignmentFingerprint": "19b81929b4f9d20cf0c6b59c27fe0a29b0ad762c44a29a2ef7961f6bc6e2c738"
+    "levelAssignmentFingerprint": "976fe864df9669ecb35a398311d811999ff652c9c8c07c7a13552640798abf5c"
   },
   "freshness": {
     "status": "current",
-    "dataThrough": "2026-10-03",
+    "dataThrough": "2026-10-05",
     "comparison": {
       "changed": true,
       "changes": [
         {
           "kind": "totalContributions",
-          "before": 36881,
-          "after": 37148
+          "before": 37148,
+          "after": 37657
+        },
+        {
+          "kind": "window.start",
+          "before": "2025-09-28",
+          "after": "2025-10-05"
         },
         {
           "kind": "window.end",
-          "before": "2026-10-02",
-          "after": "2026-10-03"
+          "before": "2026-10-03",
+          "after": "2026-10-05"
         },
         {
           "kind": "levelAssignments",
-          "before": "cf705f4057acdcb5bc7b8d29551c276991afa044e7db5fde2ce1854677bbfd96",
-          "after": "19b81929b4f9d20cf0c6b59c27fe0a29b0ad762c44a29a2ef7961f6bc6e2c738"
+          "before": "19b81929b4f9d20cf0c6b59c27fe0a29b0ad762c44a29a2ef7961f6bc6e2c738",
+          "after": "976fe864df9669ecb35a398311d811999ff652c9c8c07c7a13552640798abf5c"
+        },
+        {
+          "kind": "densityLevel",
+          "level": "Q1",
+          "before": {
+            "days": 185,
+            "githubColor": "#9be9a8"
+          },
+          "after": {
+            "days": 191,
+            "githubColor": "#9be9a8"
+          }
         },
         {
           "kind": "densityLevel",
           "level": "Q2",
           "before": {
-            "days": 83,
+            "days": 84,
             "githubColor": "#40c463"
           },
           "after": {
-            "days": 84,
+            "days": 85,
             "githubColor": "#40c463"
+          }
+        },
+        {
+          "kind": "densityLevel",
+          "level": "Q3",
+          "before": {
+            "days": 20,
+            "githubColor": "#30a14e"
+          },
+          "after": {
+            "days": 17,
+            "githubColor": "#30a14e"
+          }
+        },
+        {
+          "kind": "densityLevel",
+          "level": "Q4",
+          "before": {
+            "days": 13,
+            "githubColor": "#216e39"
+          },
+          "after": {
+            "days": 11,
+            "githubColor": "#216e39"
           }
         }
       ]
@@ -70,36 +111,36 @@
     {
       "key": "FIRST_QUARTILE",
       "label": "Q1",
-      "days": 185,
-      "share": 0.6125827814569537,
-      "shareOfYear": 0.49865229110512127,
+      "days": 191,
+      "share": 0.6282894736842105,
+      "shareOfYear": 0.5218579234972678,
       "color": "#0e4429",
       "githubColor": "#9be9a8"
     },
     {
       "key": "SECOND_QUARTILE",
       "label": "Q2",
-      "days": 84,
-      "share": 0.2781456953642384,
-      "shareOfYear": 0.22641509433962265,
+      "days": 85,
+      "share": 0.27960526315789475,
+      "shareOfYear": 0.23224043715846995,
       "color": "#006d32",
       "githubColor": "#40c463"
     },
     {
       "key": "THIRD_QUARTILE",
       "label": "Q3",
-      "days": 20,
-      "share": 0.06622516556291391,
-      "shareOfYear": 0.05390835579514825,
+      "days": 17,
+      "share": 0.05592105263157895,
+      "shareOfYear": 0.04644808743169399,
       "color": "#26a641",
       "githubColor": "#30a14e"
     },
     {
       "key": "FOURTH_QUARTILE",
       "label": "Q4",
-      "days": 13,
-      "share": 0.04304635761589404,
-      "shareOfYear": 0.03504043126684636,
+      "days": 11,
+      "share": 0.03618421052631579,
+      "shareOfYear": 0.030054644808743168,
       "color": "#39d353",
       "githubColor": "#216e39"
     }
@@ -109,8 +150,8 @@
       "key": "COUNT_1_50",
       "label": "1-50",
       "days": 109,
-      "share": 0.3609271523178808,
-      "shareOfYear": 0.29380053908355797,
+      "share": 0.35855263157894735,
+      "shareOfYear": 0.2978142076502732,
       "minCount": 1,
       "maxCount": 50,
       "rangeLabel": "1-50"
@@ -119,8 +160,8 @@
       "key": "COUNT_51_100",
       "label": "51-100",
       "days": 45,
-      "share": 0.1490066225165563,
-      "shareOfYear": 0.12129380053908356,
+      "share": 0.14802631578947367,
+      "shareOfYear": 0.12295081967213115,
       "minCount": 52,
       "maxCount": 99,
       "rangeLabel": "51-100"
@@ -129,8 +170,8 @@
       "key": "COUNT_101_150",
       "label": "101-150",
       "days": 46,
-      "share": 0.152317880794702,
-      "shareOfYear": 0.12398921832884097,
+      "share": 0.1513157894736842,
+      "shareOfYear": 0.12568306010928962,
       "minCount": 101,
       "maxCount": 148,
       "rangeLabel": "101-150"
@@ -138,9 +179,9 @@
     {
       "key": "COUNT_151_PLUS",
       "label": "150+",
-      "days": 102,
-      "share": 0.33774834437086093,
-      "shareOfYear": 0.2749326145552561,
+      "days": 104,
+      "share": 0.34210526315789475,
+      "shareOfYear": 0.28415300546448086,
       "minCount": 151,
       "maxCount": 768,
       "rangeLabel": "150+"
