@@ -1,6 +1,6 @@
 {
   "username": "ClarusIubar",
-  "generatedAt": "2026-10-04T17:28:10.407Z",
+  "generatedAt": "2026-10-05T16:12:30.193Z",
   "source": {
     "ownerAffiliations": [
       "OWNER"
@@ -15,204 +15,204 @@
     "excludedPathRuleCount": 19
   },
   "summary": {
-    "totalRepositories": 109,
-    "ownedRepositories": 110,
+    "totalRepositories": 110,
+    "ownedRepositories": 111,
     "forkRepositories": 0,
     "explicitlyExcludedRepositories": 0,
     "privateRepositoriesExcluded": 1,
-    "privateRepositoriesIncluded": 80,
+    "privateRepositoriesIncluded": 81,
     "repositoriesWithLanguages": 93,
     "languageCount": 18,
-    "totalLanguageBytes": 178190299,
-    "displayedLanguageBytes": 173577992,
+    "totalLanguageBytes": 180453546,
+    "displayedLanguageBytes": 175794800,
     "displayedLanguageCount": 8,
-    "excludedArtifactFiles": 8506,
-    "excludedArtifactBytes": 1365502393
+    "excludedArtifactFiles": 8765,
+    "excludedArtifactBytes": 1506599118
   },
   "languages": [
     {
       "name": "Python",
-      "bytes": 107003912,
+      "bytes": 108596421,
       "repositories": 66,
       "color": "#3572A5",
-      "share": 0.6005035773580468
+      "share": 0.6017971018424875
     },
     {
       "name": "TypeScript",
       "bytes": 33625086,
       "repositories": 23,
       "color": "#3178c6",
-      "share": 0.18870323574685735
+      "share": 0.18633652120086353
     },
     {
       "name": "JavaScript",
-      "bytes": 23097771,
+      "bytes": 23676688,
       "repositories": 37,
       "color": "#f1e05a",
-      "share": 0.12962417780105975
+      "share": 0.13120655440043277
     },
     {
       "name": "C#",
-      "bytes": 2250532,
+      "bytes": 2275534,
       "repositories": 3,
       "color": "#7355dd",
-      "share": 0.012629935594866474
+      "share": 0.012610081932111215
     },
     {
       "name": "Rust",
       "bytes": 2111109,
       "repositories": 2,
       "color": "#dea584",
-      "share": 0.011847496815749774
+      "share": 0.011698905600890768
     },
     {
       "name": "PowerShell",
-      "bytes": 2063537,
+      "bytes": 2083917,
       "repositories": 13,
       "color": "#012456",
-      "share": 0.011580523808425733
+      "share": 0.011548218620209326
     },
     {
       "name": "Shell",
       "bytes": 1848937,
       "repositories": 14,
       "color": "#89e051",
-      "share": 0.010376193375151135
+      "share": 0.010246055236841951
     },
     {
       "name": "Dart",
       "bytes": 1577108,
       "repositories": 2,
       "color": "#00B4AB",
-      "share": 0.00885069506505514
+      "share": 0.008739689714936386
     },
     {
       "name": "Jupyter Notebook",
       "bytes": 1262064,
       "repositories": 4,
       "color": "#DA5B0B",
-      "share": 0.007082675134856808
+      "share": 0.006993844277241302
     },
     {
       "name": "YAML",
       "bytes": 1083016,
       "repositories": 47,
       "color": "#cb171e",
-      "share": 0.006077861735896184
+      "share": 0.006001633240280022
     },
     {
       "name": "SQL",
-      "bytes": 929693,
+      "bytes": 976132,
       "repositories": 16,
       "color": "#e38c00",
-      "share": 0.005217416465528238
+      "share": 0.005409325677645592
     },
     {
       "name": "CSS",
       "bytes": 874291,
       "repositories": 29,
       "color": "#663399",
-      "share": 0.00490650167212526
+      "share": 0.004844964365510446
     },
     {
       "name": "HTML",
       "bytes": 347961,
       "repositories": 40,
       "color": "#e34c26",
-      "share": 0.0019527494030412958
+      "share": 0.001928258034896139
     },
     {
       "name": "XML",
       "bytes": 38545,
       "repositories": 3,
       "color": "#0060ac",
-      "share": 0.00021631368383303516
+      "share": 0.0002136006792573641
     },
     {
       "name": "C++",
       "bytes": 32704,
       "repositories": 2,
       "color": "#f34b7d",
-      "share": 0.00018353412157414922
+      "share": 0.00018123223801875304
     },
     {
       "name": "C",
       "bytes": 32511,
       "repositories": 3,
       "color": "#555555",
-      "share": 0.0001824510098610924
+      "share": 0.00018016271068455479
     },
     {
       "name": "Kotlin",
       "bytes": 9722,
       "repositories": 2,
       "color": "#A97BFF",
-      "share": 0.00005455964805356772
+      "share": 0.000053875361363084545
     },
     {
       "name": "Swift",
       "bytes": 1800,
       "repositories": 2,
       "color": "#F05138",
-      "share": 0.000010101560018146667
+      "share": 0.000009974866329310037
     }
   ],
   "displayedLanguages": [
     {
       "name": "Python",
-      "bytes": 107003912,
+      "bytes": 108596421,
       "repositories": 66,
       "color": "#3572A5",
-      "share": 0.6005035773580468
+      "share": 0.6017971018424875
     },
     {
       "name": "TypeScript",
       "bytes": 33625086,
       "repositories": 23,
       "color": "#3178c6",
-      "share": 0.18870323574685735
+      "share": 0.18633652120086353
     },
     {
       "name": "JavaScript",
-      "bytes": 23097771,
+      "bytes": 23676688,
       "repositories": 37,
       "color": "#f1e05a",
-      "share": 0.12962417780105975
+      "share": 0.13120655440043277
     },
     {
       "name": "C#",
-      "bytes": 2250532,
+      "bytes": 2275534,
       "repositories": 3,
       "color": "#7355dd",
-      "share": 0.012629935594866474
+      "share": 0.012610081932111215
     },
     {
       "name": "Rust",
       "bytes": 2111109,
       "repositories": 2,
       "color": "#dea584",
-      "share": 0.011847496815749774
+      "share": 0.011698905600890768
     },
     {
       "name": "PowerShell",
-      "bytes": 2063537,
+      "bytes": 2083917,
       "repositories": 13,
       "color": "#012456",
-      "share": 0.011580523808425733
+      "share": 0.011548218620209326
     },
     {
       "name": "Shell",
       "bytes": 1848937,
       "repositories": 14,
       "color": "#89e051",
-      "share": 0.010376193375151135
+      "share": 0.010246055236841951
     },
     {
       "name": "Dart",
       "bytes": 1577108,
       "repositories": 2,
       "color": "#00B4AB",
-      "share": 0.00885069506505514
+      "share": 0.008739689714936386
     }
   ]
 }
