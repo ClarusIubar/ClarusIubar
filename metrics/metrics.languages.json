@@ -1,6 +1,6 @@
 {
   "username": "ClarusIubar",
-  "generatedAt": "2026-10-12T16:11:47.408Z",
+  "generatedAt": "2026-10-13T16:12:39.835Z",
   "source": {
     "ownerAffiliations": [
       "OWNER"
@@ -23,196 +23,196 @@
     "privateRepositoriesIncluded": 84,
     "repositoriesWithLanguages": 96,
     "languageCount": 18,
-    "totalLanguageBytes": 194412857,
-    "displayedLanguageBytes": 189562786,
+    "totalLanguageBytes": 196003410,
+    "displayedLanguageBytes": 191120201,
     "displayedLanguageCount": 8,
-    "excludedArtifactFiles": 10103,
-    "excludedArtifactBytes": 2232876576
+    "excludedArtifactFiles": 10108,
+    "excludedArtifactBytes": 2233164945
   },
   "languages": [
     {
       "name": "Python",
-      "bytes": 117266713,
+      "bytes": 118038197,
       "repositories": 68,
       "color": "#3572A5",
-      "share": 0.6031839396300832
+      "share": 0.602225221489769
     },
     {
       "name": "TypeScript",
-      "bytes": 33966748,
+      "bytes": 34069643,
       "repositories": 23,
       "color": "#3178c6",
-      "share": 0.17471451489445475
+      "share": 0.17382168504109188
     },
     {
       "name": "JavaScript",
-      "bytes": 27359471,
-      "repositories": 38,
+      "bytes": 27508375,
+      "repositories": 39,
       "color": "#f1e05a",
-      "share": 0.14072871219623093
+      "share": 0.14034641029969835
     },
     {
       "name": "PowerShell",
-      "bytes": 3079473,
+      "bytes": 3566795,
       "repositories": 13,
       "color": "#012456",
-      "share": 0.01583986289548741
+      "share": 0.018197617072070328
     },
     {
       "name": "C#",
-      "bytes": 2351699,
-      "repositories": 3,
+      "bytes": 2398509,
+      "repositories": 4,
       "color": "#7355dd",
-      "share": 0.012096417059495195
+      "share": 0.012237077916144418
     },
     {
       "name": "Rust",
       "bytes": 2111109,
       "repositories": 2,
       "color": "#dea584",
-      "share": 0.010858896024556648
+      "share": 0.01077077689617747
     },
     {
       "name": "Shell",
       "bytes": 1850465,
       "repositories": 14,
       "color": "#89e051",
-      "share": 0.009518223375525004
+      "share": 0.009440983705334515
     },
     {
       "name": "Dart",
       "bytes": 1577108,
       "repositories": 2,
       "color": "#00B4AB",
-      "share": 0.00811215896076256
+      "share": 0.008046329398044656
     },
     {
       "name": "Jupyter Notebook",
       "bytes": 1262064,
       "repositories": 4,
       "color": "#DA5B0B",
-      "share": 0.006491669426986508
+      "share": 0.006438990015530852
     },
     {
       "name": "SQL",
-      "bytes": 1115086,
+      "bytes": 1148224,
       "repositories": 17,
       "color": "#e38c00",
-      "share": 0.0057356597562886495
+      "share": 0.005858183793843178
     },
     {
       "name": "YAML",
       "bytes": 1090970,
       "repositories": 49,
       "color": "#cb171e",
-      "share": 0.005611614462308941
+      "share": 0.005566076631013716
     },
     {
       "name": "CSS",
       "bytes": 918708,
       "repositories": 29,
       "color": "#663399",
-      "share": 0.0047255516645177435
+      "share": 0.00468720416649894
     },
     {
       "name": "HTML",
       "bytes": 347961,
       "repositories": 40,
       "color": "#e34c26",
-      "share": 0.0017898044675100887
+      "share": 0.0017752803382349318
     },
     {
       "name": "XML",
       "bytes": 38545,
       "repositories": 3,
       "color": "#0060ac",
-      "share": 0.0001982636364425219
+      "share": 0.00019665474187413373
     },
     {
       "name": "C++",
       "bytes": 32704,
       "repositories": 2,
       "color": "#f34b7d",
-      "share": 0.00016821932718163798
+      "share": 0.00016685423993388686
     },
     {
       "name": "C",
       "bytes": 32511,
       "repositories": 3,
       "color": "#555555",
-      "share": 0.00016722659448392346
+      "share": 0.00016586956318770168
     },
     {
       "name": "Kotlin",
       "bytes": 9722,
       "repositories": 2,
       "color": "#A97BFF",
-      "share": 0.000050006980762594316
+      "share": 0.00004960117785705871
     },
     {
       "name": "Swift",
       "bytes": 1800,
       "repositories": 2,
       "color": "#F05138",
-      "share": 0.000009258646921689957
+      "share": 0.000009183513694991328
     }
   ],
   "displayedLanguages": [
     {
       "name": "Python",
-      "bytes": 117266713,
+      "bytes": 118038197,
       "repositories": 68,
       "color": "#3572A5",
-      "share": 0.6031839396300832
+      "share": 0.602225221489769
     },
     {
       "name": "TypeScript",
-      "bytes": 33966748,
+      "bytes": 34069643,
       "repositories": 23,
       "color": "#3178c6",
-      "share": 0.17471451489445475
+      "share": 0.17382168504109188
     },
     {
       "name": "JavaScript",
-      "bytes": 27359471,
-      "repositories": 38,
+      "bytes": 27508375,
+      "repositories": 39,
       "color": "#f1e05a",
-      "share": 0.14072871219623093
+      "share": 0.14034641029969835
     },
     {
       "name": "PowerShell",
-      "bytes": 3079473,
+      "bytes": 3566795,
       "repositories": 13,
       "color": "#012456",
-      "share": 0.01583986289548741
+      "share": 0.018197617072070328
     },
     {
       "name": "C#",
-      "bytes": 2351699,
-      "repositories": 3,
+      "bytes": 2398509,
+      "repositories": 4,
       "color": "#7355dd",
-      "share": 0.012096417059495195
+      "share": 0.012237077916144418
     },
     {
       "name": "Rust",
       "bytes": 2111109,
       "repositories": 2,
       "color": "#dea584",
-      "share": 0.010858896024556648
+      "share": 0.01077077689617747
     },
     {
       "name": "Shell",
       "bytes": 1850465,
       "repositories": 14,
       "color": "#89e051",
-      "share": 0.009518223375525004
+      "share": 0.009440983705334515
     },
     {
       "name": "Dart",
       "bytes": 1577108,
       "repositories": 2,
       "color": "#00B4AB",
-      "share": 0.00811215896076256
+      "share": 0.008046329398044656
     }
   ]
 }
