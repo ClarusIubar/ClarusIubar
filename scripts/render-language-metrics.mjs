@@ -346,12 +346,10 @@ async function fetchRepositories(metricsIgnore) {
   if (owned.repositories.some((repository) => repository.isPrivate && metricsIgnore.repositoryNames.has(repository.name.toLowerCase()))) {
     throw new Error(".metricsignore cannot exclude private repositories; all owned private repositories are included.");
   }
-  const explicitlyExcluded = owned.repositories.filter(
-    (repository) => !repository.isPrivate && metricsIgnore.repositoryNames.has(repository.name.toLowerCase()),
-  );
-  const includedRepositories = owned.repositories.filter(
-    (repository) => !isExcludedRepository(repository, metricsIgnore),
-  );
+  if (metricsIgnore.repositoryNames.size > 0) {
+    throw new Error(".metricsignore repo: rules are disabled; all owned non-fork repositories are included.");
+  }
+  const includedRepositories = owned.repositories.filter((repository) => !repository.isFork);
   const repositories = await mapWithConcurrency(includedRepositories, TREE_FETCH_CONCURRENCY, async (repository) => {
     const branch = repository.defaultBranchRef?.name;
     const treeSha = repository.defaultBranchRef?.target?.tree?.oid;
@@ -393,7 +391,7 @@ async function fetchRepositories(metricsIgnore) {
     totals: {
       owned: owned.totalCount,
       forks: 0,
-      explicitlyExcluded: explicitlyExcluded.length,
+      explicitlyExcluded: 0,
       privateExcluded: 0,
       privateIncluded: owned.repositories.filter((repository) => repository.isPrivate).length,
     },
