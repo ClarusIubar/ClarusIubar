@@ -370,7 +370,7 @@ async function fetchRepositories(metricsIgnore) {
     } catch (error) {
       if (error.status === 404 && repository.isPrivate) {
         throw new Error(
-          "GitHub returned 404 while reading an owned private repository tree. Ensure METRICS_TOKEN can read every owned private repository; private repository names and API details are omitted from this public workflow log.",
+          "GitHub returned 404 while reading an owned private repository tree. Metrics generation stopped to avoid incomplete results; private repository names and API details are omitted from this public workflow log.",
         );
       }
       if (error.status === 404) {
