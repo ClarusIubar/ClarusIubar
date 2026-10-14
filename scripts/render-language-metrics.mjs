@@ -58,6 +58,13 @@ query ($login: String!, $isFork: Boolean!, $after: String) {
         pushedAt
         defaultBranchRef {
           name
+          target {
+            ... on Commit {
+              tree {
+                oid
+              }
+            }
+          }
         }
       }
     }
@@ -293,6 +300,7 @@ async function requestGitHubApiWithRetry(url) {
       if (!response.ok) {
         const message = await response.text();
         const error = new Error(`GitHub API request failed: ${response.status} ${message}`);
+        error.status = response.status;
         if (isRetryableStatus(response.status) || (response.status === 403 && isRetryableMessage(message))) {
           error.transient = true;
           error.retryDelayMs = retryAfterDelayMs(response);
@@ -349,15 +357,44 @@ async function fetchRepositories(metricsIgnore, privateExcludedRepositories) {
   );
   const repositories = await mapWithConcurrency(includedRepositories, TREE_FETCH_CONCURRENCY, async (repository) => {
     const branch = repository.defaultBranchRef?.name;
+    const treeSha = repository.defaultBranchRef?.target?.tree?.oid;
     if (!branch) return { ...repository, files: [] };
-    const tree = await requestGitHubApiWithRetry(
-      `https://api.github.com/repos/${repository.nameWithOwner}/git/trees/${encodeURIComponent(branch)}?recursive=1`,
-    );
+    if (!treeSha) {
+      throw new Error(
+        repository.isPrivate
+          ? "GitHub GraphQL returned no default-branch tree SHA for a private repository."
+          : `GitHub GraphQL returned no default-branch tree SHA for public repository ${repository.nameWithOwner} (${branch}).`,
+      );
+    }
+
+    let tree;
+    try {
+      tree = await requestGitHubApiWithRetry(
+        `https://api.github.com/repos/${repository.nameWithOwner}/git/trees/${treeSha}?recursive=1`,
+      );
+    } catch (error) {
+      if (error.status === 404 && repository.isPrivate) {
+        return { ...repository, files: [], treeUnavailable: true };
+      }
+      if (error.status === 404) {
+        error.message = `GitHub returned 404 while reading the default-branch tree for public repository ${repository.nameWithOwner} (${branch}): ${error.message}`;
+      }
+      throw error;
+    }
+
     if (tree.truncated) {
-      throw new Error("A repository Git tree is truncated; cannot calculate accurate file-level language metrics.");
+      throw new Error(
+        `GitHub returned a truncated tree for repository ${repository.isPrivate ? "a private repository" : repository.nameWithOwner}; cannot calculate accurate file-level language metrics.`,
+      );
     }
     return { ...repository, files: tree.tree.filter((entry) => entry.type === "blob" && Number.isFinite(entry.size)) };
   });
+  const privateTreeUnavailableCount = repositories.filter((repository) => repository.treeUnavailable).length;
+  if (privateTreeUnavailableCount > 0) {
+    console.warn(
+      `Skipped ${privateTreeUnavailableCount} private repository tree(s) after GitHub returned 404. The language summary will be incomplete for these repositories. Check METRICS_TOKEN access or add them to LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES. Private repository names are omitted from this public workflow log.`,
+    );
+  }
 
   return {
     repositories,
@@ -367,6 +404,7 @@ async function fetchRepositories(metricsIgnore, privateExcludedRepositories) {
       explicitlyExcluded: explicitlyExcluded.length,
       privateExcluded: privateExcluded.length,
       privateIncluded: owned.repositories.filter((repository) => repository.isPrivate).length - privateExcluded.length,
+      privateTreeUnavailable: privateTreeUnavailableCount,
       privateExclusionSecretConfigured: privateExcludedRepositories.size > 0,
     },
   };
@@ -442,6 +480,7 @@ export function buildSnapshot({ repositories, totals }, metricsIgnore) {
       explicitlyExcludedRepositories: totals.explicitlyExcluded,
       privateRepositoriesExcluded: totals.privateExcluded,
       privateRepositoriesIncluded: totals.privateIncluded,
+      privateRepositoriesWithUnavailableTrees: totals.privateTreeUnavailable ?? 0,
       repositoriesWithLanguages,
       languageCount: sortedLanguages.length,
       totalLanguageBytes: repositoryLanguageBytes,
