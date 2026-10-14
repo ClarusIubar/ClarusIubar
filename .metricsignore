@@ -1,8 +1,8 @@
 # Profile language metrics exclusions.
 #
-# `repo:` only accepts a bare public repository name. Private repositories are
-# included by default and must never be listed here. To exclude a private
-# repository, set the `LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES` Actions secret.
+# Forks are excluded automatically. All owned public and private repositories
+# are included; repository-level exclusions are disabled. Path rules below only
+# remove generated artifacts from the language calculation.
 
 # Generated build output and dependency trees.
 path:**/.next/**

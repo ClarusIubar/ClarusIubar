@@ -20,7 +20,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: "22"
 
@@ -28,7 +28,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ env.METRICS_RUNTIME_TOKEN }}
           PROFILE_USERNAME: ClarusIubar
-          LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES: ${{ secrets.LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES }}
         run: node scripts/render-language-metrics.mjs
 
       - name: Generate contribution density assets

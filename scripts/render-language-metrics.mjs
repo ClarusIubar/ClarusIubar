@@ -58,6 +58,13 @@ query ($login: String!, $isFork: Boolean!, $after: String) {
         pushedAt
         defaultBranchRef {
           name
+          target {
+            ... on Commit {
+              tree {
+                oid
+              }
+            }
+          }
         }
       }
     }
@@ -293,6 +300,7 @@ async function requestGitHubApiWithRetry(url) {
       if (!response.ok) {
         const message = await response.text();
         const error = new Error(`GitHub API request failed: ${response.status} ${message}`);
+        error.status = response.status;
         if (isRetryableStatus(response.status) || (response.status === 403 && isRetryableMessage(message))) {
           error.transient = true;
           error.retryDelayMs = retryAfterDelayMs(response);
@@ -333,41 +341,59 @@ async function fetchRepositoriesByForkState(isFork) {
   }
 }
 
-async function fetchRepositories(metricsIgnore, privateExcludedRepositories) {
+async function fetchRepositories(metricsIgnore) {
   const owned = await fetchRepositoriesByForkState(false);
   if (owned.repositories.some((repository) => repository.isPrivate && metricsIgnore.repositoryNames.has(repository.name.toLowerCase()))) {
-    throw new Error(".metricsignore must not list private repositories; use LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES instead.");
+    throw new Error(".metricsignore cannot exclude private repositories; all owned private repositories are included.");
   }
-  const explicitlyExcluded = owned.repositories.filter(
-    (repository) => !repository.isPrivate && metricsIgnore.repositoryNames.has(repository.name.toLowerCase()),
-  );
-  const privateExcluded = owned.repositories.filter(
-    (repository) => repository.isPrivate && privateExcludedRepositories.has(repository.name.toLowerCase()),
-  );
-  const includedRepositories = owned.repositories.filter(
-    (repository) => !isExcludedRepository(repository, metricsIgnore, privateExcludedRepositories),
-  );
+  if (metricsIgnore.repositoryNames.size > 0) {
+    throw new Error(".metricsignore repo: rules are disabled; all owned non-fork repositories are included.");
+  }
+  const includedRepositories = owned.repositories.filter((repository) => !repository.isFork);
   const repositories = await mapWithConcurrency(includedRepositories, TREE_FETCH_CONCURRENCY, async (repository) => {
     const branch = repository.defaultBranchRef?.name;
+    const treeSha = repository.defaultBranchRef?.target?.tree?.oid;
     if (!branch) return { ...repository, files: [] };
-    const tree = await requestGitHubApiWithRetry(
-      `https://api.github.com/repos/${repository.nameWithOwner}/git/trees/${encodeURIComponent(branch)}?recursive=1`,
-    );
+    if (!treeSha) {
+      throw new Error(
+        repository.isPrivate
+          ? "GitHub GraphQL returned no default-branch tree SHA for a private repository."
+          : `GitHub GraphQL returned no default-branch tree SHA for public repository ${repository.nameWithOwner} (${branch}).`,
+      );
+    }
+
+    let tree;
+    try {
+      tree = await requestGitHubApiWithRetry(
+        `https://api.github.com/repos/${repository.nameWithOwner}/git/trees/${treeSha}?recursive=1`,
+      );
+    } catch (error) {
+      if (error.status === 404 && repository.isPrivate) {
+        throw new Error(
+          "GitHub returned 404 while reading an owned private repository tree. Metrics generation stopped to avoid incomplete results; private repository names and API details are omitted from this public workflow log.",
+        );
+      }
+      if (error.status === 404) {
+        error.message = `GitHub returned 404 while reading the default-branch tree for public repository ${repository.nameWithOwner} (${branch}): ${error.message}`;
+      }
+      throw error;
+    }
+
     if (tree.truncated) {
-      throw new Error("A repository Git tree is truncated; cannot calculate accurate file-level language metrics.");
+      throw new Error(
+        `GitHub returned a truncated tree for repository ${repository.isPrivate ? "a private repository" : repository.nameWithOwner}; cannot calculate accurate file-level language metrics.`,
+      );
     }
     return { ...repository, files: tree.tree.filter((entry) => entry.type === "blob" && Number.isFinite(entry.size)) };
   });
-
   return {
     repositories,
     totals: {
       owned: owned.totalCount,
       forks: 0,
-      explicitlyExcluded: explicitlyExcluded.length,
-      privateExcluded: privateExcluded.length,
-      privateIncluded: owned.repositories.filter((repository) => repository.isPrivate).length - privateExcluded.length,
-      privateExclusionSecretConfigured: privateExcludedRepositories.size > 0,
+      explicitlyExcluded: 0,
+      privateExcluded: 0,
+      privateIncluded: owned.repositories.filter((repository) => repository.isPrivate).length,
     },
   };
 }
@@ -429,7 +455,6 @@ export function buildSnapshot({ repositories, totals }, metricsIgnore) {
       includeForks: false,
       metricsIgnoreFile: ".metricsignore",
       privateRepositoriesIncluded: true,
-      privateExclusionSecretConfigured: Boolean(totals.privateExclusionSecretConfigured),
       languageColorSource: "GitHub Linguist languages.yml snapshot",
       repositoryBatchSize: REPOSITORY_BATCH_SIZE,
       metric: "Tracked source-file bytes after build-artifact exclusion",
@@ -550,12 +575,9 @@ function stripTrailingWhitespace(value) {
 
 async function main() {
   const metricsIgnore = parseMetricsIgnore(await readFile(metricsIgnorePath, "utf8"));
-  const privateExcludedRepositories = parsePrivateExcludedRepositories(
-    process.env.LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES || "",
-  );
   let source;
   try {
-    source = await fetchRepositories(metricsIgnore, privateExcludedRepositories);
+    source = await fetchRepositories(metricsIgnore);
   } catch (error) {
     if (error.transient && (await existingGeneratedAssetsAvailable())) {
       console.warn("GitHub GraphQL is temporarily unavailable; preserving existing language assets.");
