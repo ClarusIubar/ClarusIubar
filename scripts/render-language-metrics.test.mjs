@@ -1,9 +1,9 @@
 /*
 File: render-language-metrics.test.mjs
-Purpose: Verify repository language metrics exclude generated build artifacts.
-Primary Responsibility: Exercise file-path filtering and source-language aggregation.
-Design Intent: Prevent vault plugin bundles and common build outputs from distorting profile metrics.
-Non-Goals: Validate GitHub authentication or network retry behavior.
+Purpose: Verify repository tree fallback, artifact filtering, and language aggregation.
+Primary Responsibility: Exercise private empty-tree handling, file-path filtering, and source-language totals.
+Design Intent: Keep an empty private repository from suppressing complete metrics while excluding generated artifacts.
+Non-Goals: Validate GitHub authentication or live service availability.
 Dependencies: node:test, node:assert/strict, render-language-metrics.mjs.
 */
 import assert from "node:assert/strict";
@@ -11,7 +11,15 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 process.env.LANGUAGE_RENDERER_TEST_MODE = "1";
-const { buildSnapshot, colorForLanguage, isExcludedArtifactPath, isExcludedRepository, parseMetricsIgnore, parsePrivateExcludedRepositories } = await import("./render-language-metrics.mjs");
+const {
+  buildSnapshot,
+  colorForLanguage,
+  isEmptyPrivateTreeAfterRestNotFound,
+  isExcludedArtifactPath,
+  isExcludedRepository,
+  parseMetricsIgnore,
+  parsePrivateExcludedRepositories,
+} = await import("./render-language-metrics.mjs");
 
 const metricsIgnore = parseMetricsIgnore("repo:obsidian\npath:**/dist/**\npath:**/*.min.js\n");
 
@@ -29,6 +37,56 @@ test("includes private repositories unless a private exclusion secret matches", 
   assert.equal(isExcludedRepository({ ...privateRepository, name: "obsidian", nameWithOwner: "ClarusIubar/obsidian" }, metricsIgnore), false);
   assert.equal(isExcludedRepository({ name: "fork", isFork: true, isPrivate: false }, metricsIgnore), true);
   assert.throws(() => parsePrivateExcludedRepositories("ClarusIubar/private-repo"), /invalid repository name/);
+});
+
+test("accepts a private empty tree only after GraphQL confirms the exact tree object", async () => {
+  const repository = { nameWithOwner: "ClarusIubar/private-empty", isPrivate: true };
+  let capturedRequest;
+  const isEmpty = await isEmptyPrivateTreeAfterRestNotFound(repository, "root-tree-sha", async (query, variables) => {
+    capturedRequest = { query, variables };
+    return { repository: { object: { __typename: "Tree", entries: [] } } };
+  });
+
+  assert.equal(isEmpty, true);
+  assert.match(capturedRequest.query, /object\(oid: \$oid\)/);
+  assert.deepEqual(capturedRequest.variables, { owner: "ClarusIubar", name: "private-empty", oid: "root-tree-sha" });
+});
+
+test("keeps nonempty, invalid, or unreadable private trees fail-closed", async () => {
+  const repository = { nameWithOwner: "ClarusIubar/private-repository", isPrivate: true };
+  const nonempty = await isEmptyPrivateTreeAfterRestNotFound(repository, "root-tree-sha", async () => ({
+    repository: { object: { __typename: "Tree", entries: [{ name: "tracked-file.md" }] } },
+  }));
+  const invalidTree = await isEmptyPrivateTreeAfterRestNotFound(repository, "root-tree-sha", async () => ({
+    repository: { object: { __typename: "Blob", entries: [] } },
+  }));
+  const unreadable = await isEmptyPrivateTreeAfterRestNotFound(repository, "root-tree-sha", async () => {
+    throw new Error("synthetic lookup failure");
+  });
+  const publicRepository = await isEmptyPrivateTreeAfterRestNotFound(
+    { ...repository, isPrivate: false },
+    "root-tree-sha",
+    async () => ({ repository: { object: { __typename: "Tree", entries: [] } } }),
+  );
+
+  assert.equal(nonempty, false);
+  assert.equal(invalidTree, false);
+  assert.equal(unreadable, false);
+  assert.equal(publicRepository, false);
+});
+
+test("preserves transient GraphQL failures for the existing-asset fallback", async () => {
+  const transientError = Object.assign(new Error("synthetic temporary lookup failure"), { transient: true });
+  await assert.rejects(
+    isEmptyPrivateTreeAfterRestNotFound(
+      { nameWithOwner: "ClarusIubar/private-repository", isPrivate: true },
+      "root-tree-sha",
+      async () => {
+        throw transientError;
+      },
+    ),
+    (error) => error === transientError,
+  );
 });
 
 test("excludes Obsidian installed-plugin bundles and common build directories", () => {
@@ -108,5 +166,4 @@ test("counts source files but omits generated plugin bundles", () => {
   assert.deepEqual(snapshot.languages.map(({ name, bytes }) => ({ name, bytes })), [{ name: "JavaScript", bytes: 120 }]);
   assert.equal("excludedRepositories" in snapshot.source, false);
   assert.equal(snapshot.source.privateRepositoriesIncluded, true);
-  assert.equal(snapshot.source.privateExclusionSecretConfigured, false);
 });
