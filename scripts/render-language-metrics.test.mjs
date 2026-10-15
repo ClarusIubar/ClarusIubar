@@ -75,6 +75,20 @@ test("keeps nonempty, invalid, or unreadable private trees fail-closed", async (
   assert.equal(publicRepository, false);
 });
 
+test("preserves transient GraphQL failures for the existing-asset fallback", async () => {
+  const transientError = Object.assign(new Error("synthetic temporary lookup failure"), { transient: true });
+  await assert.rejects(
+    isEmptyPrivateTreeAfterRestNotFound(
+      { nameWithOwner: "ClarusIubar/private-repository", isPrivate: true },
+      "root-tree-sha",
+      async () => {
+        throw transientError;
+      },
+    ),
+    (error) => error === transientError,
+  );
+});
+
 test("excludes Obsidian installed-plugin bundles and common build directories", () => {
   const ignore = parseMetricsIgnore("path:**/.obsidian*/plugins/**/main.js\npath:**/.obsidian*/plugins/**/styles.css\npath:**/dist/**\npath:**/node_modules/**\n");
   assert.equal(isExcludedArtifactPath(".obsidian_Mac/plugins/dataview/main.js", ignore), true);

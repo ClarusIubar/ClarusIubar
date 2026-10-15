@@ -312,7 +312,7 @@ async function requestGraphqlWithRetry(query, variables) {
  * @param {string} treeSha Root tree object ID from the repository's default branch.
  * @param {(query: string, variables: object) => Promise<object>} graphqlRequest GraphQL request seam for deterministic tests.
  * @returns {Promise<boolean>} True only when GitHub confirms this exact object is an empty Tree.
- * @throws This helper does not throw; lookup errors return false so the caller retains its safe error.
+ * @throws Transient lookup errors are propagated so the caller can preserve existing generated assets.
  */
 export async function isEmptyPrivateTreeAfterRestNotFound(
   repository,
@@ -336,7 +336,8 @@ export async function isEmptyPrivateTreeAfterRestNotFound(
     const data = await graphqlRequest(emptyPrivateTreeQuery, { owner, name, oid: treeSha });
     const tree = data.repository?.object;
     return tree?.__typename === "Tree" && Array.isArray(tree.entries) && tree.entries.length === 0;
-  } catch {
+  } catch (error) {
+    if (error?.transient) throw error;
     return false;
   }
 }
