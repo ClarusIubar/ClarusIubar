@@ -72,6 +72,21 @@ query ($login: String!, $isFork: Boolean!, $after: String) {
 }
 `;
 
+const emptyPrivateTreeQuery = `
+query ($owner: String!, $name: String!, $oid: GitObjectID!) {
+  repository(owner: $owner, name: $name) {
+    object(oid: $oid) {
+      __typename
+      ... on Tree {
+        entries {
+          name
+        }
+      }
+    }
+  }
+}
+`;
+
 function escapeXml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -289,6 +304,43 @@ async function requestGraphqlWithRetry(query, variables) {
   throw lastError ?? new Error("GitHub GraphQL request failed without an error payload.");
 }
 
+/**
+ * Confirms that a private repository's exact root tree is empty after REST returned 404.
+ * Why: GitHub can return 404 for an empty private tree; accepting only a GraphQL-confirmed
+ * empty tree prevents that case from hiding the rest of the metrics while keeping failures closed.
+ * @param {{isPrivate: boolean, nameWithOwner: string}} repository Repository returned by GitHub GraphQL.
+ * @param {string} treeSha Root tree object ID from the repository's default branch.
+ * @param {(query: string, variables: object) => Promise<object>} graphqlRequest GraphQL request seam for deterministic tests.
+ * @returns {Promise<boolean>} True only when GitHub confirms this exact object is an empty Tree.
+ * @throws This helper does not throw; lookup errors return false so the caller retains its safe error.
+ */
+export async function isEmptyPrivateTreeAfterRestNotFound(
+  repository,
+  treeSha,
+  graphqlRequest = requestGraphqlWithRetry,
+) {
+  if (
+    !repository ||
+    !repository.isPrivate ||
+    typeof repository.nameWithOwner !== "string" ||
+    typeof treeSha !== "string"
+  ) {
+    return false;
+  }
+
+  const parts = repository.nameWithOwner.split("/");
+  if (parts.length !== 2 || !parts[0] || !parts[1]) return false;
+  const [owner, name] = parts;
+
+  try {
+    const data = await graphqlRequest(emptyPrivateTreeQuery, { owner, name, oid: treeSha });
+    const tree = data.repository?.object;
+    return tree?.__typename === "Tree" && Array.isArray(tree.entries) && tree.entries.length === 0;
+  } catch {
+    return false;
+  }
+}
+
 async function requestGitHubApiWithRetry(url) {
   const maxAttempts = Number.isFinite(graphqlMaxAttempts) && graphqlMaxAttempts > 0 ? graphqlMaxAttempts : 4;
   let lastError = null;
@@ -369,6 +421,9 @@ async function fetchRepositories(metricsIgnore) {
       );
     } catch (error) {
       if (error.status === 404 && repository.isPrivate) {
+        if (await isEmptyPrivateTreeAfterRestNotFound(repository, treeSha)) {
+          return { ...repository, files: [] };
+        }
         throw new Error(
           "GitHub returned 404 while reading an owned private repository tree. Metrics generation stopped to avoid incomplete results; private repository names and API details are omitted from this public workflow log.",
         );
