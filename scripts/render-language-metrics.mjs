@@ -394,15 +394,26 @@ async function fetchRepositoriesByForkState(isFork) {
   }
 }
 
-async function fetchRepositories(metricsIgnore) {
-  const owned = await fetchRepositoriesByForkState(false);
+export async function fetchRepositories(
+  metricsIgnore,
+  privateExcludedRepositories = new Set(),
+  dependencies = {},
+) {
+  const fetchOwnedRepositories = dependencies.fetchOwnedRepositories ?? (() => fetchRepositoriesByForkState(false));
+  const fetchTree = dependencies.fetchTree ?? requestGitHubApiWithRetry;
+  const owned = await fetchOwnedRepositories();
   if (owned.repositories.some((repository) => repository.isPrivate && metricsIgnore.repositoryNames.has(repository.name.toLowerCase()))) {
     throw new Error(".metricsignore cannot exclude private repositories; all owned private repositories are included.");
   }
   if (metricsIgnore.repositoryNames.size > 0) {
     throw new Error(".metricsignore repo: rules are disabled; all owned non-fork repositories are included.");
   }
-  const includedRepositories = owned.repositories.filter((repository) => !repository.isFork);
+  const privateExcluded = owned.repositories.filter(
+    (repository) => repository.isPrivate && privateExcludedRepositories.has(repository.name.toLowerCase()),
+  );
+  const includedRepositories = owned.repositories.filter(
+    (repository) => !isExcludedRepository(repository, metricsIgnore, privateExcludedRepositories),
+  );
   const repositories = await mapWithConcurrency(includedRepositories, TREE_FETCH_CONCURRENCY, async (repository) => {
     const branch = repository.defaultBranchRef?.name;
     const treeSha = repository.defaultBranchRef?.target?.tree?.oid;
@@ -417,7 +428,7 @@ async function fetchRepositories(metricsIgnore) {
 
     let tree;
     try {
-      tree = await requestGitHubApiWithRetry(
+      tree = await fetchTree(
         `https://api.github.com/repos/${repository.nameWithOwner}/git/trees/${treeSha}?recursive=1`,
       );
     } catch (error) {
@@ -448,8 +459,8 @@ async function fetchRepositories(metricsIgnore) {
       owned: owned.totalCount,
       forks: 0,
       explicitlyExcluded: 0,
-      privateExcluded: 0,
-      privateIncluded: owned.repositories.filter((repository) => repository.isPrivate).length,
+      privateExcluded: privateExcluded.length,
+      privateIncluded: includedRepositories.filter((repository) => repository.isPrivate).length,
     },
   };
 }
@@ -631,9 +642,12 @@ function stripTrailingWhitespace(value) {
 
 async function main() {
   const metricsIgnore = parseMetricsIgnore(await readFile(metricsIgnorePath, "utf8"));
+  const privateExcludedRepositories = parsePrivateExcludedRepositories(
+    process.env.LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES || "",
+  );
   let source;
   try {
-    source = await fetchRepositories(metricsIgnore);
+    source = await fetchRepositories(metricsIgnore, privateExcludedRepositories);
   } catch (error) {
     if (error.transient && (await existingGeneratedAssetsAvailable())) {
       console.warn("GitHub GraphQL is temporarily unavailable; preserving existing language assets.");

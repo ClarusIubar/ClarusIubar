@@ -14,6 +14,7 @@ process.env.LANGUAGE_RENDERER_TEST_MODE = "1";
 const {
   buildSnapshot,
   colorForLanguage,
+  fetchRepositories,
   isEmptyPrivateTreeAfterRestNotFound,
   isExcludedArtifactPath,
   isExcludedRepository,
@@ -37,6 +38,58 @@ test("includes private repositories unless a private exclusion secret matches", 
   assert.equal(isExcludedRepository({ ...privateRepository, name: "obsidian", nameWithOwner: "ClarusIubar/obsidian" }, metricsIgnore), false);
   assert.equal(isExcludedRepository({ name: "fork", isFork: true, isPrivate: false }, metricsIgnore), true);
   assert.throws(() => parsePrivateExcludedRepositories("ClarusIubar/private-repo"), /invalid repository name/);
+});
+
+test("filters secret-excluded private repositories before fetching trees and reports the exclusion count", async () => {
+  const repositories = [
+    {
+      name: "obsidian",
+      nameWithOwner: "ClarusIubar/obsidian",
+      isPrivate: true,
+      isFork: false,
+      defaultBranchRef: { name: "main", target: { tree: { oid: "obsidian-tree" } } },
+    },
+    {
+      name: "private-app",
+      nameWithOwner: "ClarusIubar/private-app",
+      isPrivate: true,
+      isFork: false,
+      defaultBranchRef: { name: "main", target: { tree: { oid: "private-tree" } } },
+    },
+    {
+      name: "public-app",
+      nameWithOwner: "ClarusIubar/public-app",
+      isPrivate: false,
+      isFork: false,
+      defaultBranchRef: { name: "main", target: { tree: { oid: "public-tree" } } },
+    },
+  ];
+  const requestedTrees = [];
+  const source = await fetchRepositories(
+    parseMetricsIgnore(""),
+    parsePrivateExcludedRepositories("OBSIDIAN"),
+    {
+      fetchOwnedRepositories: async () => ({ repositories, totalCount: repositories.length }),
+      fetchTree: async (url) => {
+        requestedTrees.push(url);
+        const size = url.includes("private-tree") ? 200 : 100;
+        return { truncated: false, tree: [{ type: "blob", path: "src/main.ts", size }] };
+      },
+    },
+  );
+
+  assert.equal(requestedTrees.length, 2);
+  assert.equal(requestedTrees.some((url) => url.includes("obsidian-tree")), false);
+  assert.deepEqual(source.repositories.map(({ name }) => name), ["private-app", "public-app"]);
+  assert.equal(source.totals.privateExcluded, 1);
+  assert.equal(source.totals.privateIncluded, 1);
+
+  const snapshot = buildSnapshot(source, parseMetricsIgnore(""));
+  assert.equal(snapshot.summary.ownedRepositories, 3);
+  assert.equal(snapshot.summary.totalRepositories, 2);
+  assert.equal(snapshot.summary.privateRepositoriesExcluded, 1);
+  assert.equal(snapshot.summary.privateRepositoriesIncluded, 1);
+  assert.equal(snapshot.summary.totalLanguageBytes, 300);
 });
 
 test("accepts a private empty tree only after GraphQL confirms the exact tree object", async () => {
