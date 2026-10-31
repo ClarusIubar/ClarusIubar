@@ -1,2 +1,3 @@
 .agent-governance-local/
 .local/
+/node_modules/
