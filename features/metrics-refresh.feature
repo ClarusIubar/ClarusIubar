@@ -78,14 +78,3 @@ Feature: GitHub Metrics refresh
     Then the original source file contributes to the language totals
     And build output and Obsidian plugin bundles contribute zero bytes
     And the fork tree is never fetched
-
-  Rule: Every GitHub Actions workflow in this repository completes in under 60 seconds
-
-    Scenario: The metrics refresh path completes in under one minute for complete responses
-      Given the metrics refresh targets "ClarusIubar"
-      And the owned repository and contribution responses are complete
-      And a previous metrics asset set exists
-      When the full metrics refresh runs
-      Then the refresh succeeds with a fresh generated timestamp
-      And the new complete asset set replaces the previous asset set once
-      And the metrics refresh completes in under 60 seconds

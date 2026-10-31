@@ -45,15 +45,7 @@ jobs:
       - name: Update README asset cache keys
         run: node scripts/update-readme-cache-bust.mjs
 
-      - name: Commit generated assets
-        run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add -A .
-          if git diff --cached --quiet; then
-            echo "No changes to commit."
-            exit 0
-          fi
-          git commit -m "chore: update profile metrics"
-          git pull --rebase origin "${GITHUB_REF_NAME}"
-          git push
+      - name: Publish generated metrics through a pull request
+        env:
+          GH_TOKEN: ${{ secrets.METRICS_TOKEN }}
+        run: node scripts/publish-generated-metrics.mjs

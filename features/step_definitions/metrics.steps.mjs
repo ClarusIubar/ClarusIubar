@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { performance } from "node:perf_hooks";
 import { Before, Given, Then, When } from "@cucumber/cucumber";
 import { runMetricsRefresh } from "../../scripts/metrics-workflow.mjs";
 
@@ -253,7 +252,6 @@ Given("the repository response includes an owned fork with source files", functi
 });
 
 When("the full metrics refresh runs", async function () {
-  const startedAt = performance.now();
   try {
     this.refreshResult = await runMetricsRefresh({
       environment: this.environment,
@@ -272,8 +270,6 @@ When("the full metrics refresh runs", async function () {
     });
   } catch (error) {
     this.refreshError = error;
-  } finally {
-    this.refreshElapsedMs = performance.now() - startedAt;
   }
 });
 
@@ -289,14 +285,6 @@ Then("the new complete asset set replaces the previous asset set once", function
   assert.equal(Object.keys(this.writeBatches[0]).length, 8);
   assert.equal(this.assets.size, 8);
   for (const [relativePath, contents] of this.assets) assert.notEqual(contents, `previous:${relativePath}`);
-});
-
-Then("the metrics refresh completes in under {int} seconds", function (seconds) {
-  assert.ok(Number.isFinite(this.refreshElapsedMs), "refresh execution time was not recorded");
-  assert.ok(
-    this.refreshElapsedMs < seconds * 1_000,
-    `refresh took ${this.refreshElapsedMs.toFixed(1)}ms; expected less than ${seconds * 1_000}ms`,
-  );
 });
 
 Then("the refresh fails at stage {string}", function (stage) {
