@@ -1,28 +1,6 @@
-import { appendFile, mkdir, readFile, writeFile } from "node:fs/promises";
 import { createHash } from "node:crypto";
-import path from "node:path";
 import process from "node:process";
-
-const OWNER = process.env.PROFILE_USERNAME || process.env.GITHUB_REPOSITORY_OWNER || "ClarusIubar";
-const TOKEN =
-  process.env.METRICS_TOKEN ||
-  process.env.METRICS_RUNTIME_TOKEN ||
-  process.env.GITHUB_TOKEN ||
-  "";
-
-if (!TOKEN && !process.env.CONTRIBUTION_RENDERER_TEST_MODE) {
-  throw new Error("Missing GitHub token. Set METRICS_TOKEN, METRICS_RUNTIME_TOKEN, or GITHUB_TOKEN.");
-}
-
-const outputDir = path.resolve(process.cwd(), "metrics");
-const densityJsonPath = path.join(outputDir, "contribution-density.json");
-const densitySvgPath = path.join(outputDir, "contribution-density.svg");
-const volumeJsonPath = path.join(outputDir, "contribution-volume.json");
-const volumeSvgPath = path.join(outputDir, "contribution-volume.svg");
-const activityJsonPath = path.join(outputDir, "contribution-activity.json");
-const activitySvgPath = path.join(outputDir, "contribution-activity.svg");
-const graphqlMaxAttempts = Number.parseInt(process.env.CONTRIBUTION_GRAPHQL_MAX_ATTEMPTS || "4", 10);
-const graphqlRetryBaseDelayMs = Number.parseInt(process.env.CONTRIBUTION_GRAPHQL_RETRY_BASE_DELAY_MS || "1500", 10);
+import { assertAuthenticatedViewer, resolveProfileUsername } from "./github-api.mjs";
 
 const LEVELS = [
   { key: "FIRST_QUARTILE", label: "Q1", color: "#0e4429" },
@@ -40,6 +18,9 @@ const VOLUME_BUCKETS = [
 
 const query = `
 query ($login: String!) {
+  viewer {
+    login
+  }
   user(login: $login) {
     contributionsCollection {
       contributionCalendar {
@@ -86,46 +67,6 @@ function formatRange(minCount, maxCount) {
     return `${minCount}`;
   }
   return `${minCount}-${maxCount}`;
-}
-
-function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
-function isRetryableStatus(status) {
-  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
-}
-
-function isRetryableMessage(message) {
-  const normalized = message.toLowerCase();
-  return (
-    normalized.includes("secondary rate limit") ||
-    normalized.includes("abuse detection") ||
-    normalized.includes("resource_limits_exceeded") ||
-    normalized.includes("resource limits for this query exceeded") ||
-    normalized.includes("temporarily unavailable") ||
-    normalized.includes("try again later")
-  );
-}
-
-function retryAfterDelayMs(response) {
-  const retryAfter = response.headers.get("retry-after");
-  const parsedRetryAfter = retryAfter == null ? Number.NaN : Number.parseInt(retryAfter, 10);
-  if (Number.isFinite(parsedRetryAfter) && parsedRetryAfter >= 0) {
-    return parsedRetryAfter * 1000;
-  }
-  return null;
-}
-
-function transientGraphqlError(message, cause) {
-  const error = new Error(message);
-  error.transient = true;
-  if (cause) {
-    error.cause = cause;
-  }
-  return error;
 }
 
 export function createLevelSnapshot(days, totalDays, activeDays) {
@@ -175,8 +116,22 @@ function createVolumeSnapshot(days, totalDays, activeDays) {
   });
 }
 
-export function buildSnapshot(calendar) {
+export function buildSnapshot(calendar, {
+  username = resolveProfileUsername(process.env),
+  generatedAt = new Date().toISOString(),
+} = {}) {
+  if (typeof username !== "string" || !username) {
+    throw new Error("A configured username is required to build contribution metrics.");
+  }
+  if (!Array.isArray(calendar?.weeks) || calendar.weeks.length === 0
+    || calendar.weeks.some((week) => !Array.isArray(week.contributionDays))) {
+    throw new Error("GitHub returned an incomplete contribution calendar.");
+  }
   const days = calendar.weeks.flatMap((week) => week.contributionDays);
+  if (days.length === 0 || days.some((day) => typeof day.date !== "string"
+    || !Number.isInteger(day.contributionCount) || typeof day.contributionLevel !== "string")) {
+    throw new Error("GitHub returned an incomplete contribution calendar.");
+  }
   const totalDays = days.length;
   const activeDays = days.filter((day) => day.contributionCount > 0).length;
   const maxDayCount = days.reduce((max, day) => Math.max(max, day.contributionCount), 0);
@@ -193,7 +148,7 @@ export function buildSnapshot(calendar) {
     .digest("hex");
 
   return {
-    username: OWNER,
+    username,
     window: {
       start,
       end,
@@ -206,7 +161,7 @@ export function buildSnapshot(calendar) {
       currentMonth,
       currentMonthContributions,
       currentMonthActiveDays,
-      generatedAt: new Date().toISOString(),
+      generatedAt,
     },
     calendar: {
       apiColors: calendar.colors,
@@ -264,18 +219,7 @@ export function compareSnapshots(previous, current) {
   return { changed: changes.length > 0, changes };
 }
 
-async function readPreviousActivitySnapshot() {
-  try {
-    return JSON.parse(await readFile(activityJsonPath, "utf8"));
-  } catch (error) {
-    if (error.code === "ENOENT") {
-      return null;
-    }
-    throw new Error(`Could not read previous contribution snapshot: ${error.message}`);
-  }
-}
-
-function formatChange(change) {
+export function formatChange(change) {
   if (change.kind === "densityLevel") {
     return `${change.level}: ${JSON.stringify(change.before)} -> ${JSON.stringify(change.after)}`;
   }
@@ -289,14 +233,6 @@ function formatChange(change) {
     return change.message;
   }
   return `${change.kind}: ${change.before ?? "none"} -> ${change.after}`;
-}
-
-async function writeActionsSummary(title, lines) {
-  const summaryPath = process.env.GITHUB_STEP_SUMMARY;
-  if (!summaryPath) {
-    return;
-  }
-  await appendFile(summaryPath, `## ${title}\n\n${lines.map((line) => `- ${line}`).join("\n")}\n`, "utf8");
 }
 
 function renderMetricCard({ snapshot, title, desc, rows, paletteByKey }) {
@@ -358,7 +294,7 @@ function renderMetricCard({ snapshot, title, desc, rows, paletteByKey }) {
 </svg>`;
 }
 
-function renderDensitySvg(snapshot) {
+export function renderDensitySvg(snapshot) {
   return renderMetricCard({
     snapshot,
     title: "Contribution Density",
@@ -368,7 +304,7 @@ function renderDensitySvg(snapshot) {
   });
 }
 
-function renderVolumeSvg(snapshot) {
+export function renderVolumeSvg(snapshot) {
   return renderMetricCard({
     snapshot,
     title: "Contribution Volume",
@@ -500,64 +436,17 @@ export function renderActivitySvg(snapshot) {
 </svg>`;
 }
 
-async function requestContributionCalendar() {
-  const response = await fetch("https://api.github.com/graphql", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${TOKEN}`,
-      "Content-Type": "application/json",
-      "User-Agent": "ClarusIubar-profile-metrics",
-    },
-    body: JSON.stringify({
-      query,
-      variables: { login: OWNER },
-    }),
-  });
-
-  if (!response.ok) {
-    const message = await response.text();
-    const errorMessage = `GitHub GraphQL request failed: ${response.status} ${message}`;
-    if (isRetryableStatus(response.status) || (response.status === 403 && isRetryableMessage(message))) {
-      const error = transientGraphqlError(errorMessage);
-      error.retryDelayMs = retryAfterDelayMs(response);
-      throw error;
-    }
-    throw new Error(errorMessage);
+export async function fetchContributionCalendar(client, username = resolveProfileUsername(process.env)) {
+  if (!client || typeof client.graphql !== "function") {
+    throw new Error("An authenticated GitHub API client is required for contribution metrics.");
   }
-
-  const payload = await response.json();
-  if (payload.errors?.length) {
-    const message = JSON.stringify(payload.errors);
-    if (isRetryableMessage(message)) {
-      throw transientGraphqlError(`GitHub GraphQL errors: ${message}`);
-    }
-    throw new Error(`GitHub GraphQL errors: ${message}`);
+  const data = await client.graphql(query, { login: username }, { stage: "contribution calendar" });
+  assertAuthenticatedViewer(data, username, "contribution calendar");
+  const calendar = data.user?.contributionsCollection?.contributionCalendar;
+  if (!calendar) {
+    throw new Error("GitHub GraphQL returned no contribution calendar.");
   }
-
-  return payload.data.user.contributionsCollection.contributionCalendar;
-}
-
-async function fetchContributionCalendar() {
-  const maxAttempts = Number.isFinite(graphqlMaxAttempts) && graphqlMaxAttempts > 0 ? graphqlMaxAttempts : 4;
-  let lastError = null;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      return await requestContributionCalendar();
-    } catch (error) {
-      lastError = error;
-      if (!error.transient || attempt === maxAttempts) {
-        throw error;
-      }
-      const delayMs = error.retryDelayMs ?? graphqlRetryBaseDelayMs * attempt;
-      console.warn(
-        `GitHub GraphQL request failed transiently; retrying ${attempt}/${maxAttempts - 1} after ${delayMs}ms.`,
-      );
-      await sleep(delayMs);
-    }
-  }
-
-  throw lastError ?? new Error("GitHub GraphQL request failed without an error payload.");
+  return calendar;
 }
 
 /**
@@ -589,54 +478,14 @@ export function createAssetSnapshots(snapshot) {
   };
 }
 
-async function main() {
-  const previousSnapshot = await readPreviousActivitySnapshot();
-  let calendar;
-  try {
-    calendar = await fetchContributionCalendar();
-  } catch (error) {
-    const lastGeneratedAt = previousSnapshot?.summary?.generatedAt ?? "unknown";
-    await writeActionsSummary("Contribution metrics refresh failed", [
-      "Existing generated assets were preserved.",
-      `Last successful generation: ${lastGeneratedAt}`,
-      `Reason: ${error.message}`,
-    ]);
-    throw error;
-  }
-  const snapshot = buildSnapshot(calendar);
-  const comparison = compareSnapshots(previousSnapshot, snapshot);
-  snapshot.freshness = {
-    status: "current",
-    dataThrough: snapshot.window.end,
-    comparison,
-  };
-  const densitySvg = renderDensitySvg(snapshot);
-  const volumeSvg = renderVolumeSvg(snapshot);
-  const activitySvg = renderActivitySvg(snapshot);
+export function renderContributionAssets(snapshot) {
   const { densitySnapshot, volumeSnapshot, activitySnapshot } = createAssetSnapshots(snapshot);
-
-  await mkdir(outputDir, { recursive: true });
-  await writeFile(densityJsonPath, `${JSON.stringify(densitySnapshot, null, 2)}\n`, "utf8");
-  await writeFile(densitySvgPath, densitySvg, "utf8");
-  await writeFile(volumeJsonPath, `${JSON.stringify(volumeSnapshot, null, 2)}\n`, "utf8");
-  await writeFile(volumeSvgPath, volumeSvg, "utf8");
-  await writeFile(activityJsonPath, `${JSON.stringify(activitySnapshot, null, 2)}\n`, "utf8");
-  await writeFile(activitySvgPath, activitySvg, "utf8");
-
-  await writeActionsSummary("Contribution metrics refresh", [
-    `Data through: ${snapshot.freshness.dataThrough}`,
-    comparison.changed ? "Observed contribution values changed." : "No observed contribution values changed.",
-    ...comparison.changes.map(formatChange),
-  ]);
-
-  console.log(`Wrote ${densityJsonPath}`);
-  console.log(`Wrote ${densitySvgPath}`);
-  console.log(`Wrote ${volumeJsonPath}`);
-  console.log(`Wrote ${volumeSvgPath}`);
-  console.log(`Wrote ${activityJsonPath}`);
-  console.log(`Wrote ${activitySvgPath}`);
-}
-
-if (!process.env.CONTRIBUTION_RENDERER_TEST_MODE) {
-  await main();
+  return {
+    "metrics/contribution-density.json": `${JSON.stringify(densitySnapshot, null, 2)}\n`,
+    "metrics/contribution-density.svg": renderDensitySvg(snapshot),
+    "metrics/contribution-volume.json": `${JSON.stringify(volumeSnapshot, null, 2)}\n`,
+    "metrics/contribution-volume.svg": renderVolumeSvg(snapshot),
+    "metrics/contribution-activity.json": `${JSON.stringify(activitySnapshot, null, 2)}\n`,
+    "metrics/contribution-activity.svg": renderActivitySvg(snapshot),
+  };
 }

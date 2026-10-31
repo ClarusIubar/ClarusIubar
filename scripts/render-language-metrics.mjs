@@ -1,29 +1,11 @@
-import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import { assertAuthenticatedViewer, createGitHubClient, resolveProfileUsername } from "./github-api.mjs";
 import { GITHUB_LINGUIST_COLORS } from "./github-linguist-colors.mjs";
-
-const OWNER = process.env.PROFILE_USERNAME || process.env.GITHUB_REPOSITORY_OWNER || "ClarusIubar";
-const TOKEN =
-  process.env.METRICS_TOKEN ||
-  process.env.METRICS_RUNTIME_TOKEN ||
-  process.env.GITHUB_TOKEN ||
-  "";
-
-if (!TOKEN && !process.env.LANGUAGE_RENDERER_TEST_MODE) {
-  throw new Error("Missing GitHub token. Set METRICS_TOKEN, METRICS_RUNTIME_TOKEN, or GITHUB_TOKEN.");
-}
-
-const outputDir = path.resolve(process.cwd(), "metrics");
-const languageSvgPath = path.join(outputDir, "metrics.languages.linguist.svg");
-const languageJsonPath = path.join(outputDir, "metrics.languages.json");
-const metricsIgnorePath = path.resolve(process.cwd(), ".metricsignore");
-const graphqlMaxAttempts = Number.parseInt(process.env.LANGUAGE_GRAPHQL_MAX_ATTEMPTS || "4", 10);
-const graphqlRetryBaseDelayMs = Number.parseInt(process.env.LANGUAGE_GRAPHQL_RETRY_BASE_DELAY_MS || "1500", 10);
-const displayedLanguageLimit = Number.parseInt(process.env.LANGUAGE_DISPLAY_LIMIT || "8", 10);
 
 const REPOSITORY_BATCH_SIZE = 100;
 const TREE_FETCH_CONCURRENCY = 5;
+const DEFAULT_DISPLAYED_LANGUAGE_LIMIT = 8;
 
 const LANGUAGE_BY_EXTENSION = new Map([
   [".astro", "Astro"], [".c", "C"], [".cpp", "C++"], [".cs", "C#"], [".css", "CSS"], [".dart", "Dart"],
@@ -37,6 +19,9 @@ const LANGUAGE_BY_EXTENSION = new Map([
 
 const repositoriesQuery = `
 query ($login: String!, $isFork: Boolean!, $after: String) {
+  viewer {
+    login
+  }
   user(login: $login) {
     repositories(
       first: ${REPOSITORY_BATCH_SIZE}
@@ -74,6 +59,9 @@ query ($login: String!, $isFork: Boolean!, $after: String) {
 
 const emptyPrivateTreeQuery = `
 query ($owner: String!, $name: String!, $oid: GitObjectID!) {
+  viewer {
+    login
+  }
   repository(owner: $owner, name: $name) {
     object(oid: $oid) {
       __typename
@@ -200,110 +188,6 @@ export function isExcludedRepository(repository, metricsIgnore, privateExcludedR
   return metricsIgnore.repositoryNames.has(repository.name.toLowerCase());
 }
 
-function sleep(ms) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
-function isRetryableStatus(status) {
-  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504;
-}
-
-function isRetryableMessage(message) {
-  const normalized = message.toLowerCase();
-  return (
-    normalized.includes("secondary rate limit") ||
-    normalized.includes("abuse detection") ||
-    normalized.includes("temporarily unavailable") ||
-    normalized.includes("try again later")
-  );
-}
-
-function retryAfterDelayMs(response) {
-  const retryAfter = response.headers.get("retry-after");
-  const parsedRetryAfter = retryAfter == null ? Number.NaN : Number.parseInt(retryAfter, 10);
-  if (Number.isFinite(parsedRetryAfter) && parsedRetryAfter >= 0) {
-    return parsedRetryAfter * 1000;
-  }
-  return null;
-}
-
-function transientGraphqlError(message, cause) {
-  const error = new Error(message);
-  error.transient = true;
-  if (cause) {
-    error.cause = cause;
-  }
-  return error;
-}
-
-async function existingGeneratedAssetsAvailable() {
-  try {
-    await Promise.all([access(languageSvgPath), access(languageJsonPath)]);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function requestGraphql(query, variables) {
-  const response = await fetch("https://api.github.com/graphql", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${TOKEN}`,
-      "Content-Type": "application/json",
-      "User-Agent": "ClarusIubar-profile-language-metrics",
-    },
-    body: JSON.stringify({ query, variables }),
-  });
-
-  if (!response.ok) {
-    const message = await response.text();
-    const errorMessage = `GitHub GraphQL request failed: ${response.status} ${message}`;
-    if (isRetryableStatus(response.status) || (response.status === 403 && isRetryableMessage(message))) {
-      const error = transientGraphqlError(errorMessage);
-      error.retryDelayMs = retryAfterDelayMs(response);
-      throw error;
-    }
-    throw new Error(errorMessage);
-  }
-
-  const payload = await response.json();
-  if (payload.errors?.length) {
-    const message = JSON.stringify(payload.errors);
-    if (isRetryableMessage(message)) {
-      throw transientGraphqlError(`GitHub GraphQL errors: ${message}`);
-    }
-    throw new Error(`GitHub GraphQL errors: ${message}`);
-  }
-
-  return payload.data;
-}
-
-async function requestGraphqlWithRetry(query, variables) {
-  const maxAttempts = Number.isFinite(graphqlMaxAttempts) && graphqlMaxAttempts > 0 ? graphqlMaxAttempts : 4;
-  let lastError = null;
-
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      return await requestGraphql(query, variables);
-    } catch (error) {
-      lastError = error;
-      if (!error.transient || attempt === maxAttempts) {
-        throw error;
-      }
-      const delayMs = error.retryDelayMs ?? graphqlRetryBaseDelayMs * attempt;
-      console.warn(
-        `GitHub GraphQL request failed transiently; retrying ${attempt}/${maxAttempts - 1} after ${delayMs}ms.`,
-      );
-      await sleep(delayMs);
-    }
-  }
-
-  throw lastError ?? new Error("GitHub GraphQL request failed without an error payload.");
-}
-
 /**
  * Confirms that a private repository's exact root tree is empty after REST returned 404.
  * Why: GitHub can return 404 for an empty private tree; accepting only a GraphQL-confirmed
@@ -317,7 +201,8 @@ async function requestGraphqlWithRetry(query, variables) {
 export async function isEmptyPrivateTreeAfterRestNotFound(
   repository,
   treeSha,
-  graphqlRequest = requestGraphqlWithRetry,
+  graphqlRequest,
+  expectedUsername,
 ) {
   if (
     !repository ||
@@ -332,65 +217,54 @@ export async function isEmptyPrivateTreeAfterRestNotFound(
   if (parts.length !== 2 || !parts[0] || !parts[1]) return false;
   const [owner, name] = parts;
 
-  try {
-    const data = await graphqlRequest(emptyPrivateTreeQuery, { owner, name, oid: treeSha });
-    const tree = data.repository?.object;
-    return tree?.__typename === "Tree" && Array.isArray(tree.entries) && tree.entries.length === 0;
-  } catch (error) {
-    if (error?.transient) throw error;
-    return false;
+  if (typeof graphqlRequest !== "function") {
+    throw new Error("An authenticated GraphQL request is required to verify a private empty tree.");
   }
+  const data = await graphqlRequest(emptyPrivateTreeQuery, { owner, name, oid: treeSha }, { stage: "private empty-tree verification" });
+  if (expectedUsername) assertAuthenticatedViewer(data, expectedUsername, "private empty-tree verification");
+  const tree = data.repository?.object;
+  return tree?.__typename === "Tree" && Array.isArray(tree.entries) && tree.entries.length === 0;
 }
 
-async function requestGitHubApiWithRetry(url) {
-  const maxAttempts = Number.isFinite(graphqlMaxAttempts) && graphqlMaxAttempts > 0 ? graphqlMaxAttempts : 4;
-  let lastError = null;
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      const response = await fetch(url, {
-        headers: { Authorization: `Bearer ${TOKEN}`, "User-Agent": "ClarusIubar-profile-language-metrics" },
-      });
-      if (!response.ok) {
-        const message = await response.text();
-        const error = new Error(`GitHub API request failed: ${response.status} ${message}`);
-        error.status = response.status;
-        if (isRetryableStatus(response.status) || (response.status === 403 && isRetryableMessage(message))) {
-          error.transient = true;
-          error.retryDelayMs = retryAfterDelayMs(response);
-        }
-        throw error;
-      }
-      return response.json();
-    } catch (error) {
-      lastError = error;
-      if (!error.transient || attempt === maxAttempts) throw error;
-      await sleep(error.retryDelayMs ?? graphqlRetryBaseDelayMs * attempt);
-    }
-  }
-  throw lastError ?? new Error("GitHub API request failed without an error payload.");
-}
-
-async function fetchRepositoriesByForkState(isFork) {
+async function fetchRepositoriesByForkState(isFork, owner, client) {
   const repositories = [];
   let after = null;
+  let totalCount = null;
+  const seenCursors = new Set();
 
   while (true) {
-    const data = await requestGraphqlWithRetry(repositoriesQuery, {
-      login: OWNER,
+    const data = await client.graphql(repositoriesQuery, {
+      login: owner,
       isFork,
       after,
-    });
+    }, { stage: "repository listing" });
+    assertAuthenticatedViewer(data, owner, "repository listing");
     const connection = data.user?.repositories;
     if (!connection) {
-      throw new Error(`GitHub GraphQL returned no repositories connection for ${OWNER}.`);
+      throw new Error(`GitHub GraphQL returned no repositories connection for ${owner}.`);
     }
+    if (!Array.isArray(connection.nodes) || !Number.isInteger(connection.totalCount) || !connection.pageInfo) {
+      throw new Error("GitHub GraphQL returned an incomplete repositories page.");
+    }
+    if (totalCount !== null && connection.totalCount !== totalCount) {
+      throw new Error("GitHub repository listing changed during pagination; refusing an incomplete metrics snapshot.");
+    }
+    totalCount = connection.totalCount;
 
     repositories.push(...connection.nodes);
 
     if (!connection.pageInfo.hasNextPage) {
-      return { repositories, totalCount: connection.totalCount };
+      if (repositories.length !== totalCount) {
+        throw new Error("GitHub repository listing ended before all repositories were read.");
+      }
+      return { repositories, totalCount };
     }
-    after = connection.pageInfo.endCursor;
+    const nextCursor = connection.pageInfo.endCursor;
+    if (typeof nextCursor !== "string" || !nextCursor || seenCursors.has(nextCursor)) {
+      throw new Error("GitHub repository listing returned a missing or repeated pagination cursor.");
+    }
+    seenCursors.add(nextCursor);
+    after = nextCursor;
   }
 }
 
@@ -399,9 +273,27 @@ export async function fetchRepositories(
   privateExcludedRepositories = new Set(),
   dependencies = {},
 ) {
-  const fetchOwnedRepositories = dependencies.fetchOwnedRepositories ?? (() => fetchRepositoriesByForkState(false));
-  const fetchTree = dependencies.fetchTree ?? requestGitHubApiWithRetry;
+  const environment = dependencies.environment ?? process.env;
+  const owner = dependencies.owner ?? resolveProfileUsername(environment);
+  let client = dependencies.client;
+  const getClient = () => {
+    if (!client) {
+      client = createGitHubClient({
+        environment,
+        ...(dependencies.fetchImpl ? { fetchImpl: dependencies.fetchImpl } : {}),
+        ...(dependencies.sleepImpl ? { sleepImpl: dependencies.sleepImpl } : {}),
+        ...(dependencies.logger ? { logger: dependencies.logger } : {}),
+      });
+    }
+    return client;
+  };
+  const fetchOwnedRepositories = dependencies.fetchOwnedRepositories ?? (() => fetchRepositoriesByForkState(false, owner, getClient()));
+  const fetchTree = dependencies.fetchTree ?? ((url) => getClient().rest(url, { stage: "repository tree" }));
+  const graphqlRequest = dependencies.graphqlRequest ?? ((...args) => getClient().graphql(...args));
   const owned = await fetchOwnedRepositories();
+  if (!Array.isArray(owned.repositories) || !Number.isInteger(owned.totalCount)) {
+    throw new Error("GitHub repository listing did not return a complete repository set.");
+  }
   if (owned.repositories.some((repository) => repository.isPrivate && metricsIgnore.repositoryNames.has(repository.name.toLowerCase()))) {
     throw new Error(".metricsignore cannot exclude private repositories; all owned private repositories are included.");
   }
@@ -433,7 +325,7 @@ export async function fetchRepositories(
       );
     } catch (error) {
       if (error.status === 404 && repository.isPrivate) {
-        if (await isEmptyPrivateTreeAfterRestNotFound(repository, treeSha)) {
+        if (await isEmptyPrivateTreeAfterRestNotFound(repository, treeSha, graphqlRequest, owner)) {
           return { ...repository, files: [] };
         }
         throw new Error(
@@ -465,7 +357,14 @@ export async function fetchRepositories(
   };
 }
 
-export function buildSnapshot({ repositories, totals }, metricsIgnore) {
+export function buildSnapshot({ repositories, totals }, metricsIgnore, {
+  username = resolveProfileUsername(process.env),
+  generatedAt = new Date().toISOString(),
+  displayLimit = Number.parseInt(process.env.LANGUAGE_DISPLAY_LIMIT || String(DEFAULT_DISPLAYED_LANGUAGE_LIMIT), 10),
+} = {}) {
+  if (typeof username !== "string" || !username) {
+    throw new Error("A configured username is required to build language metrics.");
+  }
   const languages = new Map();
   let repositoryLanguageBytes = 0;
   let repositoriesWithLanguages = 0;
@@ -510,13 +409,13 @@ export function buildSnapshot({ repositories, totals }, metricsIgnore) {
       share: repositoryLanguageBytes === 0 ? 0 : language.bytes / repositoryLanguageBytes,
     }));
 
-  const limit = Number.isFinite(displayedLanguageLimit) && displayedLanguageLimit > 0 ? displayedLanguageLimit : 8;
+  const limit = Number.isFinite(displayLimit) && displayLimit > 0 ? displayLimit : DEFAULT_DISPLAYED_LANGUAGE_LIMIT;
   const displayedLanguages = sortedLanguages.slice(0, limit);
   const displayedBytes = displayedLanguages.reduce((total, language) => total + language.bytes, 0);
 
   return {
-    username: OWNER,
-    generatedAt: new Date().toISOString(),
+    username,
+    generatedAt,
     source: {
       ownerAffiliations: ["OWNER"],
       includeForks: false,
@@ -566,7 +465,7 @@ function renderEmptySvg(snapshot) {
 </svg>`;
 }
 
-function renderLanguageSvg(snapshot) {
+export function renderLanguageSvg(snapshot) {
   if (snapshot.displayedLanguages.length === 0) {
     return renderEmptySvg(snapshot);
   }
@@ -640,39 +539,11 @@ function stripTrailingWhitespace(value) {
   return value.replace(/[ \t]+$/gm, "");
 }
 
-async function main() {
-  const metricsIgnore = parseMetricsIgnore(await readFile(metricsIgnorePath, "utf8"));
-  const privateExcludedRepositories = parsePrivateExcludedRepositories(
-    process.env.LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES || "",
-  );
-  let source;
-  try {
-    source = await fetchRepositories(metricsIgnore, privateExcludedRepositories);
-  } catch (error) {
-    if (error.transient && (await existingGeneratedAssetsAvailable())) {
-      console.warn("GitHub GraphQL is temporarily unavailable; preserving existing language assets.");
-      console.warn(error.message);
-      return;
-    }
-    throw error;
-  }
-
-  const snapshot = buildSnapshot(source, metricsIgnore);
-  const svg = stripTrailingWhitespace(renderLanguageSvg(snapshot));
-
-  await mkdir(outputDir, { recursive: true });
-  await writeFile(languageJsonPath, `${JSON.stringify(snapshot, null, 2)}\n`, "utf8");
-  await writeFile(languageSvgPath, svg, "utf8");
-
-  console.log(`Wrote ${languageJsonPath}`);
-  console.log(`Wrote ${languageSvgPath}`);
-  console.log(
-    `Rendered ${snapshot.summary.displayedLanguageCount}/${snapshot.summary.languageCount} languages from ${snapshot.summary.repositoriesWithLanguages}/${snapshot.summary.totalRepositories} repositories.`,
-  );
-}
-
-if (!process.env.LANGUAGE_RENDERER_TEST_MODE) {
-  await main();
+export function renderLanguageAssets(snapshot) {
+  return {
+    "metrics/metrics.languages.json": `${JSON.stringify(snapshot, null, 2)}\n`,
+    "metrics/metrics.languages.linguist.svg": stripTrailingWhitespace(renderLanguageSvg(snapshot)),
+  };
 }
 
 async function mapWithConcurrency(values, limit, mapper) {

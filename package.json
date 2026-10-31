@@ -1,0 +1,17 @@
+{
+  "name": "clarusiubar-metrics",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test:metrics:unit": "node --test scripts/github-api.test.mjs scripts/render-language-metrics.test.mjs scripts/render-contribution-density.test.mjs",
+    "test:metrics:features": "cucumber-js features",
+    "test:metrics": "pnpm run test:metrics:unit && pnpm run test:metrics:features"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "13.3.0"
+  }
+}

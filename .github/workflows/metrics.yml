@@ -11,31 +11,36 @@ permissions:
 jobs:
   metrics:
     runs-on: ubuntu-latest
-    env:
-      METRICS_RUNTIME_TOKEN: ${{ secrets.METRICS_TOKEN != '' && secrets.METRICS_TOKEN || secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 11.25.0
+          run_install: false
+
       - name: Setup Node.js
         uses: actions/setup-node@v7.1.0
         with:
           node-version: "22"
 
-      - name: Generate language metrics card
-        env:
-          GITHUB_TOKEN: ${{ env.METRICS_RUNTIME_TOKEN }}
-          PROFILE_USERNAME: ClarusIubar
-          LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES: ${{ secrets.LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES }}
-        run: node scripts/render-language-metrics.mjs
+      - name: Install metrics test dependencies
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
-      - name: Generate contribution density assets
+      - name: Verify metrics behavior
+        run: pnpm run test:metrics
+
+      - name: Generate profile metrics
         env:
-          GITHUB_TOKEN: ${{ env.METRICS_RUNTIME_TOKEN }}
-          PROFILE_USERNAME: ClarusIubar
-        run: node scripts/render-contribution-density.mjs
+          METRICS_TOKEN: ${{ secrets.METRICS_TOKEN }}
+          GITHUB_TOKEN: ${{ github.token }}
+          PROFILE_USERNAME: ${{ github.repository_owner }}
+          LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES: ${{ secrets.LANGUAGE_PRIVATE_EXCLUDED_REPOSITORIES }}
+        run: node scripts/run-metrics.mjs
 
       - name: Update README asset cache keys
         run: node scripts/update-readme-cache-bust.mjs

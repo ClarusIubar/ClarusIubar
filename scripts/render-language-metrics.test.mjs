@@ -11,6 +11,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 process.env.LANGUAGE_RENDERER_TEST_MODE = "1";
+process.env.PROFILE_USERNAME ??= "ClarusIubar";
 const {
   buildSnapshot,
   colorForLanguage,
@@ -105,7 +106,7 @@ test("accepts a private empty tree only after GraphQL confirms the exact tree ob
   assert.deepEqual(capturedRequest.variables, { owner: "ClarusIubar", name: "private-empty", oid: "root-tree-sha" });
 });
 
-test("keeps nonempty, invalid, or unreadable private trees fail-closed", async () => {
+test("keeps nonempty and invalid private trees fail-closed and propagates lookup errors", async () => {
   const repository = { nameWithOwner: "ClarusIubar/private-repository", isPrivate: true };
   const nonempty = await isEmptyPrivateTreeAfterRestNotFound(repository, "root-tree-sha", async () => ({
     repository: { object: { __typename: "Tree", entries: [{ name: "tracked-file.md" }] } },
@@ -113,9 +114,6 @@ test("keeps nonempty, invalid, or unreadable private trees fail-closed", async (
   const invalidTree = await isEmptyPrivateTreeAfterRestNotFound(repository, "root-tree-sha", async () => ({
     repository: { object: { __typename: "Blob", entries: [] } },
   }));
-  const unreadable = await isEmptyPrivateTreeAfterRestNotFound(repository, "root-tree-sha", async () => {
-    throw new Error("synthetic lookup failure");
-  });
   const publicRepository = await isEmptyPrivateTreeAfterRestNotFound(
     { ...repository, isPrivate: false },
     "root-tree-sha",
@@ -124,11 +122,16 @@ test("keeps nonempty, invalid, or unreadable private trees fail-closed", async (
 
   assert.equal(nonempty, false);
   assert.equal(invalidTree, false);
-  assert.equal(unreadable, false);
+  await assert.rejects(
+    isEmptyPrivateTreeAfterRestNotFound(repository, "root-tree-sha", async () => {
+      throw new Error("synthetic lookup failure");
+    }),
+    /synthetic lookup failure/,
+  );
   assert.equal(publicRepository, false);
 });
 
-test("preserves transient GraphQL failures for the existing-asset fallback", async () => {
+test("propagates GraphQL failures while verifying an empty private tree", async () => {
   const transientError = Object.assign(new Error("synthetic temporary lookup failure"), { transient: true });
   await assert.rejects(
     isEmptyPrivateTreeAfterRestNotFound(
