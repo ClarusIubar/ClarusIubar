@@ -1,3 +1,5 @@
+[🎵 eternal uptime](https://youtube.com/shorts/rtsGoOJp46Y)
+
 ## Contribution Activity
 
 <p align="center">
