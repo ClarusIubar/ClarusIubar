@@ -1,13 +1,13 @@
 ## Contribution Activity
 
 <p align="center">
-  <img src="./metrics/contribution-activity.svg?v=93fd0f09f506" width="100%" alt="contribution activity metrics" />
+  <img src="./metrics/contribution-activity.svg?v=4bf106bf8e21" width="100%" alt="contribution activity metrics" />
 </p>
 
 ## Languages
 
 <p align="center">
-  <img src="./metrics/metrics.languages.linguist.svg?v=e275cc12b93f" width="100%" alt="language metrics" />
+  <img src="./metrics/metrics.languages.linguist.svg?v=e37ce2c1f6ef" width="100%" alt="language metrics" />
 </p>
 
 ## AI-generated Music
