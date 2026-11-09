@@ -18,7 +18,7 @@
 
   <text x="42" y="48" class="eyebrow">VISIBLE REPOSITORIES</text>
   <text x="42" y="82" class="title">Languages</text>
-  <text x="42" y="106" class="subtitle">18 languages - 228.81 MB visible language bytes - 100/117 repos with language data - 1,249 build artifacts excluded</text>
+  <text x="42" y="106" class="subtitle">18 languages - 228.87 MB visible language bytes - 100/117 repos with language data - 1,249 build artifacts excluded</text>
 
   <rect x="42" y="120" width="816" height="14" rx="7" fill="#21262d" />
   <rect x="42" y="120" width="460" height="14" rx="3" fill="#3572A5" /><rect x="502" y="120" width="151" height="14" rx="3" fill="#3178c6" /><rect x="653" y="120" width="138" height="14" rx="3" fill="#f1e05a" /><rect x="791" y="120" width="16" height="14" rx="3" fill="#012456" /><rect x="807" y="120" width="9" height="14" rx="3" fill="#7355dd" /><rect x="816" y="120" width="7" height="14" rx="3" fill="#e38c00" /><rect x="823" y="120" width="7" height="14" rx="3" fill="#dea584" /><rect x="830" y="120" width="7" height="14" rx="3" fill="#89e051" />
@@ -33,7 +33,7 @@
   <text x="840" y="170" class="muted" text-anchor="end">18.5%</text>
   <circle cx="48" cy="198" r="5.5" fill="#f1e05a" />
   <text x="66" y="202" class="language">JavaScript</text>
-  <text x="308" y="202" class="value" text-anchor="end">38.65 MB</text>
+  <text x="308" y="202" class="value" text-anchor="end">38.71 MB</text>
   <text x="388" y="202" class="muted" text-anchor="end">16.9%</text>
   <circle cx="500" cy="198" r="5.5" fill="#012456" />
   <text x="518" y="202" class="language">PowerShell</text>
