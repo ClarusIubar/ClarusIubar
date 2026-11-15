@@ -2,17 +2,17 @@
   "username": "ClarusIubar",
   "window": {
     "start": "2025-11-16",
-    "end": "2026-11-15",
-    "totalDays": 365
+    "end": "2026-11-16",
+    "totalDays": 366
   },
   "summary": {
-    "totalContributions": 38315,
+    "totalContributions": 38408,
     "activeDays": 275,
-    "maxDayCount": 576,
+    "maxDayCount": 578,
     "currentMonth": "2026-11",
-    "currentMonthContributions": 1583,
+    "currentMonthContributions": 1667,
     "currentMonthActiveDays": 15,
-    "generatedAt": "2026-11-14T16:06:42.292Z"
+    "generatedAt": "2026-11-15T16:06:52.812Z"
   },
   "calendar": {
     "apiColors": [
@@ -28,43 +28,38 @@
       "#39d353"
     ],
     "isHalloween": false,
-    "levelAssignmentFingerprint": "30173732ae0017d43b87e681f78d6ce308c0bf2bb0912f328b4cc1f021e3dd4e"
+    "levelAssignmentFingerprint": "304ba10b5c31786496e449a55dab00d04849dd7b67ea54371322bfe8bb78ab78"
   },
   "freshness": {
     "status": "current",
-    "dataThrough": "2026-11-15",
+    "dataThrough": "2026-11-16",
     "comparison": {
       "changed": true,
       "changes": [
         {
           "kind": "totalContributions",
-          "before": 38156,
-          "after": 38315
-        },
-        {
-          "kind": "window.start",
-          "before": "2025-11-09",
-          "after": "2025-11-16"
+          "before": 38315,
+          "after": 38408
         },
         {
           "kind": "window.end",
-          "before": "2026-11-12",
-          "after": "2026-11-15"
+          "before": "2026-11-15",
+          "after": "2026-11-16"
         },
         {
           "kind": "levelAssignments",
-          "before": "a23f69817b1993c7efaad738a62b83d643feb40c8f8b642310ad56fb367af551",
-          "after": "30173732ae0017d43b87e681f78d6ce308c0bf2bb0912f328b4cc1f021e3dd4e"
+          "before": "30173732ae0017d43b87e681f78d6ce308c0bf2bb0912f328b4cc1f021e3dd4e",
+          "after": "304ba10b5c31786496e449a55dab00d04849dd7b67ea54371322bfe8bb78ab78"
         },
         {
           "kind": "densityLevel",
           "level": "Q1",
           "before": {
-            "days": 143,
+            "days": 149,
             "githubColor": "#9be9a8"
           },
           "after": {
-            "days": 149,
+            "days": 148,
             "githubColor": "#9be9a8"
           }
         },
@@ -72,11 +67,11 @@
           "kind": "densityLevel",
           "level": "Q2",
           "before": {
-            "days": 94,
+            "days": 95,
             "githubColor": "#40c463"
           },
           "after": {
-            "days": 95,
+            "days": 94,
             "githubColor": "#40c463"
           }
         },
@@ -84,11 +79,11 @@
           "kind": "densityLevel",
           "level": "Q3",
           "before": {
-            "days": 19,
+            "days": 17,
             "githubColor": "#30a14e"
           },
           "after": {
-            "days": 17,
+            "days": 18,
             "githubColor": "#30a14e"
           }
         },
@@ -96,11 +91,11 @@
           "kind": "densityLevel",
           "level": "Q4",
           "before": {
-            "days": 15,
+            "days": 14,
             "githubColor": "#216e39"
           },
           "after": {
-            "days": 14,
+            "days": 15,
             "githubColor": "#216e39"
           }
         }
@@ -113,7 +108,7 @@
       "label": "1-50",
       "days": 66,
       "share": 0.24,
-      "shareOfYear": 0.18082191780821918,
+      "shareOfYear": 0.18032786885245902,
       "minCount": 1,
       "maxCount": 50,
       "rangeLabel": "1-50"
@@ -121,31 +116,31 @@
     {
       "key": "COUNT_51_100",
       "label": "51-100",
-      "days": 45,
-      "share": 0.16363636363636364,
-      "shareOfYear": 0.1232876712328767,
-      "minCount": 51,
+      "days": 50,
+      "share": 0.18181818181818182,
+      "shareOfYear": 0.1366120218579235,
+      "minCount": 52,
       "maxCount": 100,
       "rangeLabel": "51-100"
     },
     {
       "key": "COUNT_101_150",
       "label": "101-150",
-      "days": 59,
-      "share": 0.21454545454545454,
-      "shareOfYear": 0.16164383561643836,
-      "minCount": 101,
+      "days": 55,
+      "share": 0.2,
+      "shareOfYear": 0.15027322404371585,
+      "minCount": 102,
       "maxCount": 149,
       "rangeLabel": "101-150"
     },
     {
       "key": "COUNT_151_PLUS",
       "label": "150+",
-      "days": 105,
-      "share": 0.38181818181818183,
-      "shareOfYear": 0.2876712328767123,
-      "minCount": 151,
-      "maxCount": 576,
+      "days": 104,
+      "share": 0.3781818181818182,
+      "shareOfYear": 0.28415300546448086,
+      "minCount": 152,
+      "maxCount": 578,
       "rangeLabel": "150+"
     }
   ]
