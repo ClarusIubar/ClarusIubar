@@ -19,6 +19,9 @@ Before(function () {
     transientCreateFailures: 0,
     failPullRequestReadback: false,
     runPullRequestUrl: null,
+    runPullRequestRepository: "ClarusIubar/ClarusIubar",
+    runPullRequestCommitSha: null,
+    commitSha: "a".repeat(40),
     failMerge: false,
     pendingPullRequestUrl: null,
     calls: [],
@@ -57,7 +60,7 @@ Before(function () {
         return {
           exitCode: 0,
           stdout: JSON.stringify(this.publication.runPullRequestUrl
-            ? [{ number: 99, url: this.publication.runPullRequestUrl, title: "chore: update profile metrics", headRefName: `metrics/update-${this.publication.environment.GITHUB_RUN_ID}-1`, baseRefName: "main", state: "OPEN" }]
+            ? [{ number: 99, url: this.publication.runPullRequestUrl, title: "chore: update profile metrics", headRefName: `metrics/update-${this.publication.environment.GITHUB_RUN_ID}-1`, baseRefName: "main", state: "OPEN", headRepository: { nameWithOwner: this.publication.runPullRequestRepository }, headRefOid: this.publication.runPullRequestCommitSha ?? this.publication.commitSha }]
             : []),
           stderr: "",
         };
@@ -66,6 +69,9 @@ Before(function () {
         ? [{ number: 98, url: this.publication.pendingPullRequestUrl, title: "chore: update profile metrics", headRefName: "metrics/update-previous-1" }]
         : [];
       return { exitCode: 0, stdout: JSON.stringify(openPullRequests), stderr: "" };
+    }
+    if (command === "git" && args[0] === "rev-parse" && args[1] === "HEAD") {
+      return { exitCode: 0, stdout: `${this.publication.commitSha}\n`, stderr: "" };
     }
     if (command === "gh" && args[0] === "pr" && args[1] === "merge") {
       return this.publication.failMerge
@@ -103,6 +109,16 @@ Given("no pull request exists for the run-specific publication branch", function
 
 Given("the run-specific publication pull request is already open", function () {
   this.publication.runPullRequestUrl = PULL_REQUEST_URL;
+});
+
+Given("a run-specific pull request exists from a fork", function () {
+  this.publication.runPullRequestUrl = PULL_REQUEST_URL;
+  this.publication.runPullRequestRepository = "forker/ClarusIubar";
+});
+
+Given("a run-specific pull request exists from the same repository with a different commit", function () {
+  this.publication.runPullRequestUrl = PULL_REQUEST_URL;
+  this.publication.runPullRequestCommitSha = "b".repeat(40);
 });
 
 Given("pull request readback fails", function () {
@@ -152,7 +168,7 @@ Then("it opens a pull request targeting {string}", function (base) {
   assert.ok(create.args.includes("--base"));
   assert.equal(create.args[create.args.indexOf("--base") + 1], base);
   assert.ok(create.args.includes("--head"));
-  assert.equal(create.args[create.args.indexOf("--head") + 1], "metrics/update-12345-1");
+  assert.equal(create.args[create.args.indexOf("--head") + 1], "ClarusIubar:metrics/update-12345-1");
 });
 
 Then("it merges that pull request with {string}", function (method) {

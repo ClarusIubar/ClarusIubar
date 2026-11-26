@@ -58,6 +58,28 @@ Feature: Publish generated metrics through the protected default branch
     Then pull request creation is attempted exactly 1 time
     And publication is reported as "merged"
 
+  Scenario: A same-named fork pull request is rejected during recovery
+    Given the metrics workflow runs on "main" with run ID "12356"
+    And generated README and metrics files have changed
+    And the first pull request creation returns a GitHub GraphQL internal error
+    And a run-specific pull request exists from a fork
+    When the workflow publishes the generated metrics
+    Then publication fails at "pull request creation"
+    And pull request creation is attempted exactly 1 time
+    And the pull request is not merged
+    And it preserves the temporary publication branch for recovery
+
+  Scenario: A same-repository pull request for a different commit is rejected during recovery
+    Given the metrics workflow runs on "main" with run ID "12357"
+    And generated README and metrics files have changed
+    And the first pull request creation returns a GitHub GraphQL internal error
+    And a run-specific pull request exists from the same repository with a different commit
+    When the workflow publishes the generated metrics
+    Then publication fails at "pull request creation"
+    And pull request creation is attempted exactly 1 time
+    And the pull request is not merged
+    And it preserves the temporary publication branch for recovery
+
   Scenario: Exhausted transient creation retries fail after confirming the branch has no pull request
     Given the metrics workflow runs on "main" with run ID "12354"
     And generated README and metrics files have changed

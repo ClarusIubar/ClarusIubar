@@ -54,10 +54,10 @@ function isRetryablePullRequestCreateFailure(result) {
   return /GraphQL:\s*Something went wrong while executing your query\b/i.test(String(result.stderr ?? ""));
 }
 
-async function findRunPullRequest(runCommand, repository, branch, environment) {
+async function findRunPullRequest(runCommand, repository, branch, expectedCommitSha, environment) {
   const result = await runCommand("gh", [
     "pr", "list", "--repo", repository, "--base", "main", "--head", branch,
-    "--state", "all", "--json", "number,url,title,headRefName,baseRefName,state", "--limit", "10",
+    "--state", "all", "--json", "number,url,title,headRefName,baseRefName,state,headRepository,headRefOid", "--limit", "10",
   ]);
   if (result.exitCode !== 0) {
     const detail = redact(result.stderr || result.errorCode, environment);
@@ -75,7 +75,10 @@ async function findRunPullRequest(runCommand, repository, branch, environment) {
   const branchPullRequests = pullRequests.filter((pullRequest) => pullRequest?.headRefName === branch);
   if (branchPullRequests.length === 0) return null;
   const matchingPullRequest = branchPullRequests.find((pullRequest) =>
-    pullRequest.title === METRICS_PULL_REQUEST_TITLE && pullRequest.baseRefName === "main",
+    pullRequest.title === METRICS_PULL_REQUEST_TITLE
+      && pullRequest.baseRefName === "main"
+      && pullRequest.headRepository?.nameWithOwner === repository
+      && pullRequest.headRefOid === expectedCommitSha,
   );
   const url = pullRequestUrl(matchingPullRequest?.url, repository);
   if (!url) throw new Error("GitHub returned an unexpected pull request for the temporary publication branch.");
@@ -92,10 +95,10 @@ async function removePublicationBranch(runCommand, branch, environment) {
   return `The temporary branch could not be removed${detail ? `: ${detail}` : "."}`;
 }
 
-async function readBackAfterCreateFailure(result, runCommand, repository, branch, environment) {
+async function readBackAfterCreateFailure(result, runCommand, repository, branch, expectedCommitSha, environment) {
   const detail = redact(result.stderr || result.errorCode, environment);
   try {
-    return await findRunPullRequest(runCommand, repository, branch, environment);
+    return await findRunPullRequest(runCommand, repository, branch, expectedCommitSha, environment);
   } catch (error) {
     throw new MetricsPublicationError(
       "pull request creation",
@@ -113,10 +116,10 @@ async function throwCreateFailure(result, runCommand, branch, environment) {
   );
 }
 
-async function resolveSuccessfulCreateWithoutUrl(runCommand, repository, branch, environment) {
+async function resolveSuccessfulCreateWithoutUrl(runCommand, repository, branch, expectedCommitSha, environment) {
   let pullRequestUrlFromReadback;
   try {
-    pullRequestUrlFromReadback = await findRunPullRequest(runCommand, repository, branch, environment);
+    pullRequestUrlFromReadback = await findRunPullRequest(runCommand, repository, branch, expectedCommitSha, environment);
   } catch (error) {
     throw new MetricsPublicationError(
       "pull request creation",
@@ -129,25 +132,25 @@ async function resolveSuccessfulCreateWithoutUrl(runCommand, repository, branch,
   throw new MetricsPublicationError("pull request creation", `GitHub did not return a pull request URL and readback found none. ${cleanupDetail}`);
 }
 
-async function failedCreateError(result, runCommand, repository, branch, environment, retryAvailable) {
-  const foundPullRequest = await readBackAfterCreateFailure(result, runCommand, repository, branch, environment);
+async function failedCreateError(result, runCommand, repository, branch, expectedCommitSha, environment, retryAvailable) {
+  const foundPullRequest = await readBackAfterCreateFailure(result, runCommand, repository, branch, expectedCommitSha, environment);
   if (foundPullRequest) return foundPullRequest;
   if (!retryAvailable || !isRetryablePullRequestCreateFailure(result)) {
     return throwCreateFailure(result, runCommand, branch, environment);
   }
 
   const retry = await runCommand("gh", [
-    "pr", "create", "--repo", repository, "--base", "main", "--head", branch,
+    "pr", "create", "--repo", repository, "--base", "main", "--head", `${repository.split("/")[0]}:${branch}`,
     "--title", METRICS_PULL_REQUEST_TITLE,
     "--body", "Automated profile metrics refresh. This change contains only README metric references and generated metrics files.",
   ]);
   if (retry.exitCode !== 0) {
-    return failedCreateError(retry, runCommand, repository, branch, environment, false);
+    return failedCreateError(retry, runCommand, repository, branch, expectedCommitSha, environment, false);
   }
 
   const url = pullRequestUrl(retry.stdout, repository);
   if (url) return url;
-  return resolveSuccessfulCreateWithoutUrl(runCommand, repository, branch, environment);
+  return resolveSuccessfulCreateWithoutUrl(runCommand, repository, branch, expectedCommitSha, environment);
 }
 
 export async function publishGeneratedMetrics({ environment = process.env, runCommand = (command, args) => execute(command, args, environment) } = {}) {
@@ -199,16 +202,20 @@ export async function publishGeneratedMetrics({ environment = process.env, runCo
   const branch = `metrics/update-${environment.GITHUB_RUN_ID}-${environment.GITHUB_RUN_ATTEMPT}`;
   await checked(runCommand, "git", ["switch", "--create", branch], "create publication branch", environment);
   await checked(runCommand, "git", ["commit", "-m", METRICS_PULL_REQUEST_TITLE], "commit generated metrics", environment);
+  const publicationCommit = String((await checked(runCommand, "git", ["rev-parse", "HEAD"], "inspect publication commit", environment)).stdout).trim();
+  if (!/^[a-f0-9]{40,64}$/i.test(publicationCommit)) {
+    throw new MetricsPublicationError("inspect publication commit", "Git did not return a valid publication commit ID.");
+  }
   await checked(runCommand, "git", ["push", "--set-upstream", "origin", branch], "push publication branch", environment);
 
   const createResult = await runCommand("gh", [
-    "pr", "create", "--repo", repository, "--base", "main", "--head", branch,
+    "pr", "create", "--repo", repository, "--base", "main", "--head", `${repository.split("/")[0]}:${branch}`,
     "--title", METRICS_PULL_REQUEST_TITLE,
     "--body", "Automated profile metrics refresh. This change contains only README metric references and generated metrics files.",
   ]);
   const url = createResult.exitCode === 0
     ? pullRequestUrl(createResult.stdout, repository)
-    : await failedCreateError(createResult, runCommand, repository, branch, environment, true);
+    : await failedCreateError(createResult, runCommand, repository, branch, publicationCommit, environment, true);
   if (!url) throw new MetricsPublicationError("pull request creation", "GitHub did not return a pull request URL.");
 
   const mergeResult = await runCommand("gh", ["pr", "merge", url, "--repo", repository, "--squash", "--delete-branch"]);
