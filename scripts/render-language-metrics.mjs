@@ -4,7 +4,7 @@ import { assertAuthenticatedViewer, createGitHubClient, resolveProfileUsername }
 import { GITHUB_LINGUIST_COLORS } from "./github-linguist-colors.mjs";
 
 const REPOSITORY_BATCH_SIZE = 100;
-const TREE_FETCH_CONCURRENCY = 5;
+const TREE_FETCH_CONCURRENCY = 10;
 const DEFAULT_DISPLAYED_LANGUAGE_LIMIT = 8;
 
 const LANGUAGE_BY_EXTENSION = new Map([
