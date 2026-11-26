@@ -45,8 +45,109 @@ async function checked(runCommand, command, args, stage, environment) {
   return result;
 }
 
-function pullRequestUrl(stdout) {
-  return String(stdout).match(/https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/pull\/\d+/)?.[0] ?? null;
+function pullRequestUrl(stdout, repository) {
+  const url = String(stdout).match(/https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/pull\/\d+/)?.[0] ?? null;
+  return url?.startsWith(`https://github.com/${repository}/pull/`) ? url : null;
+}
+
+function isRetryablePullRequestCreateFailure(result) {
+  return /GraphQL:\s*Something went wrong while executing your query\b/i.test(String(result.stderr ?? ""));
+}
+
+async function findRunPullRequest(runCommand, repository, branch, environment) {
+  const result = await runCommand("gh", [
+    "pr", "list", "--repo", repository, "--base", "main", "--head", branch,
+    "--state", "all", "--json", "number,url,title,headRefName,baseRefName,state", "--limit", "10",
+  ]);
+  if (result.exitCode !== 0) {
+    const detail = redact(result.stderr || result.errorCode, environment);
+    throw new Error(`GitHub could not confirm whether pull request creation succeeded${detail ? `: ${detail}` : "."}`);
+  }
+
+  let pullRequests;
+  try {
+    pullRequests = JSON.parse(result.stdout);
+  } catch {
+    throw new Error("GitHub returned invalid pull request readback data.");
+  }
+  if (!Array.isArray(pullRequests)) throw new Error("GitHub returned invalid pull request readback data.");
+
+  const branchPullRequests = pullRequests.filter((pullRequest) => pullRequest?.headRefName === branch);
+  if (branchPullRequests.length === 0) return null;
+  const matchingPullRequest = branchPullRequests.find((pullRequest) =>
+    pullRequest.title === METRICS_PULL_REQUEST_TITLE && pullRequest.baseRefName === "main",
+  );
+  const url = pullRequestUrl(matchingPullRequest?.url, repository);
+  if (!url) throw new Error("GitHub returned an unexpected pull request for the temporary publication branch.");
+  if (matchingPullRequest.state !== "OPEN") {
+    throw new Error(`The run-specific pull request exists in state ${matchingPullRequest.state}; the branch was kept for recovery.`);
+  }
+  return url;
+}
+
+async function removePublicationBranch(runCommand, branch, environment) {
+  const cleanup = await runCommand("git", ["push", "origin", "--delete", branch]);
+  if (cleanup.exitCode === 0) return "The temporary branch was removed.";
+  const detail = redact(cleanup.stderr || cleanup.errorCode, environment);
+  return `The temporary branch could not be removed${detail ? `: ${detail}` : "."}`;
+}
+
+async function readBackAfterCreateFailure(result, runCommand, repository, branch, environment) {
+  const detail = redact(result.stderr || result.errorCode, environment);
+  try {
+    return await findRunPullRequest(runCommand, repository, branch, environment);
+  } catch (error) {
+    throw new MetricsPublicationError(
+      "pull request creation",
+      `Pull request creation failed${detail ? `: ${detail}` : ""}. The outcome could not be safely recovered (${redact(error.message, environment)}); the temporary branch was preserved for recovery.`,
+    );
+  }
+}
+
+async function throwCreateFailure(result, runCommand, branch, environment) {
+  const detail = redact(result.stderr || result.errorCode, environment);
+  const cleanupDetail = await removePublicationBranch(runCommand, branch, environment);
+  throw new MetricsPublicationError(
+    "pull request creation",
+    `Pull request creation failed${detail ? `: ${detail}` : ""}. ${cleanupDetail}`,
+  );
+}
+
+async function resolveSuccessfulCreateWithoutUrl(runCommand, repository, branch, environment) {
+  let pullRequestUrlFromReadback;
+  try {
+    pullRequestUrlFromReadback = await findRunPullRequest(runCommand, repository, branch, environment);
+  } catch (error) {
+    throw new MetricsPublicationError(
+      "pull request creation",
+      `GitHub reported success without a pull request URL, and readback could not safely recover it (${redact(error.message, environment)}); the temporary branch was preserved for recovery.`,
+    );
+  }
+  if (pullRequestUrlFromReadback) return pullRequestUrlFromReadback;
+
+  const cleanupDetail = await removePublicationBranch(runCommand, branch, environment);
+  throw new MetricsPublicationError("pull request creation", `GitHub did not return a pull request URL and readback found none. ${cleanupDetail}`);
+}
+
+async function failedCreateError(result, runCommand, repository, branch, environment, retryAvailable) {
+  const foundPullRequest = await readBackAfterCreateFailure(result, runCommand, repository, branch, environment);
+  if (foundPullRequest) return foundPullRequest;
+  if (!retryAvailable || !isRetryablePullRequestCreateFailure(result)) {
+    return throwCreateFailure(result, runCommand, branch, environment);
+  }
+
+  const retry = await runCommand("gh", [
+    "pr", "create", "--repo", repository, "--base", "main", "--head", branch,
+    "--title", METRICS_PULL_REQUEST_TITLE,
+    "--body", "Automated profile metrics refresh. This change contains only README metric references and generated metrics files.",
+  ]);
+  if (retry.exitCode !== 0) {
+    return failedCreateError(retry, runCommand, repository, branch, environment, false);
+  }
+
+  const url = pullRequestUrl(retry.stdout, repository);
+  if (url) return url;
+  return resolveSuccessfulCreateWithoutUrl(runCommand, repository, branch, environment);
 }
 
 export async function publishGeneratedMetrics({ environment = process.env, runCommand = (command, args) => execute(command, args, environment) } = {}) {
@@ -105,20 +206,10 @@ export async function publishGeneratedMetrics({ environment = process.env, runCo
     "--title", METRICS_PULL_REQUEST_TITLE,
     "--body", "Automated profile metrics refresh. This change contains only README metric references and generated metrics files.",
   ]);
-  if (createResult.exitCode !== 0) {
-    const detail = redact(createResult.stderr || createResult.errorCode, environment);
-    const cleanup = await runCommand("git", ["push", "origin", "--delete", branch]);
-    const cleanupDetail = cleanup.exitCode === 0
-      ? "The temporary branch was removed."
-      : `The temporary branch could not be removed${redact(cleanup.stderr || cleanup.errorCode, environment) ? `: ${redact(cleanup.stderr || cleanup.errorCode, environment)}` : "."}`;
-    throw new MetricsPublicationError(
-      "pull request creation",
-      `Pull request creation failed${detail ? `: ${detail}` : ""}. ${cleanupDetail}`,
-    );
-  }
-
-  const url = pullRequestUrl(createResult.stdout);
-  if (!url) throw new MetricsPublicationError("pull request creation", "GitHub did not return a metrics pull request URL.");
+  const url = createResult.exitCode === 0
+    ? pullRequestUrl(createResult.stdout, repository)
+    : await failedCreateError(createResult, runCommand, repository, branch, environment, true);
+  if (!url) throw new MetricsPublicationError("pull request creation", "GitHub did not return a pull request URL.");
 
   const mergeResult = await runCommand("gh", ["pr", "merge", url, "--repo", repository, "--squash", "--delete-branch"]);
   if (mergeResult.exitCode !== 0) {

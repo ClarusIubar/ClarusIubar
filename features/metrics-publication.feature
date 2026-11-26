@@ -35,8 +35,47 @@ Feature: Publish generated metrics through the protected default branch
     And GitHub rejects pull request creation
     When the workflow publishes the generated metrics
     Then publication fails at "pull request creation"
+    And pull request creation is attempted exactly 1 time
     And the pull request is not merged
     And it removes the temporary publication branch
+
+  Scenario: A transient GraphQL creation error retries after confirming no pull request exists
+    Given the metrics workflow runs on "main" with run ID "12352"
+    And generated README and metrics files have changed
+    And the first pull request creation returns a GitHub GraphQL internal error
+    And no pull request exists for the run-specific publication branch
+    When the workflow publishes the generated metrics
+    Then pull request creation is attempted exactly 2 times
+    And pull request readback is scoped to the run-specific branch
+    And publication is reported as "merged"
+
+  Scenario: An uncertain create response reuses the run-specific pull request found by readback
+    Given the metrics workflow runs on "main" with run ID "12353"
+    And generated README and metrics files have changed
+    And the first pull request creation returns a GitHub GraphQL internal error
+    And the run-specific publication pull request is already open
+    When the workflow publishes the generated metrics
+    Then pull request creation is attempted exactly 1 time
+    And publication is reported as "merged"
+
+  Scenario: Exhausted transient creation retries fail after confirming the branch has no pull request
+    Given the metrics workflow runs on "main" with run ID "12354"
+    And generated README and metrics files have changed
+    And every pull request creation returns a GitHub GraphQL internal error
+    And no pull request exists for the run-specific publication branch
+    When the workflow publishes the generated metrics
+    Then publication fails at "pull request creation"
+    And pull request creation is attempted exactly 2 times
+    And it removes the temporary publication branch
+
+  Scenario: Failed pull request readback preserves the branch because creation outcome is unknown
+    Given the metrics workflow runs on "main" with run ID "12355"
+    And generated README and metrics files have changed
+    And the first pull request creation returns a GitHub GraphQL internal error
+    And pull request readback fails
+    When the workflow publishes the generated metrics
+    Then publication fails at "pull request creation"
+    And it preserves the temporary publication branch for recovery
 
   Scenario: Pull request diagnostics never expose the workflow credential
     Given the metrics workflow runs on "main" with run ID "12350"

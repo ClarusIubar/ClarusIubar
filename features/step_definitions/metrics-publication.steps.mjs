@@ -16,6 +16,9 @@ Before(function () {
     changedFiles: ["README.md", "metrics/contribution-activity.svg"],
     failCreate: false,
     leakCredentialInCreateError: false,
+    transientCreateFailures: 0,
+    failPullRequestReadback: false,
+    runPullRequestUrl: null,
     failMerge: false,
     pendingPullRequestUrl: null,
     calls: [],
@@ -28,6 +31,14 @@ Before(function () {
       return { exitCode: 0, stdout: this.publication.changedFiles.join("\n"), stderr: "" };
     }
     if (command === "gh" && args[0] === "pr" && args[1] === "create") {
+      if (this.publication.transientCreateFailures > 0) {
+        this.publication.transientCreateFailures -= 1;
+        return {
+          exitCode: 1,
+          stdout: "",
+          stderr: "GraphQL: Something went wrong while executing your query on 2026-11-25T16:09:54Z. Please include [REQ-TRANSIENT] when reporting this issue.",
+        };
+      }
       return this.publication.failCreate
         ? {
             exitCode: 1,
@@ -39,6 +50,18 @@ Before(function () {
         : { exitCode: 0, stdout: `${PULL_REQUEST_URL}\n`, stderr: "" };
     }
     if (command === "gh" && args[0] === "pr" && args[1] === "list") {
+      if (args.includes("--head")) {
+        if (this.publication.failPullRequestReadback) {
+          return { exitCode: 1, stdout: "", stderr: "GitHub API unavailable" };
+        }
+        return {
+          exitCode: 0,
+          stdout: JSON.stringify(this.publication.runPullRequestUrl
+            ? [{ number: 99, url: this.publication.runPullRequestUrl, title: "chore: update profile metrics", headRefName: `metrics/update-${this.publication.environment.GITHUB_RUN_ID}-1`, baseRefName: "main", state: "OPEN" }]
+            : []),
+          stderr: "",
+        };
+      }
       const openPullRequests = this.publication.pendingPullRequestUrl
         ? [{ number: 98, url: this.publication.pendingPullRequestUrl, title: "chore: update profile metrics", headRefName: "metrics/update-previous-1" }]
         : [];
@@ -66,6 +89,24 @@ Given("no generated metric files have changed", function () {
 
 Given("GitHub rejects pull request creation", function () {
   this.publication.failCreate = true;
+});
+
+Given("the first pull request creation returns a GitHub GraphQL internal error", function () {
+  this.publication.transientCreateFailures = 1;
+});
+
+Given("every pull request creation returns a GitHub GraphQL internal error", function () {
+  this.publication.transientCreateFailures = 2;
+});
+
+Given("no pull request exists for the run-specific publication branch", function () {});
+
+Given("the run-specific publication pull request is already open", function () {
+  this.publication.runPullRequestUrl = PULL_REQUEST_URL;
+});
+
+Given("pull request readback fails", function () {
+  this.publication.failPullRequestReadback = true;
 });
 
 Given("GitHub rejects pull request creation with a diagnostic containing the credential", function () {
@@ -143,9 +184,26 @@ Then("the pull request is not merged", function () {
 });
 
 Then("it removes the temporary publication branch", function () {
+  const branch = `metrics/update-${this.publication.environment.GITHUB_RUN_ID}-1`;
   assert.ok(this.publication.calls.some(({ command, args }) =>
-    command === "git" && args[0] === "push" && args[2] === "--delete" && args[3] === "metrics/update-12347-1",
+    command === "git" && args[0] === "push" && args[2] === "--delete" && args[3] === branch,
   ));
+});
+
+Then("pull request creation is attempted exactly {int} time(s)", function (attempts) {
+  assert.equal(this.publication.calls.filter(({ command, args }) => command === "gh" && args[0] === "pr" && args[1] === "create").length, attempts);
+});
+
+Then("pull request readback is scoped to the run-specific branch", function () {
+  const readback = this.publication.calls.find(({ command, args }) => command === "gh" && args[0] === "pr" && args[1] === "list" && args.includes("--head"));
+  assert.ok(readback);
+  assert.equal(readback.args[readback.args.indexOf("--base") + 1], "main");
+  assert.equal(readback.args[readback.args.indexOf("--head") + 1], `metrics/update-${this.publication.environment.GITHUB_RUN_ID}-1`);
+  assert.equal(readback.args[readback.args.indexOf("--state") + 1], "all");
+});
+
+Then("it preserves the temporary publication branch for recovery", function () {
+  assert.equal(this.publication.calls.some(({ command, args }) => command === "git" && args[0] === "push" && args[2] === "--delete"), false);
 });
 
 Then("the failure identifies the open pull request for recovery", function () {
